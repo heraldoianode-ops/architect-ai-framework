@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; NC='\033[0m'
+ok() { echo -e "${GREEN}✅ $1${NC}"; }
+err() { echo -e "${RED}❌ $1${NC}"; exit 1; }
+warn() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+
+# 1. JSON validation
+if command -v python3 >/dev/null 2>&1; then
+  for f in __AI_CORE__/*.json; do
+    [ -f "$f" ] || continue
+    python3 -c "import json,sys; json.load(open('$f'))" 2>/dev/null || err "JSON invalido: $f"
+  done
+  ok "JSON valido en __AI_CORE__"
+fi
+
+# 2. Commit lint
+COMMIT_FILE=".git/COMMIT_EDITMSG"
+if [ -f "$COMMIT_FILE" ]; then
+  MSG=$(cat "$COMMIT_FILE")
+  echo "$MSG" | grep -qE "^(feat|fix|chore|docs|style|refactor|test|perf|ci|build|revert)(\(.+\))?: .{3,}" || {
+    warn "Commit no sigue convencion: '$MSG'"
+    warn "Formato: tipo(scope): descripcion"
+    err "Commit bloqueado — corregir mensaje"
+  }
+  ok "Commit lint OK"
+fi
+
+# 3. Security — no secrets
+SENSITIVE="password|secret_key|private_key|api_key|sk-|eyJ"
+git diff --cached --name-only | grep -v "services.private.json" | while read f; do
+  [ -f "$f" ] && grep -qiE "$SENSITIVE" "$f" && err "⚠️ SECRET detectado en $f — revisar antes de commitear"
+done
+ok "Sin secrets detectados"
+
+# 4. Branch guard
+BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
+if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+  warn "Commit directo en '$BRANCH'. ¿Confirmado por el usuario? [s/N]"
+  read -r C; [[ "$C" =~ ^[Ss]$ ]] || err "Push a main bloqueado por framework."
+fi
+echo; ok "Pre-commit OK — continuando"

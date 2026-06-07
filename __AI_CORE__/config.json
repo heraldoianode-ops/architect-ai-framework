@@ -1,0 +1,62 @@
+{
+  "_meta": {
+    "file": "config.json",
+    "framework_version": "2.2.0",
+    "description_es": "Mapa técnico maestro del proyecto. Uso exclusivo de la IA.",
+    "description_en": "Master technical map of the project. AI use only.",
+    "note_es": "Reemplazar todos los valores entre [corchetes] al iniciar el proyecto.",
+    "note_en": "Replace all values in [brackets] when starting the project."
+  },
+  "meta": {
+    "project": "[NOMBRE_PROYECTO]",
+    "project_slug": "[nombre-proyecto]",
+    "version": "0.1.0",
+    "type": "[SaaS-web|api-rest|mobile-app|desktop-windows|fullstack-nextjs|library-npm|custom]",
+    "client_type": "[client_external|internal_product|both]",
+    "client_context": {},
+    "created": "[YYYY-MM-DD]",
+    "last_updated": "[YYYY-MM-DD]",
+    "owner": "[nombre-equipo-o-dev]",
+    "language_primary": "es",
+    "language_secondary": "en"
+  },
+  "stack": {
+    "frontend": null,
+    "backend": null,
+    "database": null,
+    "auth": null,
+    "hosting": null,
+    "email": null,
+    "payments": null,
+    "monitoring": null,
+    "repo": "[github.com/heraldoianode-ops/nombre-proyecto]",
+    "modules_repo": "https://github.com/heraldoianode-ops/architect-ai-modules",
+    "branch_main": "main",
+    "branch_dev": "[develop]",
+    "package_manager": "[npm|yarn|pnpm|pip]"
+  },
+  "initial_agreement": {
+    "agreed_on": null,
+    "phases": []
+  },
+  "roadmap": {
+    "current_phase": null,
+    "current_node": null,
+    "progress_pct": 0,
+    "phases": []
+  },
+  "files_map": {
+    "critical": [],
+    "env_vars": [],
+    "entry_points": [],
+    "config_files": []
+  },
+  "session_state": {
+    "completed_today": [],
+    "pending_tomorrow": [],
+    "bugs_known": [],
+    "last_commit": null,
+    "last_snap": null,
+    "active_since": null
+  }
+}

@@ -1,0 +1,197 @@
+{
+  "_meta": {
+    "file": "workflow.json",
+    "version": "2.2.0",
+    "framework": "ARCHITECT-AI",
+    "orchestrator": "claude-code",
+    "description_es": "Reglas operativas completas. Uso exclusivo de la IA.",
+    "description_en": "Complete operational rules. AI use only."
+  },
+  "communication": {
+    "user_language": "natural",
+    "internal_language": "machine",
+    "note_es": "El usuario siempre recibe lenguaje natural. El LM es exclusivamente interno.",
+    "note_en": "User always receives natural language. LM is exclusively internal.",
+    "code_language": "EN",
+    "comments_language": "bilingual_ES_EN",
+    "commits_language": "EN",
+    "documentation_language": "bilingual_ES_EN"
+  },
+  "color_protocol": {
+    "green": { "tags": ["[CREAR]","[MODIFICAR]","[INCRUSTAR]","[REEMPLAZAR]","[PEGAR]"] },
+    "red":   { "tags": ["[BORRAR]","[ELIMINAR]"] },
+    "blue":  { "tags": ["[BUSCAR]","[VERIFICAR]"] },
+    "rule_es": "Siempre AZUL antes de VERDE o ROJO.",
+    "rule_en": "Always BLUE before GREEN or RED."
+  },
+  "selective_context_loading": {
+    "on_startup_always": {
+      "config.json": ["meta.project","meta.version","roadmap.current_node","roadmap.progress_pct","session_state"],
+      "workflow.json": "full",
+      "health.json": ["status","dimensions.debt","alerts"],
+      "session_digest.json": "last_3_sessions",
+      "patterns.json": "reinforced_checks active only"
+    },
+    "on_demand": {
+      "tech_debt.json": "DEUDA command or touching affected file",
+      "features.json": "working on feature or FEATURE command",
+      "decisions.json": "architecture proposal or R16 check",
+      "modules.json": "install or publish module",
+      "services.json": "connect or check external service",
+      "services.private.json": "env vars or credentials needed",
+      "schema.sql": "touching database"
+    }
+  },
+  "turbo_mode": {
+    "trigger": "TURBO [task description]",
+    "skips": ["health check","patterns","meta-learning","session digest"],
+    "loads": ["config.json current_node only","workflow.json rules only"],
+    "snap_on_complete": true,
+    "note_es": "Solo para tareas atomicas < 15 minutos sin impacto arquitectural.",
+    "note_en": "Only for atomic tasks < 15 minutes without architectural impact."
+  },
+  "rules": {
+    "R1": { "name": "AI_CORE conflict", "action_es": "Verificar contra codigo. Si no coincide → preguntar al usuario.", "priority": "CRITICAL" },
+    "R2": { "name": "Branch control", "action_es": "Rama definida una vez. Todo trabajo ahi. Main solo por solicitud explicita.", "project_branch": null, "main_branch": "main" },
+    "R3": { "name": "Node granularity", "action_es": "Fases y nodos definidos en acuerdo previo. Features segun su sector.", "requires_initial_agreement": true },
+    "R4": { "name": "New ENV variable", "action_es": "Buscar si ya existe. Si no → agregar al codigo, registrar y avisar.", "priority": "HIGH" },
+    "R5": { "name": "Breaking change", "steps": ["Identify consumers","Deprecate old + create new parallel","Migrate consumers one by one","Delete deprecated when all migrated"] },
+    "R6": { "name": "Bilingual docs", "rules": ["Docs ES+EN","Code EN","Comments ES+EN","Commits EN"] },
+    "R7": { "name": "Outdated module", "action_es": "Actualizar library inmediatamente. Luego continuar." },
+    "R8": { "name": "Minimum tests", "coverage": "80% critical functions",
+      "L1": "1 unit test — function in isolation",
+      "L2": "1 unit + 1 integration — function integrates with others",
+      "L3": "1 unit + 1 integration + 1 E2E — change may affect production sectors",
+      "node_complete": "COMPLETE only when minimum tests pass" },
+    "R9": { "name": "Service down", "action_es": "Frenar. Registrar DOWN con timestamp. Encolar en pending_sync.json. Esperar REINTENTAR." },
+    "R10": { "name": "Semantic versioning", "auto_increment": ["PATCH","MINOR"], "requires_confirmation": ["MAJOR"],
+      "MAJOR_protocol": "Ask user → test what breaks + what adds → increment only if all passes" },
+    "R16": { "name": "Architectural coherence", "action_es": "Al proponer feature o arch → cargar decisions.json → verificar no contradice ACTIVE o SETTLED." }
+  },
+  "auto_save": {
+    "orchestrator": "claude-code",
+    "layer_1_milestone": {
+      "triggers": ["Node completed","Feature COMPLETE","New debt","Successful PUSH","Module published"],
+      "method": "fs.writeFile → git add __AI_CORE__/ → git commit",
+      "commit_format": "chore(snap): milestone — {trigger} [{timestamp}]"
+    },
+    "layer_2_predictive": {
+      "trigger": "tokens < 20% of context",
+      "method": "fs.writeFile all modified → git add __AI_CORE__/ → git commit",
+      "alert_es": "⚠️ CONTEXTO AL 80% — Estado guardado en repo. Continuidad garantizada.",
+      "commit_format": "chore(snap): predictive save [{timestamp}]"
+    },
+    "layer_3_session_end": {
+      "triggers_es": ["gracias","hasta manana","listo por hoy","cerramos","hasta luego","CERRAR SESION"],
+      "method": "fs.writeFile all → git add __AI_CORE__/ → git commit → git push origin [branch]",
+      "commit_format": "chore(snap): session end [{timestamp}]",
+      "files": ["config.json","features.json","tech_debt.json","decisions.json","patterns.json","health.json","session_digest.json"]
+    }
+  },
+  "session_digest_rules": {
+    "file": "__AI_CORE__/session_digest.json",
+    "max_sessions": 5,
+    "archive_to": "__AI_CORE__/changelog.md",
+    "settle_threshold": 3,
+    "description_es": "Arranque lee digest, no changelog completo. Ahorra tokens."
+  },
+  "decision_cache": {
+    "settle_threshold": 3,
+    "on_settled_es": "Agregar a session_digest.json.settled_decisions_cache."
+  },
+  "pre_mortem_protocol": {
+    "trigger_es": "Al iniciar nueva fase",
+    "inputs": ["patterns.json","meta.json","tech_debt.json"],
+    "output_es": "Max 5 riesgos especificos como checkpoints preventivos en roadmap."
+  },
+  "module_contracts": {
+    "stored_in": "modules.json — campo contracts por modulo",
+    "fields": ["inputs","outputs","types","throws","version_contract"],
+    "check_on_modify_es": "Antes de modificar → verificar contratos → evaluar breaking changes per R5."
+  },
+  "multi_agent_protocol": {
+    "activation_es": "Automatico al detectar subagentes. Un agente solo = single mode (default).",
+    "roles": { "architect": "Decisions + __AI_CORE__ + coordination", "frontend": "UI", "backend": "API + logic", "database": "Schema + queries", "devops": "Deploy + CI/CD" },
+    "rules_es": ["Solo Arquitecto modifica __AI_CORE__","Agentes reportan al Arquitecto","Main requiere aprobacion del Arquitecto"]
+  },
+  "offline_mode": {
+    "queue_file": "__AI_CORE__/pending_sync.json",
+    "on_down_es": "Registrar en cola. Continuar local. Avisar usuario.",
+    "on_reintentar_es": "Procesar cola en orden. Reportar cada resultado.",
+    "queueable": ["git_push","netlify_deploy","supabase_migration","module_publish"]
+  },
+  "automated_changelog": {
+    "updated_on": "CERRAR SESION",
+    "source": "git log desde last_snap hasta HEAD",
+    "mapping": { "feat": "Añadido/Added", "fix": "Corregido/Fixed", "chore": "Mantenimiento/Maintenance", "refactor": "Refactorizado/Refactored", "docs": "Documentacion/Documentation", "test": "Tests", "perf": "Rendimiento/Performance" }
+  },
+  "client_context_protocol": {
+    "asked_on": "INICIAR PROYECTO",
+    "client_external_fields": ["client_name","active_nda","approved_stack","contractual_restrictions","technical_contact","delivery_date"],
+    "internal_product_fields": ["product_name","internal_owner","business_goal","launch_date"],
+    "stored_in": "config.json.meta.client_context"
+  },
+  "framework_versioning": {
+    "current": "2.2.0",
+    "field": "_meta.framework_version",
+    "backward_compatible_until": "2.0.0"
+  },
+  "enhanced_audit": {
+    "steps_es": [
+      "1. Leer package.json/requirements.txt → detectar stack",
+      "2. Analizar estructura → inferir arquitectura",
+      "3. Buscar TODO/FIXME → convertir en tech_debt.json",
+      "4. Leer commits recientes → inferir decisions.json",
+      "5. Detectar ENV vars usadas → poblar config.json",
+      "6. Generar __AI_CORE__ pre-poblado completo"
+    ]
+  },
+  "dashboard_ansi": {
+    "trigger": "ESTADO",
+    "sections": ["header","progress bar","current node","health score","active debts","features","services","next actions"],
+    "note_es": "Generado con python3 sin dependencias externas."
+  },
+  "anti_patterns": [
+    "Greet user / apologize",
+    "Load full files when partial fields suffice",
+    "Mark node COMPLETE without tests passing",
+    "Push to main without explicit user request",
+    "Expose Machine Language to user",
+    "Continue features if critical debt > threshold",
+    "Propose > 3 design options simultaneously",
+    "Commit per individual file instead of cohesive set"
+  ],
+  "session_commands": {
+    "ARRANCAR":         "Load context and start session",
+    "ESTADO":           "ANSI dashboard",
+    "TURBO [task]":     "Atomic task minimal context",
+    "INICIAR PROYECTO": "New project with initial agreement",
+    "AUDITAR PROYECTO": "Map inherited project → generate __AI_CORE__",
+    "SIGUIENTE":        "Continue pending fragment",
+    "CERRAR SESION":    "Final SNAP + commit + push",
+    "INSTALAR MODULO":  "Copy module from library to project",
+    "PUBLICAR MODULO":  "Copy function to library + commit",
+    "SALUD":            "Technical health dashboard",
+    "REINTENTAR":       "Process pending_sync.json queue",
+    "DEUDA [id]":       "Tech debt detail",
+    "FEATURE [id]":     "Feature detail"
+  },
+  "startup_protocol": {
+    "steps": [
+      "0. Claude Code reads all __AI_CORE__/ files directly from disk (selective)",
+      "1. Read config.json → extract project, current_node, progress_pct",
+      "2. Read workflow.json → restore active rules",
+      "3. Calculate health → alert if debt > threshold",
+      "4. Check bugs_known and pending_tomorrow",
+      "5. Apply active patterns from patterns.json",
+      "6. Emit ONE confirmation line"
+    ],
+    "confirmation_format": "[project] v[version] — [progress_pct]% — Nodo: [current_node]. [health_alert]"
+  },
+  "saas_context": {
+    "description_es": "Cada proyecto tiene su propio __AI_CORE__ aislado. architect-ai-modules es compartido.",
+    "description_en": "Each project has its own isolated __AI_CORE__. architect-ai-modules is shared.",
+    "modules_repo": "https://github.com/heraldoianode-ops/architect-ai-modules",
+    "project_isolation": true
+  }
+}

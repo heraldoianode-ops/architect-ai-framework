@@ -1,0 +1,1 @@
+{ "_meta": { "file": "pending_sync.json", "framework_version": "2.2.0", "description_es": "Cola de operaciones pendientes en modo offline.", "description_en": "Pending operations queue in offline mode." }, "offline_mode_active": false, "services_down": [], "pending_operations": [] }

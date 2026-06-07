@@ -1,0 +1,12 @@
+{
+  "_meta": { "file": "project-templates.json", "framework_version": "2.2.0", "description_es": "Templates por tipo de proyecto.", "description_en": "Templates by project type." },
+  "templates": {
+    "saas-web":          { "name_es": "SaaS Web", "stack": { "frontend": "React 18 + Vite", "backend": "Netlify Functions", "database": "Supabase", "auth": "Supabase Auth", "hosting": "Netlify", "email": "Resend", "payments": "Stripe" }, "estimated_phases": 7 },
+    "api-rest":          { "name_es": "API REST", "stack": { "frontend": null, "backend": "Express/FastAPI", "database": "Supabase/PostgreSQL", "auth": "JWT custom", "hosting": "Railway/Render" }, "estimated_phases": 6 },
+    "mobile-app":        { "name_es": "App Mobile iOS+Android", "stack": { "frontend": "React Native/Expo", "backend": "Supabase", "hosting": "App Store + Google Play", "payments": "RevenueCat" }, "estimated_phases": 7 },
+    "desktop-windows":   { "name_es": "App Escritorio Windows", "stack": { "frontend": "React + Electron/Tauri", "backend": "Node.js/Rust", "database": "SQLite/Supabase", "hosting": "GitHub Releases" }, "estimated_phases": 7 },
+    "fullstack-nextjs":  { "name_es": "Fullstack Next.js", "stack": { "frontend": "Next.js 14 App Router", "backend": "Next.js API Routes", "database": "Supabase/Prisma", "auth": "NextAuth", "hosting": "Vercel" }, "estimated_phases": 7 },
+    "library-npm":       { "name_es": "Librería NPM", "stack": { "backend": "TypeScript", "hosting": "NPM Registry" }, "estimated_phases": 5 },
+    "custom":            { "name_es": "Proyecto Personalizado", "stack": {}, "estimated_phases": 0 }
+  }
+}

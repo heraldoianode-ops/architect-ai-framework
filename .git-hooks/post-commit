@@ -1,0 +1,31 @@
+#!/bin/bash
+CORE="__AI_CORE__"
+[ -f "$CORE/health.json" ] || exit 0
+python3 -c "
+import json, datetime
+core = '$CORE'
+def load(f):
+    try: return json.load(open(f'{core}/{f}'))
+    except: return {}
+health = load('health.json')
+debt   = load('tech_debt.json')
+config = load('config.json')
+debts  = debt.get('debts', [])
+critical = sum(1 for d in debts if d.get('status')=='OPEN' and d.get('severity')=='CRITICAL')
+high     = sum(1 for d in debts if d.get('status')=='OPEN' and d.get('severity')=='HIGH')
+medium   = sum(1 for d in debts if d.get('status')=='OPEN' and d.get('severity')=='MEDIUM')
+low      = sum(1 for d in debts if d.get('status')=='OPEN' and d.get('severity')=='LOW')
+score    = min(100, critical*30 + high*15 + medium*5 + low)
+phases   = config.get('roadmap',{}).get('phases',[])
+complete = sum(1 for p in phases if p.get('status')=='COMPLETE')
+status   = 'CRITICAL' if critical>0 or score>60 else 'WARNING' if high>2 or score>30 else 'HEALTHY'
+alerts   = []
+if critical: alerts.append({'level':'CRITICAL','msg_es':f'{critical} deuda(s) critica(s)','msg_en':f'{critical} critical debt(s)'})
+if high > 2: alerts.append({'level':'HIGH','msg_es':f'{high} deudas HIGH — considerar sesion de deuda','msg_en':f'{high} HIGH debts'})
+health.update({'last_calculated':datetime.datetime.now().isoformat(),'overall_score':score,'status':status,'alerts':alerts})
+health['dimensions']['debt'] = {'critical_count':critical,'high_count':high,'medium_count':medium,'low_count':low,'value':score}
+health['dimensions']['progress'] = {'phases_complete':complete,'phases_total':len(phases),'pct':config.get('roadmap',{}).get('progress_pct',0)}
+json.dump(health, open(f'{core}/health.json','w'), indent=2, ensure_ascii=False)
+if status=='CRITICAL': print('\033[0;31m⚠️  SALUD CRITICA\033[0m')
+elif status=='WARNING': print('\033[1;33m⚠️  SALUD WARNING\033[0m')
+" 2>/dev/null || true

@@ -1,0 +1,28 @@
+# Environment — NEVER commit
+.env
+.env.local
+.env.*.local
+
+# Private AI_CORE files
+__AI_CORE__/services.private.json
+__AI_CORE__/*.private.json
+__AI_CORE__/*.secret.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Node
+node_modules/
+dist/
+.next/
+
+# Python
+__pycache__/
+*.pyc
+.venv/

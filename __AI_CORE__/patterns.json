@@ -1,0 +1,1 @@
+{ "_meta": { "file": "patterns.json", "framework_version": "2.2.0", "description_es": "Meta-aprendizaje nivel 1. Patrones de este proyecto.", "description_en": "Level 1 meta-learning. This project's patterns." }, "recurring_bugs": [], "volatile_modules": [], "reverted_decisions": [], "estimation_accuracy": [], "reinforced_checks": [] }

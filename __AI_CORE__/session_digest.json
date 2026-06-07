@@ -1,0 +1,1 @@
+{ "_meta": { "file": "session_digest.json", "framework_version": "2.2.0", "description_es": "Últimas 5 sesiones comprimidas. El arranque lee esto, no el changelog.", "description_en": "Last 5 sessions compressed. Startup reads this, not full changelog.", "max_sessions": 5 }, "last_sessions": [], "settled_decisions_cache": [] }
