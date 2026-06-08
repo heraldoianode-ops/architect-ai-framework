@@ -1,0 +1,46 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+__AI_CORE__/services.private.json
+__AI_CORE__/*.private.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+.next/
+out/
+
+# Docker volumes (local)
+postgres_data/
+redis_data/
+ollama_data/
+
+# ML models
+*.pkl
+*.joblib
+models/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+celerybeat-schedule
+celerybeat.pid
