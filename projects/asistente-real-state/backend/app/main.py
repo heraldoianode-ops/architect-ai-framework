@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings
 from app.core.database import engine
 from app.core.redis import close_redis
-from app.routers import health, auth, properties, clients, events
+from app.routers import health, auth, properties, clients, events, agent
 
 settings = get_settings()
 log = structlog.get_logger()
@@ -51,8 +51,8 @@ app.include_router(auth.router)
 app.include_router(properties.router)
 app.include_router(clients.router)
 app.include_router(events.router)
+app.include_router(agent.router)
 
 # TODO (next nodes):
-# app.include_router(agent.router,      prefix="/agent")     — Nodo 2.2
 # app.include_router(analytics.router,  prefix="/analytics") — Nodo 5.2
 # app.include_router(admin.router,      prefix="/admin")     — Nodo 6.2
