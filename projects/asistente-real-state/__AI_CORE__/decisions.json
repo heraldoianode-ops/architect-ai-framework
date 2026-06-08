@@ -1,10 +1,69 @@
 {
   "_meta": { "file": "decisions.json", "description_es": "Decisiones arquitectónicas. Consultar antes de cambios (R16).", "description_en": "Architectural decisions. Check before changes (R16)." },
   "decisions": [
-    { "id": "D001", "date": "2026-06-08", "status": "SETTLED", "title_es": "Stack: Next.js 14 + Supabase + Vercel", "title_en": "Stack: Next.js 14 + Supabase + Vercel", "rationale_es": "SSR nativo, auth+DB+storage integrado, deploy zero-config.", "rationale_en": "Native SSR, integrated auth+DB+storage, zero-config deploy.", "impact": "GLOBAL" },
-    { "id": "D002", "date": "2026-06-08", "status": "SETTLED", "title_es": "IA: Claude API claude-sonnet-4-6", "title_en": "AI: Claude API claude-sonnet-4-6", "rationale_es": "Mejor contexto largo y manejo de español.", "rationale_en": "Best long context and Spanish handling.", "impact": "MODULES: 2.2, 4.1" },
-    { "id": "D003", "date": "2026-06-08", "status": "SETTLED", "title_es": "WhatsApp: Meta Business API directa", "title_en": "WhatsApp: Direct Meta Business API", "rationale_es": "Menor costo, sin intermediario.", "rationale_en": "Lower cost, no intermediary.", "impact": "MODULES: 2.1, 2.2" },
-    { "id": "D004", "date": "2026-06-08", "status": "SETTLED", "title_es": "Scraping: Playwright", "title_en": "Scraping: Playwright", "rationale_es": "Multi-browser, mejor manejo de SPAs y anti-bot.", "rationale_en": "Multi-browser, better SPA and anti-bot handling.", "impact": "MODULE: 3.1" },
-    { "id": "D005", "date": "2026-06-08", "status": "SETTLED", "title_es": "RBAC: Supabase RLS + middleware Next.js (doble capa)", "title_en": "RBAC: Supabase RLS + Next.js middleware (double layer)", "rationale_es": "Seguridad en BD y en rutas.", "rationale_en": "Security at DB and route level.", "impact": "GLOBAL" }
+    {
+      "id": "D001", "date": "2026-06-08", "status": "SETTLED",
+      "title_es": "Backend analítico: Python 3.12 + FastAPI (no Next.js API Routes)",
+      "title_en": "Analytical backend: Python 3.12 + FastAPI (not Next.js API Routes)",
+      "rationale_es": "Python es el ecosistema nativo para LLMs (LangChain), ML (XGBoost/Pandas), RPA (Playwright) y embeddings. FastAPI ofrece async nativo, validación Pydantic y OpenAPI automático.",
+      "rationale_en": "Python is the native ecosystem for LLMs (LangChain), ML (XGBoost/Pandas), RPA (Playwright) and embeddings. FastAPI offers native async, Pydantic validation and auto OpenAPI.",
+      "impact": "GLOBAL — arquitectura central"
+    },
+    {
+      "id": "D002", "date": "2026-06-08", "status": "SETTLED",
+      "title_es": "LLM: Ollama local por defecto. API externa solo con flag allow_external=true",
+      "title_en": "LLM: Local Ollama by default. External API only with allow_external=true flag",
+      "rationale_es": "Costo operacional cero en producción. Privacidad de datos del cliente. Escalable sin billing. Solo 3 agentes críticos pueden usar API externa (legal RAG, objeciones, reporte predictivo).",
+      "rationale_en": "Zero operational cost in production. Client data privacy. Scalable without billing. Only 3 critical agents can use external API.",
+      "impact": "MÓDULOS: 2.1, 2.2, 4.1, 4.2, 5.1, 6.1"
+    },
+    {
+      "id": "D003", "date": "2026-06-08", "status": "SETTLED",
+      "title_es": "Patrón IA: ReAct (Reasoning + Acting) con Tool Use. No flujos hardcoded.",
+      "title_en": "AI Pattern: ReAct (Reasoning + Acting) with Tool Use. No hardcoded flows.",
+      "rationale_es": "El agente decide qué herramienta usar según el contexto. Permite añadir herramientas sin refactorizar el flujo. Más robusto ante inputs inesperados.",
+      "rationale_en": "Agent decides which tool to use based on context. Allows adding tools without refactoring the flow. More robust against unexpected inputs.",
+      "impact": "MÓDULO: 2.2"
+    },
+    {
+      "id": "D004", "date": "2026-06-08", "status": "SETTLED",
+      "title_es": "Vector DB: pgvector (extensión PostgreSQL). No Pinecone/Weaviate/Chroma.",
+      "title_en": "Vector DB: pgvector (PostgreSQL extension). Not Pinecone/Weaviate/Chroma.",
+      "rationale_es": "Una sola base de datos para datos relacionales + vectores. Elimina complejidad operacional. Soporte ANN con ivfflat/hnsw. Sin servicio externo adicional.",
+      "rationale_en": "Single database for relational data + vectors. Eliminates operational complexity. ANN support with ivfflat/hnsw. No additional external service.",
+      "impact": "MÓDULOS: 4.1, 4.2"
+    },
+    {
+      "id": "D005", "date": "2026-06-08", "status": "SETTLED",
+      "title_es": "RPA Adinco: Playwright Python en worker Celery aislado",
+      "title_en": "Adinco RPA: Python Playwright in isolated Celery worker",
+      "rationale_es": "Adinco no tiene API REST. Playwright headless simula sesión real. Worker Celery aislado permite pausar/reiniciar sin afectar el orquestador principal.",
+      "rationale_en": "Adinco has no REST API. Headless Playwright simulates real session. Isolated Celery worker allows pause/restart without affecting main orchestrator.",
+      "impact": "MÓDULO: 3.1"
+    },
+    {
+      "id": "D006", "date": "2026-06-08", "status": "SETTLED",
+      "title_es": "Gateway WhatsApp: Node.js separado (no Python) para alta concurrencia",
+      "title_en": "WhatsApp Gateway: Separate Node.js (not Python) for high concurrency",
+      "rationale_es": "Node.js event loop maneja mejor miles de conexiones WebSocket simultáneas. Python FastAPI llama al gateway vía HTTP interno. Separación de responsabilidades limpia.",
+      "rationale_en": "Node.js event loop handles thousands of simultaneous WebSocket connections better. Python FastAPI calls gateway via internal HTTP. Clean separation of concerns.",
+      "impact": "MÓDULO: 2.3"
+    },
+    {
+      "id": "D007", "date": "2026-06-08", "status": "SETTLED",
+      "title_es": "Despliegue: Docker Compose en desarrollo → Railway/Render en producción",
+      "title_en": "Deployment: Docker Compose in dev → Railway/Render in production",
+      "rationale_es": "Docker garantiza paridad dev/prod. Railway/Render soportan Docker nativo, PostgreSQL managed y Redis. Vercel solo para el dashboard Next.js frontend.",
+      "rationale_en": "Docker ensures dev/prod parity. Railway/Render support native Docker, managed PostgreSQL and Redis. Vercel only for Next.js frontend dashboard.",
+      "impact": "GLOBAL — infraestructura"
+    },
+    {
+      "id": "D008", "date": "2026-06-08", "status": "SETTLED",
+      "title_es": "Predicción: XGBoost/LightGBM. No redes neuronales para V1.",
+      "title_en": "Prediction: XGBoost/LightGBM. No neural networks for V1.",
+      "rationale_es": "Datos insuficientes para DL en V1. XGBoost ofrece mejor rendimiento con tablas pequeñas, entrenamiento rápido, explicabilidad con SHAP y sin GPU requerida.",
+      "rationale_en": "Insufficient data for DL in V1. XGBoost offers better performance with small tables, fast training, SHAP explainability and no GPU required.",
+      "impact": "MÓDULO: 5.1"
+    }
   ]
 }

@@ -6,11 +6,12 @@
     "description_es": "Mapa técnico maestro del proyecto. Uso exclusivo de la IA.",
     "description_en": "Master technical map of the project. AI use only."
   },
+
   "meta": {
     "project": "Asistente-de-Real-State",
     "project_slug": "asistente-real-state",
     "version": "0.1.0",
-    "type": "WebApp + API",
+    "type": "PropTech IA — Ecosistema Operacional Autónomo",
     "client": "interno",
     "created": "2026-06-08",
     "last_updated": "2026-06-08",
@@ -18,84 +19,538 @@
     "language_primary": "es",
     "language_secondary": "en"
   },
+
   "stack": {
-    "frontend": "Next.js 14 + Tailwind CSS + shadcn/ui",
-    "backend": "Next.js API Routes + Node.js",
-    "database": "Supabase (PostgreSQL)",
-    "auth": "Supabase Auth (RBAC)",
-    "hosting": "Vercel",
-    "email": "Resend",
-    "payments": null,
-    "monitoring": "Sentry",
-    "whatsapp": "Meta WhatsApp Business API",
-    "ai_assistant": "Claude API (claude-sonnet-4-6)",
-    "scraping": "Playwright + Cheerio",
-    "file_integrations": "Google Drive API + ExcelJS",
+    "ai_core": "Python 3.12 + FastAPI + LangChain",
+    "agent_pattern": "ReAct (Reasoning + Acting) — Tool Use",
+    "llm_local": "Ollama (Llama 3.1 8B / Mistral 7B) — zero token cost — default",
+    "llm_external_gated": "Claude API — solo agentes autorizados con flag allow_external=true",
+    "embeddings_local": "nomic-embed-text via Ollama — default",
+    "embeddings_external_gated": "text-embedding-3-small (OpenAI) — solo si embeddings locales insuficientes",
+    "vector_db": "pgvector (extensión PostgreSQL)",
+    "session_memory": "Redis (ventana conversacional WhatsApp)",
+    "background_workers": "Celery + Redis (scraping, analytics, notificaciones)",
+    "rpa_scraping": "Playwright (Python) + BeautifulSoup",
+    "analytics": "Pandas + XGBoost / LightGBM + Plotly / Matplotlib",
+    "database": "PostgreSQL 16 (Supabase)",
+    "auth": "Supabase Auth (RBAC) + FastAPI JWT",
+    "frontend_dashboard": "Next.js 14 + Tailwind CSS + shadcn/ui (dashboard web)",
+    "whatsapp_gateway": "Node.js + Meta WhatsApp Business API (alta concurrencia)",
+    "realtime": "WebSockets (Node.js) para gráficos en vivo",
     "storage": "Supabase Storage",
+    "google_integrations": "Google Drive API + Google Sheets API",
+    "excel": "OpenPyXL + Pandas",
+    "email": "Resend",
+    "monitoring": "Sentry",
+    "container": "Docker Compose (desarrollo) → Railway / Render (producción)",
     "repo": "heraldoianode-ops/asistente-real-state",
     "branch_main": "main",
     "branch_dev": "develop",
-    "package_manager": "pnpm"
+    "package_manager_python": "uv / pip",
+    "package_manager_node": "pnpm"
   },
+
+  "ai_policy": {
+    "description_es": "Política de uso de IA externa. El sistema opera local por defecto.",
+    "description_en": "External AI usage policy. System operates locally by default.",
+    "default_llm": "ollama/llama3.1:8b",
+    "external_llm_flag": "allow_external",
+    "external_llm_authorized_agents": [
+      "rag_legal_agent",
+      "objection_handler_agent",
+      "predictive_report_agent"
+    ],
+    "token_budget_per_day": null,
+    "rule": "Si allow_external=false o no especificado → usar LLM local. Nunca gastar tokens sin flag explícito."
+  },
+
   "roles": {
-    "administrador": { "description_es": "Configura accesos, carpetas, repositorios, sistema de meta-aprendizaje y parámetros globales", "description_en": "Configures access, folders, repositories, meta-learning system and global parameters", "access": "full" },
-    "agente_real_state": { "description_es": "Registra su usuario y actividad. Gestiona clientes, propiedades, agenda y plan de trabajo", "description_en": "Registers their account and activity. Manages clients, properties, calendar and work plan", "access": "agent_scope" },
-    "cliente_comprador": { "description_es": "Acceso directo. Busca propiedades, agenda visitas, consulta por WhatsApp", "description_en": "Direct access. Searches properties, books visits, queries via WhatsApp", "access": "buyer_scope" },
-    "cliente_vendedor": { "description_es": "Acceso directo. Registra propiedades, agenda reuniones con agentes", "description_en": "Direct access. Lists properties, schedules meetings with agents", "access": "seller_scope" },
-    "broker": { "description_es": "Supervisa agentes, ve reportes agregados, oportunidades de negocio y plan de trabajo", "description_en": "Supervises agents, views aggregated reports, business opportunities and work plan", "access": "broker_scope" }
+    "administrador": {
+      "description_es": "Configura accesos, fuentes scraping, modelos IA, meta-aprendizaje y parámetros globales",
+      "access": "full"
+    },
+    "agente_real_state": {
+      "description_es": "CRM, propiedades, agenda, plan de trabajo, WhatsApp handoff",
+      "access": "agent_scope"
+    },
+    "broker": {
+      "description_es": "Reportes de equipo, analytics, oportunidades, plan consolidado",
+      "access": "broker_scope"
+    },
+    "cliente_comprador": {
+      "description_es": "Acceso directo: busca propiedades, agenda visitas, consulta por WhatsApp",
+      "access": "buyer_scope"
+    },
+    "cliente_vendedor": {
+      "description_es": "Acceso directo: registra propiedad, agenda reunión con agente",
+      "access": "seller_scope"
+    }
   },
+
   "initial_agreement": {
     "agreed_on": "2026-06-08",
-    "description_es": "Asistente integral para el ecosistema inmobiliario: agentes, brokers, compradores y vendedores. Incluye CRM, WhatsApp IA, agenda, matching inteligente, plan de trabajo y analíticas.",
-    "description_en": "Comprehensive assistant for the real estate ecosystem: agents, brokers, buyers and sellers. Includes CRM, WhatsApp AI, scheduling, smart matching, work plan and analytics.",
+    "description_es": "Ecosistema Operacional Autónomo e Inmobiliario (PropTech IA). Arquitectura de microservicios con agentes ReAct, RPA, RAG legal, motor predictivo XGBoost y meta-aprendizaje por feedback de ventas.",
+    "description_en": "Autonomous Real Estate Operational Ecosystem (PropTech AI). Microservices architecture with ReAct agents, RPA, legal RAG, XGBoost predictive engine and sales-feedback meta-learning.",
     "phases": [
-      { "id": 1, "name_es": "Infraestructura Base", "name_en": "Base Infrastructure", "estimated_days": 12, "nodes": [
-        { "id": "1.1", "name_es": "Setup: proyecto, auth, roles, schema BD", "name_en": "Setup: project, auth, roles, DB schema", "steps_es": ["Inicializar Next.js 14 + Tailwind + shadcn/ui", "Configurar Supabase: proyecto, tablas base, RLS por rol", "Implementar Supabase Auth con roles", "Middleware de autorización por ruta y rol", "Layout base + navegación por rol", "Variables de entorno y configuración inicial"], "steps_en": ["Initialize Next.js 14 + Tailwind + shadcn/ui", "Configure Supabase: project, base tables, RLS by role", "Implement Supabase Auth with roles", "Authorization middleware per route and role", "Base layout + role-based navigation", "Environment variables and initial config"], "estimated_hours": 16, "test_level": 1 },
-        { "id": "1.2", "name_es": "Módulo: Propiedades — listado, búsqueda y ficha", "name_en": "Module: Properties — listing, search and detail", "steps_es": ["Schema: tabla properties con campos completos", "CRUD de propiedades para agentes y vendedores", "Búsqueda avanzada con filtros", "Galería de imágenes (Supabase Storage)", "Ficha de propiedad pública y privada", "Mapa integrado (Mapbox API)"], "steps_en": ["Schema: properties table with full fields", "Property CRUD for agents and sellers", "Advanced search with filters", "Image gallery (Supabase Storage)", "Public and private property detail page", "Integrated map (Mapbox API)"], "estimated_hours": 20, "test_level": 1 },
-        { "id": "1.3", "name_es": "Módulo: CRM base — leads y clientes", "name_en": "Module: Base CRM — leads and clients", "steps_es": ["Schema: clientes, leads, historial de interacciones", "Pipeline Kanban de leads por agente", "Perfil de cliente con historial completo", "Etiquetas, notas y seguimiento", "Importación inicial desde Excel / CSV", "Búsqueda y filtros de cartera de clientes"], "steps_en": ["Schema: clients, leads, interaction history", "Kanban lead pipeline per agent", "Client profile with full history", "Tags, notes and follow-up", "Initial import from Excel / CSV", "Client portfolio search and filters"], "estimated_hours": 18, "test_level": 1 }
-      ]},
-      { "id": 2, "name_es": "Comunicaciones y Agenda", "name_en": "Communications & Scheduling", "estimated_days": 14, "nodes": [
-        { "id": "2.1", "name_es": "Integración WhatsApp — canal entrante y saliente", "name_en": "WhatsApp Integration — inbound and outbound", "steps_es": ["Configurar Meta WhatsApp Business API + webhook", "Recepción de mensajes entrantes y enrutamiento por agente", "Envío de mensajes, imágenes y plantillas desde el sistema", "Historial de conversaciones por cliente en el CRM", "Notificaciones de nuevos mensajes en dashboard"], "steps_en": ["Configure Meta WhatsApp Business API + webhook", "Inbound message reception and routing by agent", "Send messages, images and templates from system", "Conversation history per client in CRM", "New message notifications in dashboard"], "estimated_hours": 22, "test_level": 2 },
-        { "id": "2.2", "name_es": "Asistente IA por WhatsApp", "name_en": "AI Assistant via WhatsApp", "steps_es": ["Integrar Claude API como motor de respuestas automáticas", "Contexto: base de propiedades + perfil del cliente", "Flujos: buscar propiedad, agendar visita, resolver FAQs", "Escalamiento automático a agente humano", "Registro de interacciones IA en historial CRM", "Panel de configuración de respuestas automáticas"], "steps_en": ["Integrate Claude API as automatic response engine", "Context: property base + querying client profile", "Flows: search property, book visit, resolve FAQs", "Auto-escalation to human agent", "Log AI interactions in CRM history", "Automatic response configuration panel"], "estimated_hours": 24, "test_level": 2 },
-        { "id": "2.3", "name_es": "Agenda: visitas, captaciones y reuniones", "name_en": "Scheduler: visits, captures and meetings", "steps_es": ["Schema: eventos (visita_comprador, captacion_vendedor, reunion_agente)", "Calendario por agente con disponibilidad configurable", "Portal público: comprador agenda visita", "Portal vendedor: agenda reunión con agente", "Recordatorios automáticos WhatsApp + email", "Vista semanal/mensual para agente y broker", "Sincronización Google Calendar (opcional)"], "steps_en": ["Schema: events (buyer_visit, seller_capture, agent_meeting)", "Per-agent calendar with configurable availability", "Public portal: buyer books visit", "Seller portal: schedules meeting", "Automatic WhatsApp + email reminders", "Weekly/monthly view for agent and broker", "Google Calendar sync (optional)"], "estimated_hours": 20, "test_level": 2 }
-      ]},
-      { "id": 3, "name_es": "Inteligencia e Integraciones", "name_en": "Intelligence & Integrations", "estimated_days": 16, "nodes": [
-        { "id": "3.1", "name_es": "CRM por Scraping — ingesta automática", "name_en": "Scraping CRM — automatic ingestion", "steps_es": ["Motor de scraping con Playwright", "Parser de propiedades: normalización de datos", "Deduplicación inteligente", "Scheduler de scraping configurable", "Panel de fuentes de datos activas/pausadas", "Alertas de propiedades nuevas por perfil de cliente"], "steps_en": ["Scraping engine with Playwright", "Property parser: data normalization", "Smart deduplication", "Configurable scraping scheduler", "Active/paused data sources panel", "New property alerts matching client profiles"], "estimated_hours": 26, "test_level": 2 },
-        { "id": "3.2", "name_es": "Integración Excel, Google Drive y SQL externo", "name_en": "Excel, Google Drive and external SQL integration", "steps_es": ["Importador Excel: clientes, propiedades, historial", "Exportador Excel: reportes, CRM, agenda", "Conector Google Drive: leer/escribir carpetas configuradas", "Conector SQL externo: lectura de BD externas", "Panel admin de conexiones activas", "Sincronización programada configurable"], "steps_en": ["Excel importer: clients, properties, history", "Excel exporter: reports, CRM, calendar", "Google Drive connector: read/write configured folders", "External SQL connector: read from external databases", "Admin panel for active connections", "Configurable scheduled sync"], "estimated_hours": 22, "test_level": 2 },
-        { "id": "3.3", "name_es": "Motor de Matching — coincidencias y oportunidades", "name_en": "Matching Engine — matches and opportunities", "steps_es": ["Algoritmo matching: perfil comprador ↔ propiedades", "Score por zona, precio, tipo, características", "Feed de oportunidades por agente", "Historial: clientes que buscaron y no cerraron", "Alertas proactivas vía WhatsApp y dashboard", "Ranking de leads calientes por probabilidad de cierre"], "steps_en": ["Matching algorithm: buyer profile ↔ properties", "Score by zone, price, type, features", "Opportunity feed per agent", "History: clients who searched and didn't close", "Proactive alerts via WhatsApp and dashboard", "Hot lead ranking by closing probability"], "estimated_hours": 24, "test_level": 3 }
-      ]},
-      { "id": 4, "name_es": "Plan de Trabajo y Analíticas", "name_en": "Work Plan & Analytics", "estimated_days": 10, "nodes": [
-        { "id": "4.1", "name_es": "Generador de Plan de Trabajo", "name_en": "Work Plan Generator", "steps_es": ["Definición de objetivos: ventas, captaciones, visitas", "Generación automática de plan semanal con IA", "Tareas diarias priorizadas según pipeline y agenda", "Seguimiento de avance vs objetivo en tiempo real", "Vista broker: plan consolidado de equipo", "Ajuste automático si hay desvío de objetivos"], "steps_en": ["Goal definition: sales, captures, visits", "Automatic weekly plan generation with AI", "Daily tasks prioritized by pipeline and calendar", "Real-time progress tracking vs goal", "Broker view: consolidated team plan", "Automatic adjustment on goal deviation"], "estimated_hours": 18, "test_level": 2 },
-        { "id": "4.2", "name_es": "Reportes y Analíticas", "name_en": "Reports & Analytics", "steps_es": ["KPIs agente: visitas, leads, captaciones, cierres", "KPIs broker: rendimiento equipo, propiedades, ingresos", "KPIs propiedades: tiempo en mercado, vistas, consultas", "Funnel de ventas por agente y equipo", "Reportes exportables a Excel/PDF", "Gráficas interactivas (Recharts)"], "steps_en": ["Agent KPIs: visits, leads, captures, closings", "Broker KPIs: team performance, properties, revenue", "Property KPIs: time on market, views, inquiries", "Sales funnel per agent and team", "Exportable reports to Excel/PDF", "Interactive charts (Recharts)"], "estimated_hours": 16, "test_level": 1 }
-      ]},
-      { "id": 5, "name_es": "Panel Admin y Meta-Aprendizaje", "name_en": "Admin Panel & Meta-Learning", "estimated_days": 8, "nodes": [
-        { "id": "5.1", "name_es": "Panel de Administración", "name_en": "Administration Panel", "steps_es": ["CRUD de usuarios y asignación de roles", "Gestión de accesos a carpetas y repositorios", "Configuración de fuentes de scraping", "Configuración de integraciones", "Gestión de plantillas WhatsApp", "Log de actividad del sistema"], "steps_en": ["User CRUD and role assignment", "Access management for folders and repositories", "Scraping source configuration", "Integration configuration", "WhatsApp template management", "System activity log"], "estimated_hours": 14, "test_level": 1 },
-        { "id": "5.2", "name_es": "Sistema de Meta-Aprendizaje", "name_en": "Meta-Learning System", "steps_es": ["Registro de patrones de éxito", "Aprendizaje de preferencias por zona y tipo de cliente", "Retroalimentación al motor de matching", "Dashboard de insights para admin y broker", "Exportación de modelo de patrones aprendidos"], "steps_en": ["Success pattern registry", "Learning preferences by zone and client type", "Feedback to matching engine", "Insights dashboard for admin and broker", "Export of learned pattern model"], "estimated_hours": 20, "test_level": 3 }
-      ]}
+      {
+        "id": 1,
+        "name_es": "Fundación — Infraestructura y Orquestador",
+        "name_en": "Foundation — Infrastructure and Orchestrator",
+        "estimated_days": 10,
+        "nodes": [
+          {
+            "id": "1.1",
+            "name_es": "Setup: Docker, PostgreSQL+pgvector, Redis, Supabase Auth",
+            "name_en": "Setup: Docker, PostgreSQL+pgvector, Redis, Supabase Auth",
+            "steps_es": [
+              "Docker Compose: servicios postgres, redis, ollama, fastapi, node-gateway",
+              "PostgreSQL 16 con extensión pgvector habilitada",
+              "Schema base: users, roles, properties, clients, interactions, events",
+              "Supabase Auth + FastAPI JWT middleware",
+              "Redis: configurar TTL para sesiones WhatsApp (24h)",
+              "Variables de entorno y secrets management (.env + docker secrets)"
+            ],
+            "steps_en": [
+              "Docker Compose: postgres, redis, ollama, fastapi, node-gateway services",
+              "PostgreSQL 16 with pgvector extension enabled",
+              "Base schema: users, roles, properties, clients, interactions, events",
+              "Supabase Auth + FastAPI JWT middleware",
+              "Redis: configure TTL for WhatsApp sessions (24h)",
+              "Environment variables and secrets management"
+            ],
+            "estimated_hours": 14,
+            "test_level": 1
+          },
+          {
+            "id": "1.2",
+            "name_es": "Orquestador FastAPI — routing de eventos y API REST base",
+            "name_en": "FastAPI Orchestrator — event routing and base REST API",
+            "steps_es": [
+              "FastAPI app structure: routers, dependencies, middleware",
+              "Endpoints CRUD: properties, clients, agents, events",
+              "WebSocket endpoint para dashboard en tiempo real",
+              "Cola de mensajes: Redis Queues + Celery worker base",
+              "Health check + logging estructurado (structlog)",
+              "OpenAPI docs automático + tests con pytest"
+            ],
+            "steps_en": [
+              "FastAPI app structure: routers, dependencies, middleware",
+              "CRUD endpoints: properties, clients, agents, events",
+              "WebSocket endpoint for real-time dashboard",
+              "Message queue: Redis Queues + base Celery worker",
+              "Health check + structured logging (structlog)",
+              "Auto OpenAPI docs + pytest tests"
+            ],
+            "estimated_hours": 16,
+            "test_level": 1
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "name_es": "Núcleo IA Local — Agente ReAct + Ollama",
+        "name_en": "Local AI Core — ReAct Agent + Ollama",
+        "estimated_days": 12,
+        "nodes": [
+          {
+            "id": "2.1",
+            "name_es": "Integración Ollama — LLM y embeddings locales",
+            "name_en": "Ollama Integration — local LLM and embeddings",
+            "steps_es": [
+              "Ollama service en Docker: pull llama3.1:8b + nomic-embed-text",
+              "LangChain OllamaLLM adapter + OllamaEmbeddings",
+              "Benchmark de latencia local (objetivo: < 3s por respuesta)",
+              "Fallback policy: si Ollama no disponible → error graceful (NO usar API externa sin flag)",
+              "Pool de conexiones al modelo local",
+              "Tests de integración: prompt → respuesta coherente en español"
+            ],
+            "steps_en": [
+              "Ollama service in Docker: pull llama3.1:8b + nomic-embed-text",
+              "LangChain OllamaLLM adapter + OllamaEmbeddings",
+              "Local latency benchmark (target: < 3s per response)",
+              "Fallback policy: if Ollama unavailable → graceful error (NO external API without flag)",
+              "Model connection pool",
+              "Integration tests: prompt → coherent Spanish response"
+            ],
+            "estimated_hours": 14,
+            "test_level": 2
+          },
+          {
+            "id": "2.2",
+            "name_es": "Agente ReAct con Tool Use — herramientas base",
+            "name_en": "ReAct Agent with Tool Use — base tools",
+            "steps_es": [
+              "LangChain AgentExecutor con patrón ReAct",
+              "Tool: search_properties(filtros) → consulta SQL + respuesta natural",
+              "Tool: get_client_history(client_id) → historial CRM",
+              "Tool: schedule_event(tipo, agente, cliente, fecha) → inserta en BD",
+              "Tool: send_whatsapp_message(to, content) → llama gateway Node.js",
+              "Memoria de ventana: ConversationBufferWindowMemory en Redis (k=10)",
+              "Tests: secuencia de herramientas correcta para casos de uso reales"
+            ],
+            "steps_en": [
+              "LangChain AgentExecutor with ReAct pattern",
+              "Tool: search_properties(filters) → SQL query + natural response",
+              "Tool: get_client_history(client_id) → CRM history",
+              "Tool: schedule_event(type, agent, client, date) → DB insert",
+              "Tool: send_whatsapp_message(to, content) → calls Node.js gateway",
+              "Window memory: ConversationBufferWindowMemory in Redis (k=10)",
+              "Tests: correct tool sequence for real use cases"
+            ],
+            "estimated_hours": 20,
+            "test_level": 2
+          },
+          {
+            "id": "2.3",
+            "name_es": "Gateway WhatsApp — Node.js + Meta API + enrutamiento",
+            "name_en": "WhatsApp Gateway — Node.js + Meta API + routing",
+            "steps_es": [
+              "Node.js + Express: webhook receiver Meta WhatsApp Business API",
+              "Verificación de firma HMAC en cada request entrante",
+              "Enrutamiento: mensaje → identificar agente asignado → llamar FastAPI",
+              "Envío: texto, imágenes, templates, botones interactivos",
+              "Historial de conversaciones persistido en PostgreSQL",
+              "Escalamiento a agente humano: flag en Redis + notificación push",
+              "Rate limiting y retry logic para mensajes salientes"
+            ],
+            "steps_en": [
+              "Node.js + Express: Meta WhatsApp Business API webhook receiver",
+              "HMAC signature verification on every inbound request",
+              "Routing: message → identify assigned agent → call FastAPI",
+              "Send: text, images, templates, interactive buttons",
+              "Conversation history persisted in PostgreSQL",
+              "Human agent escalation: Redis flag + push notification",
+              "Rate limiting and retry logic for outbound messages"
+            ],
+            "estimated_hours": 18,
+            "test_level": 2
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "name_es": "RPA e Integraciones — Scraping, Drive, Excel",
+        "name_en": "RPA & Integrations — Scraping, Drive, Excel",
+        "estimated_days": 14,
+        "nodes": [
+          {
+            "id": "3.1",
+            "name_es": "RPA Adinco — Scraping concurrente con Celery",
+            "name_en": "Adinco RPA — Concurrent scraping with Celery",
+            "steps_es": [
+              "Playwright Python: login simulado a Adinco CRM",
+              "Extracción HTML: propiedades nuevas, contactos, estado de operaciones",
+              "Parser + normalización: mapear campos Adinco → schema SQL interno",
+              "Deduplicación: hash de propiedad por (dirección + precio + m2)",
+              "Celery beat: scheduler configurable (cada N horas, por admin)",
+              "Panel admin: fuentes activas/pausadas + log de última ejecución",
+              "Circuit breaker: pausar scraping si Adinco bloquea (3 fallos consecutivos)"
+            ],
+            "steps_en": [
+              "Playwright Python: simulated login to Adinco CRM",
+              "HTML extraction: new properties, contacts, operation status",
+              "Parser + normalization: map Adinco fields → internal SQL schema",
+              "Deduplication: property hash by (address + price + sqm)",
+              "Celery beat: configurable scheduler (every N hours, by admin)",
+              "Admin panel: active/paused sources + last run log",
+              "Circuit breaker: pause scraping if Adinco blocks (3 consecutive failures)"
+            ],
+            "estimated_hours": 24,
+            "test_level": 2
+          },
+          {
+            "id": "3.2",
+            "name_es": "Integración Google Drive, Sheets y Excel (OpenPyXL)",
+            "name_en": "Google Drive, Sheets and Excel integration (OpenPyXL)",
+            "steps_es": [
+              "Google Drive API: listar, leer y escribir archivos en carpetas configuradas",
+              "Google Sheets API: leer/editar hojas sin romper formato original",
+              "OpenPyXL: importar/exportar archivos .xlsx binarios (clientes, tasaciones)",
+              "NL → Query: agente interpreta 'mostrame tasaciones de Palermo este mes' → query programática",
+              "Exportador: CRM, agenda, reportes → .xlsx descargable",
+              "Sincronización programada (Celery beat): Drive ↔ BD local",
+              "Panel admin: conexiones OAuth2 activas por cuenta Google"
+            ],
+            "steps_en": [
+              "Google Drive API: list, read and write files in configured folders",
+              "Google Sheets API: read/edit sheets without breaking original format",
+              "OpenPyXL: import/export binary .xlsx files (clients, appraisals)",
+              "NL → Query: agent interprets natural language → programmatic query",
+              "Exporter: CRM, calendar, reports → downloadable .xlsx",
+              "Scheduled sync (Celery beat): Drive ↔ local DB",
+              "Admin panel: active OAuth2 connections per Google account"
+            ],
+            "estimated_hours": 20,
+            "test_level": 2
+          },
+          {
+            "id": "3.3",
+            "name_es": "CRM y módulo de propiedades — CRUD + Kanban + búsqueda",
+            "name_en": "CRM and properties module — CRUD + Kanban + search",
+            "steps_es": [
+              "Schema completo: clients, leads, properties, interactions, pipeline_stages",
+              "Pipeline Kanban de leads por agente (API + frontend)",
+              "Búsqueda avanzada de propiedades con filtros (zona, precio, m2, tipo)",
+              "Perfil de cliente: historial completo de interacciones + scoring",
+              "Importación masiva: Excel / CSV → BD con validación de duplicados",
+              "Galería de fotos de propiedades (Supabase Storage)",
+              "API: full-text search con PostgreSQL tsvector"
+            ],
+            "steps_en": [
+              "Full schema: clients, leads, properties, interactions, pipeline_stages",
+              "Kanban lead pipeline per agent (API + frontend)",
+              "Advanced property search with filters",
+              "Client profile: full interaction history + scoring",
+              "Bulk import: Excel / CSV → DB with duplicate validation",
+              "Property photo gallery (Supabase Storage)",
+              "API: full-text search with PostgreSQL tsvector"
+            ],
+            "estimated_hours": 22,
+            "test_level": 1
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "name_es": "RAG Legal + Motor de Matching Semántico",
+        "name_en": "Legal RAG + Semantic Matching Engine",
+        "estimated_days": 12,
+        "nodes": [
+          {
+            "id": "4.1",
+            "name_es": "Pipeline RAG — embeddings + pgvector + búsqueda semántica",
+            "name_en": "RAG Pipeline — embeddings + pgvector + semantic search",
+            "steps_es": [
+              "Document loader: PDF (contratos, leyes alquiler), TXT (FAQs, objeciones)",
+              "Chunking: RecursiveCharacterTextSplitter (chunk_size=512, overlap=50)",
+              "Embeddings: nomic-embed-text local (Ollama) → almacenar en pgvector",
+              "Retriever: similitud coseno, top-k=5, umbral mínimo de relevancia",
+              "Agente RAG Legal: responde consultas legales con fuentes citadas (evita alucinación)",
+              "Agente RAG Objeciones: recupera pares [objeción → respuesta exitosa] históricos",
+              "Few-shot dinámico: inyectar ejemplos relevantes en el context window del LLM"
+            ],
+            "steps_en": [
+              "Document loader: PDF (contracts, rental laws), TXT (FAQs, objections)",
+              "Chunking: RecursiveCharacterTextSplitter (chunk_size=512, overlap=50)",
+              "Embeddings: nomic-embed-text local (Ollama) → store in pgvector",
+              "Retriever: cosine similarity, top-k=5, minimum relevance threshold",
+              "Legal RAG agent: answers legal queries with cited sources (avoids hallucination)",
+              "Objection RAG agent: retrieves historical [objection → successful response] pairs",
+              "Dynamic few-shot: inject relevant examples into LLM context window"
+            ],
+            "estimated_hours": 22,
+            "test_level": 3
+          },
+          {
+            "id": "4.2",
+            "name_es": "Motor de Matching semántico — cliente ↔ propiedad",
+            "name_en": "Semantic Matching Engine — client ↔ property",
+            "steps_es": [
+              "Embedding de perfiles de clientes compradores (zona, precio, tipo, preferencias)",
+              "Embedding de propiedades disponibles en pgvector",
+              "Matching: búsqueda ANN (Approximate Nearest Neighbor) en pgvector",
+              "Score de coincidencia compuesto: semántico + filtros exactos (precio ±15%, zona)",
+              "Feed de oportunidades por agente: propiedades sin match asignado + clientes potenciales",
+              "Alertas proactivas WhatsApp: nuevo match detectado → mensaje automático al agente",
+              "Historial: detectar clientes que buscaron y no cerraron → reactivar"
+            ],
+            "steps_en": [
+              "Buyer client profile embeddings (zone, price, type, preferences)",
+              "Available property embeddings in pgvector",
+              "Matching: ANN search in pgvector",
+              "Composite match score: semantic + exact filters (price ±15%, zone)",
+              "Agent opportunity feed: unmatched properties + potential clients",
+              "Proactive WhatsApp alerts: new match detected → auto message to agent",
+              "History: detect clients who searched and didn't close → reactivate"
+            ],
+            "estimated_hours": 20,
+            "test_level": 3
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name_es": "Motor Predictivo y Analíticas",
+        "name_en": "Predictive Engine and Analytics",
+        "estimated_days": 12,
+        "nodes": [
+          {
+            "id": "5.1",
+            "name_es": "Modelo Predictivo XGBoost — Score de interés y probabilidad de cierre",
+            "name_en": "XGBoost Predictive Model — Interest score and closing probability",
+            "steps_es": [
+              "Feature engineering: zona, precio vs. mercado, días en cartelera, interacciones del cliente",
+              "Entrenamiento inicial con datos históricos de la empresa (si disponibles) o sintéticos",
+              "Modelo XGBoost / LightGBM: clasificación binaria (cierra / no cierra)",
+              "Score de Interés (0–100) + Probabilidad de Cierre (%)",
+              "Pipeline de reentrenamiento: Celery task semanal con nuevos datos",
+              "API endpoint: POST /predict/closing → devuelve score para un cliente+propiedad",
+              "Explicabilidad: SHAP values para justificar el score al agente"
+            ],
+            "steps_en": [
+              "Feature engineering: zone, price vs. market, days listed, client interactions",
+              "Initial training with company historical data (if available) or synthetic",
+              "XGBoost / LightGBM model: binary classification (closes / doesn't close)",
+              "Interest Score (0–100) + Closing Probability (%)",
+              "Retraining pipeline: weekly Celery task with new data",
+              "API endpoint: POST /predict/closing → returns score for client+property",
+              "Explainability: SHAP values to justify score to agent"
+            ],
+            "estimated_hours": 24,
+            "test_level": 3
+          },
+          {
+            "id": "5.2",
+            "name_es": "Motor de Tablas Dinámicas y Gráficos — Pandas + Plotly",
+            "name_en": "Dynamic Tables and Charts Engine — Pandas + Plotly",
+            "steps_es": [
+              "Pandas DataFrames en memoria: KPIs por agente, propiedad y equipo",
+              "Generador de reportes bajo demanda: NL → DataFrame → resumen estadístico",
+              "Plotly: gráficos exportables como imagen PNG (para enviar por WhatsApp)",
+              "Dashboard web: Recharts / Plotly.js para gráficos interactivos en tiempo real",
+              "WebSocket: actualización de métricas sin refresh (Node.js → Next.js)",
+              "Exportador: Excel/PDF de reportes completos (OpenPyXL + ReportLab)",
+              "Generador de plan de trabajo semanal: IA local + datos del pipeline"
+            ],
+            "steps_en": [
+              "Pandas DataFrames in memory: KPIs per agent, property and team",
+              "On-demand report generator: NL → DataFrame → statistical summary",
+              "Plotly: charts exportable as PNG images (for WhatsApp delivery)",
+              "Web dashboard: Recharts / Plotly.js for real-time interactive charts",
+              "WebSocket: metric updates without refresh (Node.js → Next.js)",
+              "Exporter: Excel/PDF of full reports (OpenPyXL + ReportLab)",
+              "Weekly work plan generator: local AI + pipeline data"
+            ],
+            "estimated_hours": 20,
+            "test_level": 2
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "name_es": "Meta-Aprendizaje y Agenda Inteligente",
+        "name_en": "Meta-Learning and Smart Scheduler",
+        "estimated_days": 10,
+        "nodes": [
+          {
+            "id": "6.1",
+            "name_es": "Bucle de retroalimentación — objeciones y ventas exitosas",
+            "name_en": "Feedback loop — objections and successful sales",
+            "steps_es": [
+              "Schema: tabla objection_feedback (objecion, respuesta_exitosa, agente, fecha, outcome)",
+              "UI: agente registra 'esta respuesta funcionó' con 1 clic post-venta",
+              "Pipeline: nuevo par → chunk → embedding → pgvector (base de conocimiento dinámica)",
+              "Few-shot dinámico: RAG recupera top-3 respuestas exitosas similares al contexto actual",
+              "Métrica: tasa de conversión antes/después de incorporar cada par",
+              "Exportación del modelo de conocimiento: snapshot semanal en JSON + Drive"
+            ],
+            "steps_en": [
+              "Schema: objection_feedback table (objection, successful_response, agent, date, outcome)",
+              "UI: agent registers 'this response worked' with 1 click post-sale",
+              "Pipeline: new pair → chunk → embedding → pgvector (dynamic knowledge base)",
+              "Dynamic few-shot: RAG retrieves top-3 similar successful responses for current context",
+              "Metric: conversion rate before/after incorporating each pair",
+              "Knowledge model export: weekly JSON snapshot + Drive"
+            ],
+            "estimated_hours": 18,
+            "test_level": 3
+          },
+          {
+            "id": "6.2",
+            "name_es": "Agenda Inteligente + Panel Admin + Portal clientes",
+            "name_en": "Smart Scheduler + Admin Panel + Client portal",
+            "steps_es": [
+              "Agenda: visitas (comprador), captaciones (vendedor), reuniones (agente/broker)",
+              "Sugerencia IA de horario: basada en historial de disponibilidad y score del lead",
+              "Recordatorios automáticos WhatsApp + email (Resend) 24h y 1h antes",
+              "Panel admin: usuarios, roles, fuentes scraping, configuración LLM, conexiones OAuth",
+              "Portal comprador/vendedor: acceso directo, agenda citas, estado de operación",
+              "Sincronización Google Calendar (bidireccional, opcional)",
+              "Log de auditoría: todas las acciones del sistema con timestamp y actor"
+            ],
+            "steps_en": [
+              "Scheduler: visits (buyer), captures (seller), meetings (agent/broker)",
+              "AI schedule suggestion: based on availability history and lead score",
+              "Automatic WhatsApp + email reminders (Resend) 24h and 1h before",
+              "Admin panel: users, roles, scraping sources, LLM config, OAuth connections",
+              "Buyer/seller portal: direct access, book appointments, operation status",
+              "Google Calendar sync (bidirectional, optional)",
+              "Audit log: all system actions with timestamp and actor"
+            ],
+            "estimated_hours": 20,
+            "test_level": 2
+          }
+        ]
+      }
     ]
   },
+
+  "mvp_scope": {
+    "description_es": "MVP enfocado en arquitectura. Todo el stack levantado y funcionando localmente con IA local.",
+    "description_en": "Architecture-focused MVP. Full stack running locally with local AI.",
+    "includes": [
+      "1.1 — Docker Compose completo + PostgreSQL + pgvector + Redis",
+      "1.2 — FastAPI orquestador con CRUD base",
+      "2.1 — Ollama local (llama3.1:8b + nomic-embed-text) integrado",
+      "2.2 — Agente ReAct con 4 herramientas base",
+      "2.3 — Gateway WhatsApp Node.js funcional",
+      "3.3 — CRM + propiedades CRUD básico",
+      "4.1 — RAG pipeline con pgvector (documentos de prueba)"
+    ],
+    "excludes_from_mvp": [
+      "3.1 — Scraping Adinco (requiere acceso al CRM real)",
+      "5.1 — Modelo XGBoost (requiere datos históricos reales)",
+      "6.1 — Meta-aprendizaje (requiere datos de operaciones reales)"
+    ]
+  },
+
   "roadmap": {
-    "current_phase": "Fase 1 — Infraestructura Base",
-    "current_node": "1.1 — Setup: proyecto, auth, roles, schema BD",
+    "current_phase": "Fase 1 — Fundación — Infraestructura y Orquestador",
+    "current_node": "1.1 — Setup: Docker, PostgreSQL+pgvector, Redis, Auth",
     "progress_pct": 0,
-    "total_estimated_days": 60,
+    "total_estimated_days": 70,
     "phases": [
-      { "id": 1, "name_es": "Infraestructura Base", "status": "IN_PROGRESS", "pct": 0 },
-      { "id": 2, "name_es": "Comunicaciones y Agenda", "status": "PENDING", "pct": 0 },
-      { "id": 3, "name_es": "Inteligencia e Integraciones", "status": "PENDING", "pct": 0 },
-      { "id": 4, "name_es": "Plan de Trabajo y Analíticas", "status": "PENDING", "pct": 0 },
-      { "id": 5, "name_es": "Panel Admin y Meta-Aprendizaje", "status": "PENDING", "pct": 0 }
+      { "id": 1, "name_es": "Fundación", "status": "IN_PROGRESS", "pct": 0 },
+      { "id": 2, "name_es": "Núcleo IA Local", "status": "PENDING", "pct": 0 },
+      { "id": 3, "name_es": "RPA e Integraciones", "status": "PENDING", "pct": 0 },
+      { "id": 4, "name_es": "RAG + Matching Semántico", "status": "PENDING", "pct": 0 },
+      { "id": 5, "name_es": "Motor Predictivo y Analíticas", "status": "PENDING", "pct": 0 },
+      { "id": 6, "name_es": "Meta-Aprendizaje y Agenda", "status": "PENDING", "pct": 0 }
     ]
   },
+
   "files_map": {
     "critical": [],
-    "env_vars": ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "WHATSAPP_TOKEN", "WHATSAPP_PHONE_NUMBER_ID", "WHATSAPP_WEBHOOK_VERIFY_TOKEN", "ANTHROPIC_API_KEY", "RESEND_API_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "SENTRY_DSN", "NEXT_PUBLIC_MAPBOX_TOKEN"],
+    "env_vars": [
+      "DATABASE_URL",
+      "REDIS_URL",
+      "OLLAMA_BASE_URL",
+      "SUPABASE_URL",
+      "SUPABASE_SERVICE_ROLE_KEY",
+      "JWT_SECRET",
+      "WHATSAPP_TOKEN",
+      "WHATSAPP_PHONE_NUMBER_ID",
+      "WHATSAPP_WEBHOOK_VERIFY_TOKEN",
+      "WHATSAPP_APP_SECRET",
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET",
+      "RESEND_API_KEY",
+      "SENTRY_DSN",
+      "ANTHROPIC_API_KEY",
+      "OPENAI_API_KEY",
+      "ALLOW_EXTERNAL_LLM"
+    ],
     "entry_points": [],
     "config_files": []
   },
+
   "session_state": {
-    "completed_today": ["INICIAR PROYECTO Asistente-de-Real-State"],
-    "pending_tomorrow": ["Ejecutar nodo 1.1 — Setup inicial"],
+    "completed_today": [
+      "INICIAR PROYECTO Asistente-de-Real-State",
+      "Acuerdo inicial v1 — stack Next.js",
+      "Acuerdo revisado v2 — arquitectura PropTech IA completa con Python/FastAPI/Ollama"
+    ],
+    "pending_tomorrow": ["Ejecutar nodo 1.1 — Docker Compose + PostgreSQL + pgvector + Redis"],
     "bugs_known": [],
     "last_commit": null,
     "last_snap": "2026-06-08T000000",

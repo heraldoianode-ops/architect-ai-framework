@@ -1,17 +1,19 @@
 {
   "_meta": { "file": "features.json", "description_es": "Registro de features.", "description_en": "Feature registry." },
   "features": [
-    { "id": "F-001", "name_es": "Listado y búsqueda de propiedades", "phase": 1, "node": "1.2", "status": "PENDING", "priority": "HIGH" },
-    { "id": "F-002", "name_es": "CRM de leads y clientes", "phase": 1, "node": "1.3", "status": "PENDING", "priority": "HIGH" },
-    { "id": "F-003", "name_es": "Integración WhatsApp entrante/saliente", "phase": 2, "node": "2.1", "status": "PENDING", "priority": "HIGH" },
-    { "id": "F-004", "name_es": "Asistente IA por WhatsApp", "phase": 2, "node": "2.2", "status": "PENDING", "priority": "HIGH" },
-    { "id": "F-005", "name_es": "Agenda de visitas, captaciones y reuniones", "phase": 2, "node": "2.3", "status": "PENDING", "priority": "HIGH" },
-    { "id": "F-006", "name_es": "CRM por scraping de portales", "phase": 3, "node": "3.1", "status": "PENDING", "priority": "MEDIUM" },
-    { "id": "F-007", "name_es": "Integración Excel, Google Drive y SQL externo", "phase": 3, "node": "3.2", "status": "PENDING", "priority": "MEDIUM" },
-    { "id": "F-008", "name_es": "Motor de matching cliente-propiedad", "phase": 3, "node": "3.3", "status": "PENDING", "priority": "HIGH" },
-    { "id": "F-009", "name_es": "Generador de plan de trabajo", "phase": 4, "node": "4.1", "status": "PENDING", "priority": "MEDIUM" },
-    { "id": "F-010", "name_es": "Dashboard de reportes y analíticas", "phase": 4, "node": "4.2", "status": "PENDING", "priority": "MEDIUM" },
-    { "id": "F-011", "name_es": "Panel de administración", "phase": 5, "node": "5.1", "status": "PENDING", "priority": "HIGH" },
-    { "id": "F-012", "name_es": "Sistema de meta-aprendizaje", "phase": 5, "node": "5.2", "status": "PENDING", "priority": "LOW" }
+    { "id": "F-001", "name_es": "Docker Compose: postgres+pgvector+redis+ollama+fastapi+node", "phase": 1, "node": "1.1", "status": "PENDING", "priority": "CRITICAL" },
+    { "id": "F-002", "name_es": "FastAPI orquestador con CRUD base y WebSocket", "phase": 1, "node": "1.2", "status": "PENDING", "priority": "CRITICAL" },
+    { "id": "F-003", "name_es": "Integración Ollama LLM + embeddings locales (sin costo)", "phase": 2, "node": "2.1", "status": "PENDING", "priority": "CRITICAL" },
+    { "id": "F-004", "name_es": "Agente ReAct con Tool Use (4 herramientas base)", "phase": 2, "node": "2.2", "status": "PENDING", "priority": "HIGH" },
+    { "id": "F-005", "name_es": "Gateway WhatsApp Node.js + Meta API", "phase": 2, "node": "2.3", "status": "PENDING", "priority": "HIGH" },
+    { "id": "F-006", "name_es": "RPA Adinco — scraping con Playwright + Celery", "phase": 3, "node": "3.1", "status": "PENDING", "priority": "HIGH" },
+    { "id": "F-007", "name_es": "Integración Google Drive + Sheets + OpenPyXL", "phase": 3, "node": "3.2", "status": "PENDING", "priority": "MEDIUM" },
+    { "id": "F-008", "name_es": "CRM completo + propiedades + Kanban + búsqueda FTS", "phase": 3, "node": "3.3", "status": "PENDING", "priority": "HIGH" },
+    { "id": "F-009", "name_es": "RAG Pipeline: embeddings pgvector + legal + objeciones", "phase": 4, "node": "4.1", "status": "PENDING", "priority": "HIGH" },
+    { "id": "F-010", "name_es": "Motor de Matching semántico cliente-propiedad (ANN)", "phase": 4, "node": "4.2", "status": "PENDING", "priority": "HIGH" },
+    { "id": "F-011", "name_es": "Modelo XGBoost: Score de interés + probabilidad de cierre", "phase": 5, "node": "5.1", "status": "PENDING", "priority": "MEDIUM" },
+    { "id": "F-012", "name_es": "Motor Pandas + Plotly: KPIs, gráficos, reportes exportables", "phase": 5, "node": "5.2", "status": "PENDING", "priority": "MEDIUM" },
+    { "id": "F-013", "name_es": "Bucle meta-aprendizaje: objeciones → few-shot dinámico", "phase": 6, "node": "6.1", "status": "PENDING", "priority": "MEDIUM" },
+    { "id": "F-014", "name_es": "Agenda inteligente + panel admin + portal clientes", "phase": 6, "node": "6.2", "status": "PENDING", "priority": "HIGH" }
   ]
 }

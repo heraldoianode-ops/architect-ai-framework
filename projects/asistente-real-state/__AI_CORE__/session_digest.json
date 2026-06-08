@@ -3,11 +3,11 @@
   "last_3_sessions": [
     {
       "date": "2026-06-08",
-      "summary_es": "Sesión de inicio. Acuerdo inicial establecido. Estructura __AI_CORE__ creada.",
-      "summary_en": "Kick-off session. Initial agreement established. __AI_CORE__ structure created.",
+      "summary_es": "Sesión de inicio. Acuerdo v1 (Next.js). Revisión y acuerdo v2: arquitectura PropTech IA completa con Python/FastAPI/Ollama/ReAct/pgvector/XGBoost. Stack definitivo establecido. Política de IA local por defecto.",
+      "summary_en": "Kick-off session. Agreement v1 (Next.js). Revision and agreement v2: full PropTech AI architecture with Python/FastAPI/Ollama/ReAct/pgvector/XGBoost. Definitive stack established. Local AI by default policy.",
       "nodes_worked": [],
       "nodes_completed": [],
-      "next": "Nodo 1.1 — Setup: proyecto, auth, roles, schema BD"
+      "next": "Nodo 1.1 — Docker Compose + PostgreSQL+pgvector + Redis + Ollama"
     }
   ]
 }

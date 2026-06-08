@@ -1,13 +1,17 @@
 {
   "_meta": { "file": "services.json", "description_es": "Servicios externos y estado.", "description_en": "External services and status." },
   "services": [
-    { "id": "SVC-001", "name": "Supabase", "type": "database+auth+storage", "status": "PENDING_SETUP", "required_by": "1.1" },
-    { "id": "SVC-002", "name": "Meta WhatsApp Business API", "type": "messaging", "status": "PENDING_SETUP", "required_by": "2.1" },
-    { "id": "SVC-003", "name": "Claude API (Anthropic)", "type": "ai", "status": "PENDING_SETUP", "required_by": "2.2" },
-    { "id": "SVC-004", "name": "Resend", "type": "email", "status": "PENDING_SETUP", "required_by": "2.3" },
-    { "id": "SVC-005", "name": "Google Drive API", "type": "file_storage", "status": "PENDING_SETUP", "required_by": "3.2" },
-    { "id": "SVC-006", "name": "Mapbox", "type": "maps", "status": "PENDING_SETUP", "required_by": "1.2" },
-    { "id": "SVC-007", "name": "Sentry", "type": "monitoring", "status": "PENDING_SETUP", "required_by": "1.1" },
-    { "id": "SVC-008", "name": "Vercel", "type": "hosting", "status": "PENDING_SETUP", "required_by": "1.1" }
+    { "id": "SVC-001", "name": "PostgreSQL 16 + pgvector", "type": "database+vector", "status": "PENDING_SETUP", "required_by": "1.1", "hosted": "local Docker / Supabase" },
+    { "id": "SVC-002", "name": "Redis", "type": "cache+queue+session", "status": "PENDING_SETUP", "required_by": "1.1", "hosted": "local Docker / Railway" },
+    { "id": "SVC-003", "name": "Ollama", "type": "local_llm+embeddings", "status": "PENDING_SETUP", "required_by": "2.1", "hosted": "local Docker (llama3.1:8b + nomic-embed-text)", "cost": "ZERO" },
+    { "id": "SVC-004", "name": "Meta WhatsApp Business API", "type": "messaging", "status": "PENDING_SETUP", "required_by": "2.3" },
+    { "id": "SVC-005", "name": "Google Drive API + Sheets API", "type": "file_storage+spreadsheets", "status": "PENDING_SETUP", "required_by": "3.2" },
+    { "id": "SVC-006", "name": "Supabase Auth + Storage", "type": "auth+storage", "status": "PENDING_SETUP", "required_by": "1.1" },
+    { "id": "SVC-007", "name": "Resend", "type": "email", "status": "PENDING_SETUP", "required_by": "6.2" },
+    { "id": "SVC-008", "name": "Sentry", "type": "monitoring", "status": "PENDING_SETUP", "required_by": "1.2" },
+    { "id": "SVC-009", "name": "Claude API (Anthropic) — GATED", "type": "external_llm", "status": "PENDING_SETUP", "required_by": "agentes autorizados únicamente", "cost": "SOLO con allow_external=true" },
+    { "id": "SVC-010", "name": "OpenAI Embeddings — GATED", "type": "external_embeddings", "status": "NOT_NEEDED_FOR_MVP", "required_by": "fallback si local insuficiente", "cost": "SOLO con allow_external=true" },
+    { "id": "SVC-011", "name": "Railway / Render", "type": "hosting_backend", "status": "PENDING_SETUP", "required_by": "producción" },
+    { "id": "SVC-012", "name": "Vercel", "type": "hosting_frontend", "status": "PENDING_SETUP", "required_by": "dashboard Next.js" }
   ]
 }

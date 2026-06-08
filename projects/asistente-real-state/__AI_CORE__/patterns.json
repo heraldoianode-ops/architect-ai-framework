@@ -1,9 +1,12 @@
 {
   "_meta": { "file": "patterns.json", "description_es": "Patrones aprendidos y verificaciones reforzadas.", "description_en": "Learned patterns and reinforced checks." },
   "reinforced_checks": [
-    { "id": "P001", "active": true, "trigger_es": "Verificar RLS Supabase antes de exponer endpoint", "trigger_en": "Verify Supabase RLS before exposing endpoint", "source": "security" },
-    { "id": "P002", "active": true, "trigger_es": "Validar tokens WhatsApp en cada webhook", "trigger_en": "Validate WhatsApp tokens on every webhook", "source": "security" },
-    { "id": "P003", "active": true, "trigger_es": "Sanitizar datos de scraping antes de insertar en BD", "trigger_en": "Sanitize scraped data before DB insert", "source": "security" }
+    { "id": "P001", "active": true, "trigger_es": "Antes de cualquier llamada a LLM: verificar allow_external flag. Si false → usar Ollama local.", "trigger_en": "Before any LLM call: check allow_external flag. If false → use local Ollama.", "source": "ai_policy" },
+    { "id": "P002", "active": true, "trigger_es": "Verificar RLS PostgreSQL antes de exponer cualquier endpoint de datos", "trigger_en": "Verify PostgreSQL RLS before exposing any data endpoint", "source": "security" },
+    { "id": "P003", "active": true, "trigger_es": "Validar firma HMAC de WhatsApp en cada webhook entrante (evitar replay attacks)", "trigger_en": "Validate WhatsApp HMAC signature on every inbound webhook (prevent replay attacks)", "source": "security" },
+    { "id": "P004", "active": true, "trigger_es": "Sanitizar y normalizar todos los datos de scraping antes de insertar en BD", "trigger_en": "Sanitize and normalize all scraped data before DB insert", "source": "security" },
+    { "id": "P005", "active": true, "trigger_es": "Circuit breaker en RPA: pausar automáticamente si 3 fallos consecutivos en scraping", "trigger_en": "Circuit breaker in RPA: auto-pause if 3 consecutive scraping failures", "source": "resilience" },
+    { "id": "P006", "active": true, "trigger_es": "Chunking con overlap en RAG: evitar pérdida de contexto en límites de fragmento", "trigger_en": "Chunking with overlap in RAG: prevent context loss at fragment boundaries", "source": "rag_quality" }
   ],
   "learned_patterns": []
 }
