@@ -1,0 +1,26 @@
+{
+  "_meta": {
+    "file": "session_digest.json",
+    "description_es": "Resumen comprimido de las últimas 5 sesiones. El arranque lee esto, no el changelog completo.",
+    "description_en": "Compressed summary of last 5 sessions. Startup reads this, not the full changelog.",
+    "max_sessions": 5,
+    "auto_updated_by": "CERRAR SESIÓN / session end SNAP"
+  },
+  "last_sessions": [],
+  "settled_decisions_cache": [],
+  "session_template": {
+    "session_id": "YYYY-MM-DDTHHMMSS",
+    "date": "YYYY-MM-DD",
+    "duration_min": 0,
+    "node_start": "",
+    "node_end": "",
+    "progress_delta": 0,
+    "completed": [],
+    "new_debts": [],
+    "resolved_debts": [],
+    "features_completed": [],
+    "modules_published": [],
+    "key_decisions": [],
+    "commit": ""
+  }
+}

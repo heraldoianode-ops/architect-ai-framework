@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "file": "features.json",
+    "description_es": "Control de features, backlog y sprints del proyecto.",
+    "description_en": "Project features, backlog and sprint control."
+  },
+  "active_sprint": null,
+  "features": [],
+  "backlog": [],
+  "completed": [],
+  "status_legend": {
+    "PENDING":     { "es": "En backlog, no iniciada", "en": "In backlog, not started" },
+    "IN_PROGRESS": { "es": "En desarrollo activo", "en": "In active development" },
+    "TESTING":     { "es": "En fase de tests", "en": "In testing phase" },
+    "COMPLETE":    { "es": "Completa y testeada", "en": "Complete and tested" },
+    "BLOCKED":     { "es": "Bloqueada por dependencia o deuda", "en": "Blocked by dependency or debt" }
+  },
+  "feature_template": {
+    "id": "F-000",
+    "title_es": "",
+    "title_en": "",
+    "sector": "[auth / dashboard / payments / api / ui / infra]",
+    "status": "PENDING",
+    "priority": "[CRITICAL / HIGH / MEDIUM / LOW]",
+    "phase": 0,
+    "node": "0.0",
+    "test_level": 1,
+    "acceptance_criteria_es": [],
+    "acceptance_criteria_en": [],
+    "related_debts": [],
+    "created": "[YYYY-MM-DD]",
+    "completed": null
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "_meta": {
+    "file": "services.json",
+    "description_es": "Mapa de servicios externos conectados al proyecto.",
+    "description_en": "Map of external services connected to the project."
+  },
+  "services": {
+    "github": { "status": "PENDING", "repo": null, "branch_strategy": "gitflow", "project_branch": null, "auto_deploy_on": ["main"], "last_checked": null },
+    "database": { "provider": null, "status": "PENDING", "project_id": null, "region": null, "rls_enabled": null, "backups": null, "last_checked": null },
+    "hosting": { "provider": null, "status": "PENDING", "site_id": null, "deploy_url": null, "functions_dir": null, "env_vars_set": false, "last_checked": null },
+    "email": { "provider": null, "status": "PENDING", "from_domain": null, "templates": [], "last_checked": null },
+    "payments": { "provider": null, "status": "PENDING", "mode": "[test / live]", "webhooks_configured": false, "last_checked": null },
+    "monitoring": { "provider": null, "status": "PENDING", "dsn": null, "last_checked": null },
+    "auth": { "provider": null, "status": "PENDING", "mfa_enabled": false, "last_checked": null }
+  },
+  "status_legend": {
+    "CONNECTED": { "es": "Conectado y operativo", "en": "Connected and operational" },
+    "PENDING":   { "es": "No configurado aún", "en": "Not configured yet" },
+    "DOWN":      { "es": "Caído — operación frenada con timestamp", "en": "Down — operation stopped with timestamp" },
+    "ERROR":     { "es": "Error de configuración", "en": "Configuration error" }
+  }
+}

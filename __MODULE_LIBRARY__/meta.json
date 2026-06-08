@@ -1,0 +1,34 @@
+{
+  "_meta": {
+    "file": "meta.json",
+    "location": "__MODULE_LIBRARY__/meta.json",
+    "description_es": "Meta-aprendizaje nivel 2 — patrones detectados entre todos los proyectos de la SaaS. Se activa con el segundo proyecto.",
+    "description_en": "Level 2 meta-learning — patterns detected across all SaaS projects. Activated with the second project.",
+    "activation_condition_es": "Activar cuando el segundo proyecto inicia en el mismo framework.",
+    "activation_condition_en": "Activate when the second project starts on the same framework."
+  },
+  "active": false,
+  "projects_tracked": [],
+  "universal_debts": [],
+  "most_reused_modules": [],
+  "underestimated_phases": [],
+  "preventive_checks": [],
+  "universal_debt_template": {
+    "id": "UNI-DEBT-000",
+    "detected_in_projects": [],
+    "description_es": "",
+    "description_en": "",
+    "preventive_check_es": "Verificación que se aplica automáticamente en proyectos nuevos",
+    "preventive_check_en": "Check automatically applied in new projects",
+    "times_detected": 0
+  },
+  "underestimated_phase_template": {
+    "phase_type_es": "[auth / pagos / onboarding / dashboard / etc]",
+    "phase_type_en": "[auth / payments / onboarding / dashboard / etc]",
+    "avg_estimate_days": 0,
+    "avg_real_days": 0,
+    "adjustment_factor": 1.0,
+    "note_es": "Multiplicar estimación inicial por este factor en el acuerdo previo",
+    "note_en": "Multiply initial estimate by this factor in the prior agreement"
+  }
+}

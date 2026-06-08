@@ -1,0 +1,67 @@
+#!/bin/bash
+# ARCHITECT-AI — pre-commit hook
+# ES: Validación antes de cada commit. Instalado automáticamente por setup.sh
+# EN: Validation before each commit. Automatically installed by setup.sh
+
+set -e
+GREEN='\033[0;32m'; RED='\033[0;31m'; YELLOW='\033[1;33m'; NC='\033[0m'
+ok()   { echo -e "${GREEN}✅ $1${NC}"; }
+err()  { echo -e "${RED}❌ $1${NC}"; exit 1; }
+warn() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+
+# ── 1. JSON SCHEMA VALIDATION ─────────────────────────────────────────────────
+if command -v python3 >/dev/null 2>&1; then
+  for f in __AI_CORE__/*.json; do
+    python3 -c "
+import json, sys
+try:
+    json.load(open('$f'))
+except json.JSONDecodeError as e:
+    print(f'JSON inválido en $f: {e}')
+    sys.exit(1)
+" || err "JSON inválido en $f — commit bloqueado"
+  done
+  ok "JSON válido en todos los archivos __AI_CORE__"
+fi
+
+# ── 2. COMMIT LINT — convención de mensajes ────────────────────────────────────
+COMMIT_MSG_FILE=".git/COMMIT_EDITMSG"
+if [ -f "$COMMIT_MSG_FILE" ]; then
+  MSG=$(cat "$COMMIT_MSG_FILE")
+  PATTERN="^(feat|fix|chore|docs|style|refactor|test|perf|ci|build|revert)(\(.+\))?: .{3,}"
+  if ! echo "$MSG" | grep -qE "$PATTERN"; then
+    warn "Mensaje de commit no sigue la convención:"
+    warn "  Recibido: '$MSG'"
+    warn "  Formato:  tipo(scope): descripción"
+    warn "  Tipos:    feat|fix|chore|docs|style|refactor|test|perf|ci|build|revert"
+    if echo "$MSG" | grep -qiE "^(add|create|new)"; then
+      SUGGESTED="feat: $(echo $MSG | sed 's/^[Aa]dd //;s/^[Cc]reate //;s/^[Nn]ew //')"
+      warn "  Sugerido: '$SUGGESTED'"
+    elif echo "$MSG" | grep -qiE "^(fix|bug|correct)"; then
+      SUGGESTED="fix: $(echo $MSG | sed 's/^[Ff]ix //;s/^[Bb]ug //;s/^[Cc]orrect //')"
+      warn "  Sugerido: '$SUGGESTED'"
+    fi
+    err "Commit bloqueado — corregir mensaje antes de continuar"
+  fi
+  ok "Mensaje de commit válido"
+fi
+
+# ── 3. SECURITY CHECK — no secrets en __AI_CORE__ público ─────────────────────
+SENSITIVE_PATTERNS="password|secret|private_key|api_key|token|sk-|eyJ"
+if git diff --cached --name-only | grep -v "services.private.json" | xargs grep -liE "$SENSITIVE_PATTERNS" 2>/dev/null | grep -v ".git"; then
+  err "⚠️ SEGURIDAD: posibles secrets detectados en archivos a commitear. Verificar antes de continuar."
+fi
+ok "Sin secrets detectados"
+
+# ── 4. BRANCH PROTECTION — no push directo a main ─────────────────────────────
+BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
+if [ "$BRANCH" = "main" ] || [ "$BRANCH" = "master" ]; then
+  warn "Commit directo en '$BRANCH' detectado."
+  warn "El framework requiere trabajar en branch de proyecto."
+  warn "¿Continuar de todas formas? Solo si el usuario lo solicitó explícitamente. [s/N]"
+  read -r CONFIRM
+  [["$CONFIRM" =~ ^[Ss]$]] || err "Commit en main bloqueado por framework."
+fi
+
+echo ""
+ok "Pre-commit validado — continuando con commit"

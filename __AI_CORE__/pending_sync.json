@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "file": "pending_sync.json",
+    "description_es": "Cola de operaciones pendientes cuando servicios están caídos. Modo offline.",
+    "description_en": "Queue of pending operations when services are down. Offline mode.",
+    "auto_processed_on": "REINTENTAR command or service recovery detection"
+  },
+  "offline_mode_active": false,
+  "services_down": [],
+  "pending_operations": [],
+  "operation_template": {
+    "id": "OP-000",
+    "type": "git_push | netlify_deploy | supabase_migration | module_publish",
+    "queued_at": "YYYY-MM-DDTHHMMSS",
+    "command": "",
+    "files_affected": [],
+    "retry_count": 0,
+    "status": "PENDING | PROCESSING | DONE | FAILED"
+  }
+}

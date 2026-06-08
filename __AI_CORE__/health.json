@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "file": "health.json",
+    "description_es": "Índice de salud técnica. Calculado automáticamente al arrancar cada sesión.",
+    "description_en": "Technical health index. Automatically calculated at each session start."
+  },
+  "last_calculated": null,
+  "overall_score": null,
+  "status": "[HEALTHY / WARNING / CRITICAL]",
+  "dimensions": {
+    "debt": {
+      "critical_count": 0,
+      "high_count": 0,
+      "medium_count": 0,
+      "low_count": 0,
+      "score_es": "0 = saludable, 100 = en crisis",
+      "score_en": "0 = healthy, 100 = in crisis",
+      "value": 0
+    },
+    "test_coverage": {
+      "estimated_pct": 0,
+      "target_pct": 80,
+      "value": 0
+    },
+    "progress": {
+      "phases_complete": 0,
+      "phases_total": 0,
+      "pct": 0
+    },
+    "pending_decisions": {
+      "count": 0,
+      "note_es": "Decisiones sin tomar que bloquean avance",
+      "note_en": "Unmade decisions blocking progress"
+    }
+  },
+  "alerts": [],
+  "recommendations": []
+}
