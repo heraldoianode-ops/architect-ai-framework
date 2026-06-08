@@ -11,10 +11,10 @@ log = structlog.get_logger()
 def run_adinco_scraper(self):
     """RPA task: scrape all active Adinco sources. Runs every 6h via beat."""
     from app.core.database import SyncSessionLocal
+    from app.models.scraping_source import ScrapingSource
     from app.scraping.adinco_scraper import run_scraper
 
     with SyncSessionLocal() as db:
-        from app.models.scraping_source import ScrapingSource
         sources = db.execute(
             select(ScrapingSource).where(
                 ScrapingSource.source_type == "adinco",
@@ -40,9 +40,34 @@ def run_adinco_scraper(self):
     return results
 
 
-@celery_app.task(name="app.workers.tasks.scraping.sync_google_drive")
-def sync_google_drive():
-    """Sync configured Google Drive folders to local DB. Nodo 3.2."""
-    log.info("drive_sync.start")
-    # TODO: Nodo 3.2 — Google Drive API + OpenPyXL ingestion
-    log.info("drive_sync.complete")
+@celery_app.task(name="app.workers.tasks.scraping.sync_google_drive", bind=True, max_retries=3)
+def sync_google_drive(self):
+    """Sync all active Google Drive sources → properties/contacts. Runs every 12h via beat."""
+    from app.core.database import SyncSessionLocal
+    from app.models.scraping_source import ScrapingSource
+    from app.scraping.drive_scraper import run_drive_sync
+
+    with SyncSessionLocal() as db:
+        sources = db.execute(
+            select(ScrapingSource).where(
+                ScrapingSource.source_type == "google_drive",
+                ScrapingSource.is_active == True,
+            )
+        ).scalars().all()
+
+    if not sources:
+        log.info("drive_sync.no_active_sources")
+        return
+
+    results = []
+    for source in sources:
+        config = {**source.config, "id": str(source.id)}
+        try:
+            result = asyncio.run(run_drive_sync(config))
+            results.append(result)
+            log.info("drive_sync.source_done", source_id=str(source.id), status=result.get("status"))
+        except Exception as exc:
+            log.error("drive_sync.source_error", source_id=str(source.id), error=str(exc))
+            raise self.retry(exc=exc, countdown=600)
+
+    return results
