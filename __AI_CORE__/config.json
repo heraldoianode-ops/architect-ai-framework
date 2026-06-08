@@ -1,0 +1,87 @@
+{
+  "_meta": {
+    "file": "config.json",
+    "version": "2.0.0",
+    "framework": "ARCHITECT-AI",
+    "description_es": "Mapa técnico maestro del proyecto. Uso exclusivo de la IA.",
+    "description_en": "Master technical map of the project. AI use only.",
+    "note_es": "Reemplazar todos los valores entre [corchetes] al iniciar el proyecto.",
+    "note_en": "Replace all values in [brackets] when starting the project."
+  },
+
+  "meta": {
+    "project": "[NOMBRE_PROYECTO]",
+    "project_slug": "[nombre-proyecto]",
+    "version": "0.1.0",
+    "type": "[SaaS / API / WebApp / MobileApp / Library]",
+    "client": "[nombre-cliente-o-interno]",
+    "created": "[YYYY-MM-DD]",
+    "last_updated": "[YYYY-MM-DD]",
+    "owner": "[nombre-equipo-o-dev]",
+    "language_primary": "es",
+    "language_secondary": "en"
+  },
+
+  "stack": {
+    "frontend": "[React 18 + Vite / Next.js / Vue / null]",
+    "backend": "[Netlify Functions / Express / FastAPI / null]",
+    "database": "[Supabase / PlanetScale / MongoDB / null]",
+    "auth": "[Supabase Auth / Auth0 / NextAuth / null]",
+    "hosting": "[Netlify / Vercel / Railway / null]",
+    "email": "[Resend / SendGrid / Postmark / null]",
+    "payments": "[Stripe / Lemonsqueezy / null]",
+    "monitoring": "[Sentry / Datadog / null]",
+    "repo": "[github.com/org/repo]",
+    "branch_main": "main",
+    "branch_dev": "[develop]",
+    "package_manager": "[npm / yarn / pnpm]"
+  },
+
+  "initial_agreement": {
+    "agreed_on": "[YYYY-MM-DD]",
+    "description_es": "Acuerdo previo al inicio del proyecto. Define fases, nodos y criterios.",
+    "description_en": "Agreement prior to project start. Defines phases, nodes and criteria.",
+    "phases": [
+      {
+        "id": 1,
+        "name_es": "[Nombre Fase 1]",
+        "name_en": "[Phase 1 Name]",
+        "estimated_days": 0,
+        "nodes": [
+          {
+            "id": "1.1",
+            "name_es": "[Nombre nodo]",
+            "name_en": "[Node name]",
+            "steps_es": ["[paso 1]", "[paso 2]"],
+            "steps_en": ["[step 1]", "[step 2]"],
+            "estimated_hours": 0,
+            "test_level": 1
+          }
+        ]
+      }
+    ]
+  },
+
+  "roadmap": {
+    "current_phase": "[Fase 1 — Nombre]",
+    "current_node": "[1.1 — Nombre nodo]",
+    "progress_pct": 0,
+    "phases": []
+  },
+
+  "files_map": {
+    "critical": [],
+    "env_vars": [],
+    "entry_points": [],
+    "config_files": []
+  },
+
+  "session_state": {
+    "completed_today": [],
+    "pending_tomorrow": [],
+    "bugs_known": [],
+    "last_commit": null,
+    "last_snap": null,
+    "active_since": "[YYYY-MM-DD]"
+  }
+}

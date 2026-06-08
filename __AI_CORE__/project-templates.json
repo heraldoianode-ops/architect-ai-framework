@@ -1,0 +1,122 @@
+{
+  "_meta": {
+    "file": "project-templates.json",
+    "description_es": "Templates de proyecto por tipo. Precarga stack, fases típicas y deudas preventivas.",
+    "description_en": "Project templates by type. Preloads stack, typical phases and preventive debts.",
+    "version": "1.0.0",
+    "usage_es": "Seleccionar al ejecutar INICIAR PROYECTO. Reduce acuerdo inicial de 20min a 5min.",
+    "usage_en": "Select when running INICIAR PROYECTO. Reduces initial agreement from 20min to 5min."
+  },
+  "templates": {
+    "saas-web": {
+      "name_es": "SaaS Web",
+      "name_en": "Web SaaS",
+      "description_es": "Aplicación web SaaS con autenticación, dashboard y pagos",
+      "description_en": "Web SaaS application with authentication, dashboard and payments",
+      "stack_defaults": { "frontend": "React 18 + Vite", "backend": "Netlify Functions", "database": "Supabase", "auth": "Supabase Auth", "hosting": "Netlify", "email": "Resend", "payments": "Stripe" },
+      "typical_phases": [
+        { "id": 1, "name_es": "Setup e Infraestructura", "name_en": "Setup and Infrastructure", "estimated_days": 2 },
+        { "id": 2, "name_es": "Autenticación", "name_en": "Authentication", "estimated_days": 3 },
+        { "id": 3, "name_es": "Dashboard Principal", "name_en": "Main Dashboard", "estimated_days": 5 },
+        { "id": 4, "name_es": "Módulo Core del Negocio", "name_en": "Core Business Module", "estimated_days": 10 },
+        { "id": 5, "name_es": "Pagos y Suscripciones", "name_en": "Payments and Subscriptions", "estimated_days": 4 },
+        { "id": 6, "name_es": "Testing y QA", "name_en": "Testing and QA", "estimated_days": 3 },
+        { "id": 7, "name_es": "Deploy y Producción", "name_en": "Deploy and Production", "estimated_days": 2 }
+      ],
+      "preventive_debts": [
+        { "severity": "HIGH", "desc_es": "RLS no configurado en tablas de Supabase", "desc_en": "RLS not configured on Supabase tables" },
+        { "severity": "HIGH", "desc_es": "Rate limiting ausente en endpoints de auth", "desc_en": "Rate limiting missing on auth endpoints" },
+        { "severity": "MEDIUM", "desc_es": "Refresh token rotation no implementada", "desc_en": "Refresh token rotation not implemented" }
+      ]
+    },
+    "api-rest": {
+      "name_es": "API REST", "name_en": "REST API",
+      "stack_defaults": { "frontend": null, "backend": "Express / FastAPI", "database": "Supabase / PostgreSQL", "auth": "JWT custom", "hosting": "Railway / Render", "email": "Resend", "payments": null },
+      "typical_phases": [
+        { "id": 1, "name_es": "Setup y estructura base", "estimated_days": 2 },
+        { "id": 2, "name_es": "Autenticación JWT", "estimated_days": 2 },
+        { "id": 3, "name_es": "Endpoints core", "estimated_days": 7 },
+        { "id": 4, "name_es": "Documentación OpenAPI", "estimated_days": 2 },
+        { "id": 5, "name_es": "Testing y seguridad", "estimated_days": 3 },
+        { "id": 6, "name_es": "Deploy y monitoreo", "estimated_days": 2 }
+      ],
+      "preventive_debts": [
+        { "severity": "HIGH", "desc_es": "Input validation ausente en endpoints" },
+        { "severity": "HIGH", "desc_es": "Rate limiting global no configurado" },
+        { "severity": "MEDIUM", "desc_es": "Logging de errores sin estructura" }
+      ]
+    },
+    "mobile-app": {
+      "name_es": "App Mobile", "name_en": "Mobile App",
+      "stack_defaults": { "frontend": "React Native / Expo", "backend": "Supabase / custom API", "database": "Supabase", "auth": "Supabase Auth", "hosting": "App Store + Google Play", "payments": "RevenueCat / Stripe" },
+      "typical_phases": [
+        { "id": 1, "name_es": "Setup Expo y configuración", "estimated_days": 2 },
+        { "id": 2, "name_es": "Navegación y estructura", "estimated_days": 3 },
+        { "id": 3, "name_es": "Autenticación", "estimated_days": 3 },
+        { "id": 4, "name_es": "Pantallas core", "estimated_days": 10 },
+        { "id": 5, "name_es": "Notificaciones push", "estimated_days": 2 },
+        { "id": 6, "name_es": "Testing en dispositivos", "estimated_days": 3 },
+        { "id": 7, "name_es": "Publicación en stores", "estimated_days": 3 }
+      ],
+      "preventive_debts": [
+        { "severity": "HIGH", "desc_es": "Manejo offline no implementado" },
+        { "severity": "MEDIUM", "desc_es": "Deep linking no configurado" }
+      ]
+    },
+    "desktop-windows": {
+      "name_es": "App Escritorio Windows", "name_en": "Windows Desktop App",
+      "stack_defaults": { "frontend": "React + Electron / Tauri", "backend": "Node.js (Electron main) / Rust (Tauri)", "database": "SQLite local / Supabase remote", "hosting": "GitHub Releases / auto-update", "payments": "Stripe / LemonSqueezy" },
+      "typical_phases": [
+        { "id": 1, "name_es": "Setup Electron/Tauri", "estimated_days": 3 },
+        { "id": 2, "name_es": "Ventana principal y menú", "estimated_days": 2 },
+        { "id": 3, "name_es": "Lógica core de la aplicación", "estimated_days": 10 },
+        { "id": 4, "name_es": "Persistencia local", "estimated_days": 3 },
+        { "id": 5, "name_es": "Auto-updater", "estimated_days": 2 },
+        { "id": 6, "name_es": "Instalador Windows (NSIS/MSI)", "estimated_days": 2 },
+        { "id": 7, "name_es": "Firma de código y publicación", "estimated_days": 2 }
+      ],
+      "preventive_debts": [
+        { "severity": "HIGH", "desc_es": "IPC entre main y renderer sin sanitización" },
+        { "severity": "HIGH", "desc_es": "nodeIntegration habilitado en renderer" },
+        { "severity": "MEDIUM", "desc_es": "Auto-updater sin firma verificada" }
+      ]
+    },
+    "fullstack-nextjs": {
+      "name_es": "Fullstack Next.js", "name_en": "Next.js Fullstack",
+      "stack_defaults": { "frontend": "Next.js 14 App Router", "backend": "Next.js API Routes / Server Actions", "database": "Supabase / Prisma", "auth": "NextAuth / Supabase Auth", "hosting": "Vercel", "email": "Resend", "payments": "Stripe" },
+      "typical_phases": [
+        { "id": 1, "name_es": "Setup y configuración", "estimated_days": 2 },
+        { "id": 2, "name_es": "Autenticación y middleware", "estimated_days": 3 },
+        { "id": 3, "name_es": "Layout y navegación", "estimated_days": 2 },
+        { "id": 4, "name_es": "Módulo core", "estimated_days": 8 },
+        { "id": 5, "name_es": "Server Actions y API", "estimated_days": 4 },
+        { "id": 6, "name_es": "SEO y performance", "estimated_days": 2 },
+        { "id": 7, "name_es": "Testing y deploy", "estimated_days": 3 }
+      ],
+      "preventive_debts": [
+        { "severity": "HIGH", "desc_es": "Server Actions sin validación de input" },
+        { "severity": "MEDIUM", "desc_es": "Imágenes sin optimización next/image" }
+      ]
+    },
+    "library-npm": {
+      "name_es": "Librería NPM", "name_en": "NPM Library",
+      "stack_defaults": { "frontend": null, "backend": "Node.js / TypeScript", "database": null, "hosting": "NPM Registry" },
+      "typical_phases": [
+        { "id": 1, "name_es": "Setup TypeScript y bundler", "estimated_days": 1 },
+        { "id": 2, "name_es": "API pública de la librería", "estimated_days": 5 },
+        { "id": 3, "name_es": "Tests unitarios completos", "estimated_days": 3 },
+        { "id": 4, "name_es": "Documentación y ejemplos", "estimated_days": 2 },
+        { "id": 5, "name_es": "CI/CD y publicación NPM", "estimated_days": 1 }
+      ],
+      "preventive_debts": [
+        { "severity": "HIGH", "desc_es": "Tipos TypeScript incompletos o any abusivo" },
+        { "severity": "MEDIUM", "desc_es": "Tamaño de bundle no optimizado" }
+      ]
+    },
+    "custom": {
+      "name_es": "Proyecto Personalizado", "name_en": "Custom Project",
+      "description_es": "Stack definido completamente por el acuerdo inicial",
+      "stack_defaults": {}, "typical_phases": [], "preventive_debts": []
+    }
+  }
+}

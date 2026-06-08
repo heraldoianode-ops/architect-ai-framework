@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "file": "decisions.json",
+    "description_es": "Registro de decisiones de arquitectura. Trazabilidad completa de por qué el proyecto es como es.",
+    "description_en": "Architecture decision log. Complete traceability of why the project is the way it is."
+  },
+  "decisions": [],
+  "decision_template": {
+    "id": "DEC-000",
+    "date": "[YYYY-MM-DD]",
+    "title_es": "",
+    "title_en": "",
+    "context_es": "Situación que generó la decisión",
+    "context_en": "Situation that generated the decision",
+    "decision_es": "Qué se decidió hacer",
+    "decision_en": "What was decided",
+    "alternatives_discarded_es": ["opción A descartada — razón"],
+    "alternatives_discarded_en": ["option A discarded — reason"],
+    "consequences_es": "Qué implica esta decisión a futuro",
+    "consequences_en": "What this decision implies for the future",
+    "status": "[ACTIVE / REVISED / SUPERSEDED]",
+    "superseded_by": null
+  }
+}

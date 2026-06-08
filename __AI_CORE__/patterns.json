@@ -1,0 +1,25 @@
+{
+  "_meta": {
+    "file": "patterns.json",
+    "description_es": "Meta-aprendizaje nivel 1 — patrones detectados en este proyecto. La IA los aplica automáticamente en siguientes sesiones.",
+    "description_en": "Level 1 meta-learning — patterns detected in this project. AI applies them automatically in following sessions."
+  },
+  "recurring_bugs": [],
+  "volatile_modules": [],
+  "reverted_decisions": [],
+  "estimation_accuracy": [],
+  "reinforced_checks": [],
+  "pattern_template": {
+    "id": "PAT-000",
+    "type": "[recurring_bug / volatile_module / reverted_decision / estimation]",
+    "detected_on": "[YYYY-MM-DD]",
+    "occurrences": 1,
+    "zone_es": "Área o archivo donde ocurre",
+    "zone_en": "Area or file where it occurs",
+    "description_es": "",
+    "description_en": "",
+    "auto_check_es": "Verificación que la IA aplica automáticamente al tocar esta zona",
+    "auto_check_en": "Check the AI automatically applies when touching this zone",
+    "active": true
+  }
+}

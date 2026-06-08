@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "file": "schemas/config.schema.json",
+    "description_es": "JSON Schema para validar config.json en el pre-commit hook.",
+    "description_en": "JSON Schema for validating config.json in the pre-commit hook."
+  },
+  "type": "object",
+  "required": ["_meta","meta","stack","roadmap","session_state"],
+  "properties": {
+    "_meta": { "type": "object", "required": ["file","version","framework"] },
+    "meta": { "type": "object", "required": ["project","version","created","owner"] },
+    "stack": { "type": "object", "required": ["repo","branch_main"] },
+    "roadmap": {
+      "type": "object",
+      "required": ["current_node","progress_pct","phases"],
+      "properties": {
+        "progress_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "phases": { "type": "array" }
+      }
+    },
+    "session_state": { "type": "object", "required": ["completed_today","pending_tomorrow","bugs_known"] }
+  }
+}

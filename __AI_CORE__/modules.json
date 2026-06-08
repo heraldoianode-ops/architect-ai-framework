@@ -1,0 +1,30 @@
+{
+  "_meta": {
+    "file": "modules.json",
+    "description_es": "Registro de funciones modulares reutilizables disponibles para este proyecto.",
+    "description_en": "Registry of reusable modular functions available for this project."
+  },
+  "registry_version": "1.0",
+  "library_repo": "[github.com/org/__MODULE_LIBRARY__]",
+  "modules_installed": [],
+  "module_template": {
+    "id": "MOD-000",
+    "name_es": "",
+    "name_en": "",
+    "category": "[auth / email / payments / db / api / ui / utils]",
+    "version": "1.0.0",
+    "tags": [],
+    "language": "[JavaScript / TypeScript / Python]",
+    "dependencies": [],
+    "files": [],
+    "env_required": [],
+    "tested_on": [],
+    "description_es": "",
+    "description_en": "",
+    "created": "[YYYY-MM-DD]",
+    "last_updated": "[YYYY-MM-DD]",
+    "installed_on": "[YYYY-MM-DD]",
+    "local_path": "src/modules/[category]/[name]",
+    "download_url": ""
+  }
+}

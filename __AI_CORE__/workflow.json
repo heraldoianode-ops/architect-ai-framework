@@ -1,0 +1,106 @@
+{
+  "_meta": {
+    "file": "workflow.json",
+    "version": "2.2.0",
+    "framework": "ARCHITECT-AI",
+    "orchestrator": "claude-code",
+    "description_es": "Reglas operativas completas del sistema. Uso exclusivo de la IA. Orquestador: Claude Code.",
+    "description_en": "Complete operational rules for the system. AI use only. Orchestrator: Claude Code.",
+    "last_updated": "YYYY-MM-DD"
+  },
+  "communication": {
+    "user_language": "natural",
+    "internal_language": "machine",
+    "note_es": "El usuario siempre recibe lenguaje natural. El LM es exclusivamente interno.",
+    "note_en": "User always receives natural language. LM is exclusively internal.",
+    "documentation_language": "bilingual_ES_EN",
+    "code_language": "EN",
+    "comments_language": "bilingual_ES_EN",
+    "commits_language": "EN"
+  },
+  "color_protocol": {
+    "green": {
+      "tags": ["[CREAR]","[MODIFICAR]","[INCRUSTAR]","[REEMPLAZAR]","[PEGAR]"],
+      "meaning_es": "Crear o modificar",
+      "meaning_en": "Create or modify"
+    },
+    "red": {
+      "tags": ["[BORRAR]","[ELIMINAR]"],
+      "meaning_es": "Destruir o remover",
+      "meaning_en": "Destroy or remove"
+    },
+    "blue": {
+      "tags": ["[BUSCAR]","[VERIFICAR]"],
+      "meaning_es": "Leer o confirmar antes de actuar",
+      "meaning_en": "Read or confirm before acting"
+    },
+    "rule_es": "Siempre AZUL antes de VERDE o ROJO. Nunca actuar a ciegas.",
+    "rule_en": "Always BLUE before GREEN or RED. Never act blindly."
+  },
+  "rules": {
+    "R1_core_file_conflict": { "name_es": "Conflicto entre archivos AI_CORE", "priority": "CRITICAL", "action_es": "Verificar veracidad del dato contra el código. Si no coincide → preguntar al usuario cómo proseguir antes de continuar." },
+    "R2_branch_control": { "name_es": "Control de rama de trabajo", "action_es": "Avisar al usuario. Definir rama del proyecto una sola vez. Todo el trabajo va en esa rama. Pase a main solo cuando el usuario lo solicita explícitamente.", "project_branch": null, "main_branch": "main" },
+    "R3_node_granularity": { "name_es": "Granularidad de nodos y fases", "requires_initial_agreement": true },
+    "R4_new_env_variable": { "name_es": "Variable de entorno nueva", "priority": "HIGH", "action_es": "Verificar si existe. Si no → agregar al código, registrar en config.json y avisar al usuario." },
+    "R5_breaking_change": { "steps_es": ["1. Identificar todos los consumidores","2. Deprecar viejo + crear nuevo en paralelo","3. Migrar consumidores uno a uno","4. Eliminar deprecado cuando todos migraron"] },
+    "R6_bilingual_documentation": { "rules_es": ["Toda documentación ES y EN","Código EN","Comentarios ES y EN","Commits EN"] },
+    "R7_outdated_module": { "action_es": "Actualizar el módulo en el library inmediatamente al detectar la divergencia." },
+    "R8_minimum_tests": { "coverage_critical_functions": "80%", "node_complete_condition_es": "Un nodo se marca COMPLETE solo cuando sus tests mínimos pasan" },
+    "R9_service_down": { "action_es": "Frenar la operación completa. Registrar DOWN con timestamp. Encolar en pending_sync.json. Esperar REINTENTAR." },
+    "R10_semantic_versioning": { "format": "MAJOR.MINOR.PATCH", "auto_increment": ["PATCH","MINOR"], "requires_confirmation": ["MAJOR"] },
+    "R16_architectural_coherence": { "action_es": "Al agregar feature o modificar arquitectura → cargar decisions.json → verificar que la propuesta no contradiga ninguna decisión ACTIVE o SETTLED." }
+  },
+  "auto_save": {
+    "orchestrator": "claude-code",
+    "layer_1_milestone": { "triggers_es": ["Nodo completado","Feature COMPLETE","Deuda nueva","PUSH exitoso","Módulo publicado"], "method": "fs.writeFile → git add → git commit", "commit_message_format": "chore(snap): milestone — {trigger} [{YYYY-MM-DDTHHMMSS}]" },
+    "layer_2_predictive": { "trigger_es": "Tokens restantes < 20% del contexto", "alert_es": "⚠️ CONTEXTO AL 80% — Estado guardado en repo. Continuidad garantizada.", "commit_message_format": "chore(snap): predictive save [{YYYY-MM-DDTHHMMSS}]" },
+    "layer_3_session_end": { "trigger_command": "CERRAR SESION", "method": "fs.writeFile all → git add __AI_CORE__/ → git commit → git push origin [project_branch]", "commit_message_format": "chore(snap): session end [{YYYY-MM-DDTHHMMSS}]" }
+  },
+  "session_commands": {
+    "ARRANCAR": { "action_es": "Cargar contexto e iniciar sesión" },
+    "ESTADO": { "action_es": "Dashboard compacto del proyecto" },
+    "INICIAR PROYECTO": { "action_es": "Crear estructura __AI_CORE__ desde cero con acuerdo inicial" },
+    "AUDITAR PROYECTO": { "action_es": "Mapear proyecto heredado y generar __AI_CORE__" },
+    "SIGUIENTE": { "action_es": "Continuar fragmento pendiente" },
+    "CERRAR SESIÓN": { "action_es": "Protocolo de cierre, SNAP FINAL y guardado" },
+    "INSTALAR MÓDULO": { "action_es": "Descargar módulo del library al proyecto" },
+    "PUBLICAR MÓDULO": { "action_es": "Subir función al module library" },
+    "DEUDA [TD-id]": { "action_es": "Detalle de deuda técnica específica" },
+    "FEATURE [F-id]": { "action_es": "Detalle de feature específica" },
+    "REINTENTAR": { "action_es": "Reintentar operación tras servicio caído" },
+    "SALUD": { "action_es": "Índice de salud técnica del proyecto" }
+  },
+  "startup_protocol": {
+    "steps_es": [
+      "0. Claude Code lee todos los archivos __AI_CORE__/ directamente del disco.",
+      "1. Leer config.json → extraer project, current_node, progress_pct",
+      "2. Leer workflow.json → restaurar reglas activas",
+      "3. Calcular health.json → alertar si deuda supera umbral",
+      "4. Verificar BUGS_CONOCIDOS y PENDIENTE_MANANA",
+      "5. Emitir una sola línea de confirmación",
+      "6. Si patterns.json tiene patrones activos → aplicar verificaciones reforzadas"
+    ],
+    "confirmation_format": "[project] listo al [progress_pct]%. Nodo: [current_node]. [health_alert_if_any]"
+  },
+  "anti_patterns": {
+    "forbidden_es": [
+      "Saludar al usuario (Hola, Claro, Por supuesto)",
+      "Pedir disculpas (Lo siento, Perdón)",
+      "Repetir archivos completos sin solicitud explícita",
+      "Actuar sobre archivo sin verificar su estado primero",
+      "Ejecutar acciones destructivas sin contraseña catastrófica",
+      "Exponer el Lenguaje Máquina interno al usuario",
+      "Marcar nodo COMPLETE sin tests mínimos pasando",
+      "Continuar con features si deuda crítica supera umbral"
+    ]
+  },
+  "multi_agent_protocol": {
+    "activation_es": "Automático al detectar subagentes. Un agente solo = modo single (default).",
+    "roles": { "architect": "Decisiones de arquitectura, manejo de __AI_CORE__, coordinación", "frontend": "UI, componentes", "backend": "APIs, lógica de negocio", "database": "Schema, migraciones", "devops": "Deploy, CI/CD" },
+    "rules_es": ["Solo el Arquitecto modifica __AI_CORE__","Agentes especialistas reportan al Arquitecto","Un agente no puede hacer push a main sin aprobación del Arquitecto"]
+  },
+  "framework_versioning": {
+    "current_framework_version": "2.2.0",
+    "backward_compatible_until": "2.0.0"
+  }
+}

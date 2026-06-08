@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "file": "tech_debt.json",
+    "description_es": "Deudas técnicas catalogadas del proyecto.",
+    "description_en": "Catalogued technical debts of the project."
+  },
+  "health_threshold": {
+    "max_high_before_alert": 3,
+    "note_es": "Si CRITICAL + HIGH superan este número → proponer sesión de deuda antes de continuar features.",
+    "note_en": "If CRITICAL + HIGH exceed this number → propose debt session before continuing features."
+  },
+  "severity_legend": {
+    "CRITICAL": { "es": "Bloquea producción / Seguridad comprometida", "en": "Blocks production / Security compromised" },
+    "HIGH":     { "es": "Degradación funcional visible / Riesgo latente", "en": "Visible functional degradation / Latent risk" },
+    "MEDIUM":   { "es": "Código frágil / Puede fallar bajo carga", "en": "Fragile code / May fail under load" },
+    "LOW":      { "es": "Mejora de mantenibilidad / Sin riesgo inmediato", "en": "Maintainability improvement / No immediate risk" }
+  },
+  "debts": []
+}
