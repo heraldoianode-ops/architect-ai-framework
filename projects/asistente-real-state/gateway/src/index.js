@@ -1,148 +1,151 @@
+/**
+ * index.js — ARS WhatsApp Gateway entry point.
+ * Orchestrates webhook, sender, rate limiter, broadcast and internal API.
+ */
 const express = require("express");
-const crypto = require("crypto");
-const axios = require("axios");
-const morgan = require("morgan");
-const { WebSocketServer } = require("ws");
 const http = require("http");
+const morgan = require("morgan");
+const Redis = require("ioredis");
 
+const { handleInbound } = require("./webhook");
+const { sendText, sendTemplate, sendButtons } = require("./sender");
+const { setupWebSocket, broadcastAll } = require("./broadcast");
+const { setRedis, checkRateLimit } = require("./rateLimit");
+const { sendWelcomeMenu, sendPropertyCard, sendAppointmentReminder } = require("./templates");
+
+// ─── Config ──────────────────────────────────────────────────────────────────
+const PORT = parseInt(process.env.PORT || "3000", 10);
+const WA_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || "";
+
+// ─── Redis ───────────────────────────────────────────────────────────────────
+const redis = new Redis(process.env.REDIS_URL || "redis://redis:6379/1", {
+  lazyConnect: true,
+  retryStrategy: (times) => Math.min(times * 200, 3000),
+});
+redis.connect().catch((e) => console.warn("[redis] connect warning:", e.message));
+setRedis(redis);
+
+// ─── App ─────────────────────────────────────────────────────────────────────
 const app = express();
 const server = http.createServer(app);
 
-// ─── WebSocket server (real-time dashboard updates) ──────────────────────────
-const wss = new WebSocketServer({ server, path: "/ws" });
-const wsClients = new Set();
-
-wss.on("connection", (ws) => {
-  wsClients.add(ws);
-  ws.on("close", () => wsClients.delete(ws));
-});
-
-function broadcast(event, data) {
-  const msg = JSON.stringify({ event, data, ts: Date.now() });
-  wsClients.forEach((ws) => {
-    if (ws.readyState === ws.OPEN) ws.send(msg);
-  });
-}
-
-// ─── Middleware ──────────────────────────────────────────────────────────────
+// Raw body buffer needed for HMAC verification
+app.use(express.json({
+  verify: (req, _res, buf) => { req.rawBody = buf; },
+}));
 app.use(morgan("combined"));
-app.use(express.json());
 
-const FASTAPI_URL = process.env.FASTAPI_URL || "http://backend:8000";
-const WA_TOKEN = process.env.WHATSAPP_TOKEN || "";
-const WA_PHONE_ID = process.env.WHATSAPP_PHONE_NUMBER_ID || "";
-const WA_VERIFY_TOKEN = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN || "";
-const WA_APP_SECRET = process.env.WHATSAPP_APP_SECRET || "";
-
-// ─── HMAC signature verification ────────────────────────────────────────────
-function verifySignature(req) {
-  const sig = req.headers["x-hub-signature-256"];
-  if (!sig || !WA_APP_SECRET) return false;
-  const expected = "sha256=" + crypto
-    .createHmac("sha256", WA_APP_SECRET)
-    .update(JSON.stringify(req.body))
-    .digest("hex");
-  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
-}
+// ─── WebSocket ───────────────────────────────────────────────────────────────
+setupWebSocket(server);
 
 // ─── Webhook verification (GET) ──────────────────────────────────────────────
 app.get("/webhook", (req, res) => {
   const { "hub.mode": mode, "hub.verify_token": token, "hub.challenge": challenge } = req.query;
   if (mode === "subscribe" && token === WA_VERIFY_TOKEN) {
-    console.log("Webhook verified.");
+    console.log("[webhook] Verified by Meta.");
     return res.status(200).send(challenge);
   }
+  console.warn("[webhook] Verification failed. Check WHATSAPP_WEBHOOK_VERIFY_TOKEN.");
   res.sendStatus(403);
 });
 
-// ─── Incoming messages (POST) ────────────────────────────────────────────────
+// ─── Inbound messages (POST) ─────────────────────────────────────────────────
 app.post("/webhook", async (req, res) => {
-  // Always respond 200 immediately to Meta
-  res.sendStatus(200);
+  res.sendStatus(200); // always respond immediately to Meta
 
-  if (!verifySignature(req)) {
-    console.warn("Invalid HMAC signature — request ignored.");
-    return;
-  }
-
+  const sig = req.headers["x-hub-signature-256"];
   try {
-    const entry = req.body?.entry?.[0];
-    const changes = entry?.changes?.[0]?.value;
-    const messages = changes?.messages;
-
-    if (!messages?.length) return;
-
-    for (const msg of messages) {
-      const waId = msg.from;
-      const text = msg.text?.body || "";
-      const msgType = msg.type;
-
-      if (msgType !== "text") {
-        // TODO: handle image/audio/document types
-        continue;
-      }
-
-      console.log(`Inbound WA [${waId}]: ${text}`);
-      broadcast("message_received", { waId, text });
-
-      // Forward to FastAPI agent orchestrator
-      const response = await axios.post(`${FASTAPI_URL}/agent/whatsapp`, {
-        wa_contact_id: waId,
-        message: text,
-        message_id: msg.id,
-        timestamp: msg.timestamp,
-      }, { timeout: 30000 });
-
-      const reply = response.data?.reply;
-      if (reply) {
-        await sendMessage(waId, reply);
-        broadcast("message_sent", { waId, reply });
-      }
-    }
+    await handleInbound(req.rawBody, sig);
   } catch (err) {
-    console.error("Webhook processing error:", err.message);
+    console.error("[webhook] Processing error:", err.message);
   }
 });
 
-// ─── Send WhatsApp message ───────────────────────────────────────────────────
-async function sendMessage(to, text) {
-  await axios.post(
-    `https://graph.facebook.com/v21.0/${WA_PHONE_ID}/messages`,
-    {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
-      to,
-      type: "text",
-      text: { body: text, preview_url: false },
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${WA_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-}
+// ─── Internal API — called by FastAPI backend ─────────────────────────────────
 
-// ─── Internal API (called by FastAPI backend) ────────────────────────────────
+// Send text or media
 app.post("/send", async (req, res) => {
-  const { to, text, type = "text" } = req.body;
-  if (!to || !text) return res.status(400).json({ error: "Missing to or text" });
+  const { to, text, type = "text", image_url, caption, template_name, language, components } = req.body;
+
+  if (!to) return res.status(400).json({ error: "Missing 'to'" });
+
   try {
-    await sendMessage(to, text);
+    let result;
+    switch (type) {
+      case "template":
+        result = await sendTemplate(to, template_name, language || "es_AR", components || []);
+        break;
+      case "image":
+        const { sendImage } = require("./sender");
+        result = await sendImage(to, image_url, caption);
+        break;
+      default:
+        if (!text) return res.status(400).json({ error: "Missing 'text'" });
+        result = await sendText(to, text);
+    }
+    res.json({ ok: true, result });
+  } catch (err) {
+    console.error("[send] Error:", err.response?.data || err.message);
+    res.status(502).json({ error: err.message });
+  }
+});
+
+// Send welcome menu (interactive buttons)
+app.post("/send/welcome", async (req, res) => {
+  const { to, agency_name } = req.body;
+  if (!to) return res.status(400).json({ error: "Missing 'to'" });
+  try {
+    await sendWelcomeMenu(to, agency_name);
     res.json({ ok: true });
   } catch (err) {
-    console.error("Send error:", err.response?.data || err.message);
-    res.status(500).json({ error: err.message });
+    res.status(502).json({ error: err.message });
   }
 });
 
-app.get("/health", (_, res) => res.json({ status: "ok", service: "ars-gateway" }));
+// Send property card
+app.post("/send/property", async (req, res) => {
+  const { to, property } = req.body;
+  if (!to || !property) return res.status(400).json({ error: "Missing 'to' or 'property'" });
+  try {
+    await sendPropertyCard(to, property);
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(502).json({ error: err.message });
+  }
+});
+
+// Send appointment reminder
+app.post("/send/reminder", async (req, res) => {
+  const { to, time_label, property_title, address } = req.body;
+  try {
+    await sendAppointmentReminder(to, {
+      timeLabel: time_label,
+      propertyTitle: property_title,
+      address,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(502).json({ error: err.message });
+  }
+});
+
+// Broadcast event to all dashboard WebSocket clients
+app.post("/broadcast", (req, res) => {
+  const { event, data } = req.body;
+  if (!event) return res.status(400).json({ error: "Missing 'event'" });
+  broadcastAll(event, data || {});
+  res.json({ ok: true });
+});
+
+// ─── Health ──────────────────────────────────────────────────────────────────
+app.get("/health", async (_, res) => {
+  const redisOk = await redis.ping().then(() => "ok").catch(() => "error");
+  res.json({ status: "ok", service: "ars-gateway", redis: redisOk });
+});
 
 // ─── Start ───────────────────────────────────────────────────────────────────
-const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`ARS Gateway listening on :${PORT}`);
-  console.log(`FastAPI target: ${FASTAPI_URL}`);
-  console.log(`WebSocket: ws://localhost:${PORT}/ws`);
+  console.log(`FastAPI target: ${process.env.FASTAPI_URL || "http://backend:8000"}`);
+  console.log(`WebSocket: ws://0.0.0.0:${PORT}/ws`);
 });
