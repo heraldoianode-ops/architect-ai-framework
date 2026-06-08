@@ -1,0 +1,4 @@
+{
+  "_meta": { "file": "pending_sync.json", "description_es": "Operaciones pendientes por servicio caído.", "description_en": "Pending operations due to service down." },
+  "queue": []
+}

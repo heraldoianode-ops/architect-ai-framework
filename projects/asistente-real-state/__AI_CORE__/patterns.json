@@ -1,0 +1,9 @@
+{
+  "_meta": { "file": "patterns.json", "description_es": "Patrones aprendidos y verificaciones reforzadas.", "description_en": "Learned patterns and reinforced checks." },
+  "reinforced_checks": [
+    { "id": "P001", "active": true, "trigger_es": "Verificar RLS Supabase antes de exponer endpoint", "trigger_en": "Verify Supabase RLS before exposing endpoint", "source": "security" },
+    { "id": "P002", "active": true, "trigger_es": "Validar tokens WhatsApp en cada webhook", "trigger_en": "Validate WhatsApp tokens on every webhook", "source": "security" },
+    { "id": "P003", "active": true, "trigger_es": "Sanitizar datos de scraping antes de insertar en BD", "trigger_en": "Sanitize scraped data before DB insert", "source": "security" }
+  ],
+  "learned_patterns": []
+}

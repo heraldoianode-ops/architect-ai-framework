@@ -1,0 +1,104 @@
+{
+  "_meta": {
+    "file": "config.json",
+    "version": "2.2.0",
+    "framework": "ARCHITECT-AI",
+    "description_es": "Mapa técnico maestro del proyecto. Uso exclusivo de la IA.",
+    "description_en": "Master technical map of the project. AI use only."
+  },
+  "meta": {
+    "project": "Asistente-de-Real-State",
+    "project_slug": "asistente-real-state",
+    "version": "0.1.0",
+    "type": "WebApp + API",
+    "client": "interno",
+    "created": "2026-06-08",
+    "last_updated": "2026-06-08",
+    "owner": "heraldoianode-ops",
+    "language_primary": "es",
+    "language_secondary": "en"
+  },
+  "stack": {
+    "frontend": "Next.js 14 + Tailwind CSS + shadcn/ui",
+    "backend": "Next.js API Routes + Node.js",
+    "database": "Supabase (PostgreSQL)",
+    "auth": "Supabase Auth (RBAC)",
+    "hosting": "Vercel",
+    "email": "Resend",
+    "payments": null,
+    "monitoring": "Sentry",
+    "whatsapp": "Meta WhatsApp Business API",
+    "ai_assistant": "Claude API (claude-sonnet-4-6)",
+    "scraping": "Playwright + Cheerio",
+    "file_integrations": "Google Drive API + ExcelJS",
+    "storage": "Supabase Storage",
+    "repo": "heraldoianode-ops/asistente-real-state",
+    "branch_main": "main",
+    "branch_dev": "develop",
+    "package_manager": "pnpm"
+  },
+  "roles": {
+    "administrador": { "description_es": "Configura accesos, carpetas, repositorios, sistema de meta-aprendizaje y parámetros globales", "description_en": "Configures access, folders, repositories, meta-learning system and global parameters", "access": "full" },
+    "agente_real_state": { "description_es": "Registra su usuario y actividad. Gestiona clientes, propiedades, agenda y plan de trabajo", "description_en": "Registers their account and activity. Manages clients, properties, calendar and work plan", "access": "agent_scope" },
+    "cliente_comprador": { "description_es": "Acceso directo. Busca propiedades, agenda visitas, consulta por WhatsApp", "description_en": "Direct access. Searches properties, books visits, queries via WhatsApp", "access": "buyer_scope" },
+    "cliente_vendedor": { "description_es": "Acceso directo. Registra propiedades, agenda reuniones con agentes", "description_en": "Direct access. Lists properties, schedules meetings with agents", "access": "seller_scope" },
+    "broker": { "description_es": "Supervisa agentes, ve reportes agregados, oportunidades de negocio y plan de trabajo", "description_en": "Supervises agents, views aggregated reports, business opportunities and work plan", "access": "broker_scope" }
+  },
+  "initial_agreement": {
+    "agreed_on": "2026-06-08",
+    "description_es": "Asistente integral para el ecosistema inmobiliario: agentes, brokers, compradores y vendedores. Incluye CRM, WhatsApp IA, agenda, matching inteligente, plan de trabajo y analíticas.",
+    "description_en": "Comprehensive assistant for the real estate ecosystem: agents, brokers, buyers and sellers. Includes CRM, WhatsApp AI, scheduling, smart matching, work plan and analytics.",
+    "phases": [
+      { "id": 1, "name_es": "Infraestructura Base", "name_en": "Base Infrastructure", "estimated_days": 12, "nodes": [
+        { "id": "1.1", "name_es": "Setup: proyecto, auth, roles, schema BD", "name_en": "Setup: project, auth, roles, DB schema", "steps_es": ["Inicializar Next.js 14 + Tailwind + shadcn/ui", "Configurar Supabase: proyecto, tablas base, RLS por rol", "Implementar Supabase Auth con roles", "Middleware de autorización por ruta y rol", "Layout base + navegación por rol", "Variables de entorno y configuración inicial"], "steps_en": ["Initialize Next.js 14 + Tailwind + shadcn/ui", "Configure Supabase: project, base tables, RLS by role", "Implement Supabase Auth with roles", "Authorization middleware per route and role", "Base layout + role-based navigation", "Environment variables and initial config"], "estimated_hours": 16, "test_level": 1 },
+        { "id": "1.2", "name_es": "Módulo: Propiedades — listado, búsqueda y ficha", "name_en": "Module: Properties — listing, search and detail", "steps_es": ["Schema: tabla properties con campos completos", "CRUD de propiedades para agentes y vendedores", "Búsqueda avanzada con filtros", "Galería de imágenes (Supabase Storage)", "Ficha de propiedad pública y privada", "Mapa integrado (Mapbox API)"], "steps_en": ["Schema: properties table with full fields", "Property CRUD for agents and sellers", "Advanced search with filters", "Image gallery (Supabase Storage)", "Public and private property detail page", "Integrated map (Mapbox API)"], "estimated_hours": 20, "test_level": 1 },
+        { "id": "1.3", "name_es": "Módulo: CRM base — leads y clientes", "name_en": "Module: Base CRM — leads and clients", "steps_es": ["Schema: clientes, leads, historial de interacciones", "Pipeline Kanban de leads por agente", "Perfil de cliente con historial completo", "Etiquetas, notas y seguimiento", "Importación inicial desde Excel / CSV", "Búsqueda y filtros de cartera de clientes"], "steps_en": ["Schema: clients, leads, interaction history", "Kanban lead pipeline per agent", "Client profile with full history", "Tags, notes and follow-up", "Initial import from Excel / CSV", "Client portfolio search and filters"], "estimated_hours": 18, "test_level": 1 }
+      ]},
+      { "id": 2, "name_es": "Comunicaciones y Agenda", "name_en": "Communications & Scheduling", "estimated_days": 14, "nodes": [
+        { "id": "2.1", "name_es": "Integración WhatsApp — canal entrante y saliente", "name_en": "WhatsApp Integration — inbound and outbound", "steps_es": ["Configurar Meta WhatsApp Business API + webhook", "Recepción de mensajes entrantes y enrutamiento por agente", "Envío de mensajes, imágenes y plantillas desde el sistema", "Historial de conversaciones por cliente en el CRM", "Notificaciones de nuevos mensajes en dashboard"], "steps_en": ["Configure Meta WhatsApp Business API + webhook", "Inbound message reception and routing by agent", "Send messages, images and templates from system", "Conversation history per client in CRM", "New message notifications in dashboard"], "estimated_hours": 22, "test_level": 2 },
+        { "id": "2.2", "name_es": "Asistente IA por WhatsApp", "name_en": "AI Assistant via WhatsApp", "steps_es": ["Integrar Claude API como motor de respuestas automáticas", "Contexto: base de propiedades + perfil del cliente", "Flujos: buscar propiedad, agendar visita, resolver FAQs", "Escalamiento automático a agente humano", "Registro de interacciones IA en historial CRM", "Panel de configuración de respuestas automáticas"], "steps_en": ["Integrate Claude API as automatic response engine", "Context: property base + querying client profile", "Flows: search property, book visit, resolve FAQs", "Auto-escalation to human agent", "Log AI interactions in CRM history", "Automatic response configuration panel"], "estimated_hours": 24, "test_level": 2 },
+        { "id": "2.3", "name_es": "Agenda: visitas, captaciones y reuniones", "name_en": "Scheduler: visits, captures and meetings", "steps_es": ["Schema: eventos (visita_comprador, captacion_vendedor, reunion_agente)", "Calendario por agente con disponibilidad configurable", "Portal público: comprador agenda visita", "Portal vendedor: agenda reunión con agente", "Recordatorios automáticos WhatsApp + email", "Vista semanal/mensual para agente y broker", "Sincronización Google Calendar (opcional)"], "steps_en": ["Schema: events (buyer_visit, seller_capture, agent_meeting)", "Per-agent calendar with configurable availability", "Public portal: buyer books visit", "Seller portal: schedules meeting", "Automatic WhatsApp + email reminders", "Weekly/monthly view for agent and broker", "Google Calendar sync (optional)"], "estimated_hours": 20, "test_level": 2 }
+      ]},
+      { "id": 3, "name_es": "Inteligencia e Integraciones", "name_en": "Intelligence & Integrations", "estimated_days": 16, "nodes": [
+        { "id": "3.1", "name_es": "CRM por Scraping — ingesta automática", "name_en": "Scraping CRM — automatic ingestion", "steps_es": ["Motor de scraping con Playwright", "Parser de propiedades: normalización de datos", "Deduplicación inteligente", "Scheduler de scraping configurable", "Panel de fuentes de datos activas/pausadas", "Alertas de propiedades nuevas por perfil de cliente"], "steps_en": ["Scraping engine with Playwright", "Property parser: data normalization", "Smart deduplication", "Configurable scraping scheduler", "Active/paused data sources panel", "New property alerts matching client profiles"], "estimated_hours": 26, "test_level": 2 },
+        { "id": "3.2", "name_es": "Integración Excel, Google Drive y SQL externo", "name_en": "Excel, Google Drive and external SQL integration", "steps_es": ["Importador Excel: clientes, propiedades, historial", "Exportador Excel: reportes, CRM, agenda", "Conector Google Drive: leer/escribir carpetas configuradas", "Conector SQL externo: lectura de BD externas", "Panel admin de conexiones activas", "Sincronización programada configurable"], "steps_en": ["Excel importer: clients, properties, history", "Excel exporter: reports, CRM, calendar", "Google Drive connector: read/write configured folders", "External SQL connector: read from external databases", "Admin panel for active connections", "Configurable scheduled sync"], "estimated_hours": 22, "test_level": 2 },
+        { "id": "3.3", "name_es": "Motor de Matching — coincidencias y oportunidades", "name_en": "Matching Engine — matches and opportunities", "steps_es": ["Algoritmo matching: perfil comprador ↔ propiedades", "Score por zona, precio, tipo, características", "Feed de oportunidades por agente", "Historial: clientes que buscaron y no cerraron", "Alertas proactivas vía WhatsApp y dashboard", "Ranking de leads calientes por probabilidad de cierre"], "steps_en": ["Matching algorithm: buyer profile ↔ properties", "Score by zone, price, type, features", "Opportunity feed per agent", "History: clients who searched and didn't close", "Proactive alerts via WhatsApp and dashboard", "Hot lead ranking by closing probability"], "estimated_hours": 24, "test_level": 3 }
+      ]},
+      { "id": 4, "name_es": "Plan de Trabajo y Analíticas", "name_en": "Work Plan & Analytics", "estimated_days": 10, "nodes": [
+        { "id": "4.1", "name_es": "Generador de Plan de Trabajo", "name_en": "Work Plan Generator", "steps_es": ["Definición de objetivos: ventas, captaciones, visitas", "Generación automática de plan semanal con IA", "Tareas diarias priorizadas según pipeline y agenda", "Seguimiento de avance vs objetivo en tiempo real", "Vista broker: plan consolidado de equipo", "Ajuste automático si hay desvío de objetivos"], "steps_en": ["Goal definition: sales, captures, visits", "Automatic weekly plan generation with AI", "Daily tasks prioritized by pipeline and calendar", "Real-time progress tracking vs goal", "Broker view: consolidated team plan", "Automatic adjustment on goal deviation"], "estimated_hours": 18, "test_level": 2 },
+        { "id": "4.2", "name_es": "Reportes y Analíticas", "name_en": "Reports & Analytics", "steps_es": ["KPIs agente: visitas, leads, captaciones, cierres", "KPIs broker: rendimiento equipo, propiedades, ingresos", "KPIs propiedades: tiempo en mercado, vistas, consultas", "Funnel de ventas por agente y equipo", "Reportes exportables a Excel/PDF", "Gráficas interactivas (Recharts)"], "steps_en": ["Agent KPIs: visits, leads, captures, closings", "Broker KPIs: team performance, properties, revenue", "Property KPIs: time on market, views, inquiries", "Sales funnel per agent and team", "Exportable reports to Excel/PDF", "Interactive charts (Recharts)"], "estimated_hours": 16, "test_level": 1 }
+      ]},
+      { "id": 5, "name_es": "Panel Admin y Meta-Aprendizaje", "name_en": "Admin Panel & Meta-Learning", "estimated_days": 8, "nodes": [
+        { "id": "5.1", "name_es": "Panel de Administración", "name_en": "Administration Panel", "steps_es": ["CRUD de usuarios y asignación de roles", "Gestión de accesos a carpetas y repositorios", "Configuración de fuentes de scraping", "Configuración de integraciones", "Gestión de plantillas WhatsApp", "Log de actividad del sistema"], "steps_en": ["User CRUD and role assignment", "Access management for folders and repositories", "Scraping source configuration", "Integration configuration", "WhatsApp template management", "System activity log"], "estimated_hours": 14, "test_level": 1 },
+        { "id": "5.2", "name_es": "Sistema de Meta-Aprendizaje", "name_en": "Meta-Learning System", "steps_es": ["Registro de patrones de éxito", "Aprendizaje de preferencias por zona y tipo de cliente", "Retroalimentación al motor de matching", "Dashboard de insights para admin y broker", "Exportación de modelo de patrones aprendidos"], "steps_en": ["Success pattern registry", "Learning preferences by zone and client type", "Feedback to matching engine", "Insights dashboard for admin and broker", "Export of learned pattern model"], "estimated_hours": 20, "test_level": 3 }
+      ]}
+    ]
+  },
+  "roadmap": {
+    "current_phase": "Fase 1 — Infraestructura Base",
+    "current_node": "1.1 — Setup: proyecto, auth, roles, schema BD",
+    "progress_pct": 0,
+    "total_estimated_days": 60,
+    "phases": [
+      { "id": 1, "name_es": "Infraestructura Base", "status": "IN_PROGRESS", "pct": 0 },
+      { "id": 2, "name_es": "Comunicaciones y Agenda", "status": "PENDING", "pct": 0 },
+      { "id": 3, "name_es": "Inteligencia e Integraciones", "status": "PENDING", "pct": 0 },
+      { "id": 4, "name_es": "Plan de Trabajo y Analíticas", "status": "PENDING", "pct": 0 },
+      { "id": 5, "name_es": "Panel Admin y Meta-Aprendizaje", "status": "PENDING", "pct": 0 }
+    ]
+  },
+  "files_map": {
+    "critical": [],
+    "env_vars": ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "WHATSAPP_TOKEN", "WHATSAPP_PHONE_NUMBER_ID", "WHATSAPP_WEBHOOK_VERIFY_TOKEN", "ANTHROPIC_API_KEY", "RESEND_API_KEY", "GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "SENTRY_DSN", "NEXT_PUBLIC_MAPBOX_TOKEN"],
+    "entry_points": [],
+    "config_files": []
+  },
+  "session_state": {
+    "completed_today": ["INICIAR PROYECTO Asistente-de-Real-State"],
+    "pending_tomorrow": ["Ejecutar nodo 1.1 — Setup inicial"],
+    "bugs_known": [],
+    "last_commit": null,
+    "last_snap": "2026-06-08T000000",
+    "active_since": "2026-06-08"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "_meta": { "file": "health.json", "description_es": "Índice de salud técnica.", "description_en": "Technical health index." },
+  "status": "HEALTHY",
+  "score": 100,
+  "last_calculated": "2026-06-08",
+  "dimensions": {
+    "debt": { "critical": 0, "high": 0, "medium": 0, "low": 0 },
+    "test_coverage": { "target_pct": 80, "current_pct": 0, "status": "PENDING" },
+    "documentation": { "status": "OK" },
+    "dependencies": { "outdated": 0, "vulnerable": 0 }
+  },
+  "alerts": []
+}

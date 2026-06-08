@@ -1,0 +1,10 @@
+{
+  "_meta": { "file": "decisions.json", "description_es": "Decisiones arquitectónicas. Consultar antes de cambios (R16).", "description_en": "Architectural decisions. Check before changes (R16)." },
+  "decisions": [
+    { "id": "D001", "date": "2026-06-08", "status": "SETTLED", "title_es": "Stack: Next.js 14 + Supabase + Vercel", "title_en": "Stack: Next.js 14 + Supabase + Vercel", "rationale_es": "SSR nativo, auth+DB+storage integrado, deploy zero-config.", "rationale_en": "Native SSR, integrated auth+DB+storage, zero-config deploy.", "impact": "GLOBAL" },
+    { "id": "D002", "date": "2026-06-08", "status": "SETTLED", "title_es": "IA: Claude API claude-sonnet-4-6", "title_en": "AI: Claude API claude-sonnet-4-6", "rationale_es": "Mejor contexto largo y manejo de español.", "rationale_en": "Best long context and Spanish handling.", "impact": "MODULES: 2.2, 4.1" },
+    { "id": "D003", "date": "2026-06-08", "status": "SETTLED", "title_es": "WhatsApp: Meta Business API directa", "title_en": "WhatsApp: Direct Meta Business API", "rationale_es": "Menor costo, sin intermediario.", "rationale_en": "Lower cost, no intermediary.", "impact": "MODULES: 2.1, 2.2" },
+    { "id": "D004", "date": "2026-06-08", "status": "SETTLED", "title_es": "Scraping: Playwright", "title_en": "Scraping: Playwright", "rationale_es": "Multi-browser, mejor manejo de SPAs y anti-bot.", "rationale_en": "Multi-browser, better SPA and anti-bot handling.", "impact": "MODULE: 3.1" },
+    { "id": "D005", "date": "2026-06-08", "status": "SETTLED", "title_es": "RBAC: Supabase RLS + middleware Next.js (doble capa)", "title_en": "RBAC: Supabase RLS + Next.js middleware (double layer)", "rationale_es": "Seguridad en BD y en rutas.", "rationale_en": "Security at DB and route level.", "impact": "GLOBAL" }
+  ]
+}

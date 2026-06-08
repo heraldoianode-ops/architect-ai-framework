@@ -1,0 +1,4 @@
+{
+  "_meta": { "file": "tech_debt.json", "description_es": "Deuda técnica del proyecto.", "description_en": "Project technical debt." },
+  "debts": []
+}

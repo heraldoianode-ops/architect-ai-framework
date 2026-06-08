@@ -1,0 +1,13 @@
+{
+  "_meta": { "file": "services.json", "description_es": "Servicios externos y estado.", "description_en": "External services and status." },
+  "services": [
+    { "id": "SVC-001", "name": "Supabase", "type": "database+auth+storage", "status": "PENDING_SETUP", "required_by": "1.1" },
+    { "id": "SVC-002", "name": "Meta WhatsApp Business API", "type": "messaging", "status": "PENDING_SETUP", "required_by": "2.1" },
+    { "id": "SVC-003", "name": "Claude API (Anthropic)", "type": "ai", "status": "PENDING_SETUP", "required_by": "2.2" },
+    { "id": "SVC-004", "name": "Resend", "type": "email", "status": "PENDING_SETUP", "required_by": "2.3" },
+    { "id": "SVC-005", "name": "Google Drive API", "type": "file_storage", "status": "PENDING_SETUP", "required_by": "3.2" },
+    { "id": "SVC-006", "name": "Mapbox", "type": "maps", "status": "PENDING_SETUP", "required_by": "1.2" },
+    { "id": "SVC-007", "name": "Sentry", "type": "monitoring", "status": "PENDING_SETUP", "required_by": "1.1" },
+    { "id": "SVC-008", "name": "Vercel", "type": "hosting", "status": "PENDING_SETUP", "required_by": "1.1" }
+  ]
+}
