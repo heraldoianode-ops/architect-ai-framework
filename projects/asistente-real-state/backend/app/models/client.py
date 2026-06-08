@@ -1,55 +1,55 @@
 import uuid
 import enum
-from sqlalchemy import String, Numeric, SmallInteger, Text, ARRAY, Enum as SAEnum, JSON, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from datetime import datetime
+from sqlalchemy import DateTime, Enum as PGEnum, ForeignKey, String, Text, text, Index
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from pgvector.sqlalchemy import Vector
-from app.models.base import Base, TimestampMixin, UUIDMixin
-from app.models.user import UserRole
-from app.models.property import PropertyType
+from app.core.database import Base
 
 
 class LeadStage(str, enum.Enum):
     nuevo = "nuevo"
     contactado = "contactado"
-    interesado = "interesado"
-    visita_agendada = "visita_agendada"
-    oferta_realizada = "oferta_realizada"
+    calificado = "calificado"
+    propuesta = "propuesta"
     negociacion = "negociacion"
-    cerrado_ganado = "cerrado_ganado"
-    cerrado_perdido = "cerrado_perdido"
+    cerrado = "cerrado"
+    perdido = "perdido"
 
 
-class Client(Base, UUIDMixin, TimestampMixin):
+LEAD_STAGE_ORDER = [
+    LeadStage.nuevo,
+    LeadStage.contactado,
+    LeadStage.calificado,
+    LeadStage.propuesta,
+    LeadStage.negociacion,
+    LeadStage.cerrado,
+]
+
+
+class Client(Base):
     __tablename__ = "clients"
 
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
     agent_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
-
-    # Identity
-    full_name: Mapped[str] = mapped_column(String, nullable=False)
-    email: Mapped[str | None] = mapped_column(String, nullable=True)
-    phone: Mapped[str | None] = mapped_column(String, nullable=True)
-    whatsapp_id: Mapped[str | None] = mapped_column(String, unique=True, nullable=True, index=True)
-
-    # Profile
-    role: Mapped[UserRole] = mapped_column(SAEnum(UserRole, name="user_role", create_type=False), nullable=False, default=UserRole.cliente_comprador)
-    source: Mapped[str | None] = mapped_column(String, nullable=True)
-
-    # Buyer preferences (semantic matching)
-    search_zones: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
-    search_types: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
-    budget_min: Mapped[float | None] = mapped_column(Numeric(14, 2), nullable=True)
-    budget_max: Mapped[float | None] = mapped_column(Numeric(14, 2), nullable=True)
-    preferences_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    full_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    email: Mapped[str | None] = mapped_column(String(254), nullable=True, unique=True)
+    phone: Mapped[str | None] = mapped_column(String(30), nullable=True, unique=True)
+    source: Mapped[str | None] = mapped_column(String(60), nullable=True)
+    notes: Mapped[str] = mapped_column(Text, nullable=False, default="")
+    lead_stage: Mapped[LeadStage] = mapped_column(PGEnum(LeadStage, name="lead_stage_enum"), nullable=False, default=LeadStage.nuevo, index=True)
     preference_embedding: Mapped[list | None] = mapped_column(Vector(768), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("now()"))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=text("now()"))
 
-    # Pipeline
-    stage: Mapped[LeadStage] = mapped_column(SAEnum(LeadStage, name="lead_stage", create_type=False), default=LeadStage.nuevo, nullable=False, index=True)
-    score: Mapped[int] = mapped_column(SmallInteger, default=0)
-    closing_prob: Mapped[float | None] = mapped_column(Numeric(5, 2), nullable=True)
+    agent = relationship("User", lazy="raise")
+    interactions = relationship("Interaction", back_populates="client", lazy="raise", order_by="Interaction.created_at.desc()")
 
-    # Tags & notes
-    tags: Mapped[list[str] | None] = mapped_column(ARRAY(String), nullable=True)
-    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
-
-    metadata_: Mapped[dict] = mapped_column("metadata", JSON, default=dict)
+    __table_args__ = (
+        Index(
+            "ix_clients_fts",
+            text("to_tsvector('spanish', coalesce(full_name,'') || ' ' || coalesce(email,'') || ' ' || coalesce(notes,''))"),
+            postgresql_using="gin",
+        ),
+    )
