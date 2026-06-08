@@ -1,0 +1,537 @@
+{
+  "_meta": {
+    "file": "workflow.json",
+    "version": "2.2.0",
+    "framework": "ARCHITECT-AI",
+    "orchestrator": "claude-code",
+    "description_es": "Reglas operativas completas del sistema. Uso exclusivo de la IA. Orquestador: Claude Code.",
+    "description_en": "Complete operational rules for the system. AI use only. Orchestrator: Claude Code.",
+    "last_updated": "YYYY-MM-DD"
+  },
+  "communication": {
+    "user_language": "natural",
+    "internal_language": "machine",
+    "note_es": "El usuario siempre recibe lenguaje natural. El LM es exclusivamente interno.",
+    "note_en": "User always receives natural language. LM is exclusively internal.",
+    "documentation_language": "bilingual_ES_EN",
+    "code_language": "EN",
+    "comments_language": "bilingual_ES_EN",
+    "commits_language": "EN"
+  },
+  "color_protocol": {
+    "green": {
+      "tags": ["[CREAR]", "[MODIFICAR]", "[INCRUSTAR]", "[REEMPLAZAR]", "[PEGAR]"],
+      "meaning_es": "Crear o modificar",
+      "meaning_en": "Create or modify"
+    },
+    "red": {
+      "tags": ["[BORRAR]", "[ELIMINAR]"],
+      "meaning_es": "Destruir o remover",
+      "meaning_en": "Destroy or remove"
+    },
+    "blue": {
+      "tags": ["[BUSCAR]", "[VERIFICAR]"],
+      "meaning_es": "Leer o confirmar antes de actuar",
+      "meaning_en": "Read or confirm before acting"
+    },
+    "rule_es": "Siempre AZUL antes de VERDE o ROJO. Nunca actuar a ciegas.",
+    "rule_en": "Always BLUE before GREEN or RED. Never act blindly."
+  },
+  "internal_machine_language": {
+    "description_es": "Protocolo interno de la IA. Nunca se expone al usuario.",
+    "description_en": "Internal AI protocol. Never exposed to the user.",
+    "verbs": {
+      ">>NEW": { "meaning_es": "Crear recurso que NO existe", "meaning_en": "Create resource that does NOT exist", "confirm": false },
+      ">>MOD": { "meaning_es": "Modificar recurso existente", "meaning_en": "Modify existing resource", "confirm": false },
+      ">>DEL": { "meaning_es": "Eliminar recurso (irreversible)", "meaning_en": "Delete resource (irreversible)", "confirm": "catastrophic_password" },
+      ">>GET": { "meaning_es": "Leer o inspeccionar recurso", "meaning_en": "Read or inspect resource", "confirm": false },
+      ">>RUN": { "meaning_es": "Ejecutar comando o script", "meaning_en": "Execute command or script", "confirm": "only_if_prod" },
+      ">>LINK": { "meaning_es": "Conectar dos recursos", "meaning_en": "Connect two resources", "confirm": false },
+      ">>PUSH": { "meaning_es": "Commit y push al repositorio", "meaning_en": "Commit and push to repository", "confirm": "only_if_main" },
+      ">>PUB": { "meaning_es": "Publicar módulo al library", "meaning_en": "Publish module to library", "confirm": false },
+      ">>SYNC": { "meaning_es": "Sincronizar archivos AI_CORE", "meaning_en": "Sync AI_CORE files", "confirm": false },
+      ">>TEST": { "meaning_es": "Ejecutar suite de tests", "meaning_en": "Run test suite", "confirm": false },
+      ">>LOCK": { "meaning_es": "Proteger recurso contra modificación", "meaning_en": "Lock resource against modification", "confirm": false },
+      ">>SNAP": { "meaning_es": "Guardar snapshot del estado", "meaning_en": "Save state snapshot", "confirm": false }
+    },
+    "scopes": {
+      ":FILE": "Archivo en repositorio",
+      ":FN": "Función dentro de archivo",
+      ":DB": "Tabla o query en base de datos",
+      ":ENV": "Variable de entorno",
+      ":MOD": "Módulo en el library",
+      ":SVC": "Servicio externo",
+      ":FEAT": "Feature en features.json",
+      ":DEBT": "Deuda técnica",
+      ":PHASE": "Fase del roadmap",
+      ":CFG": "Archivo de configuración AI_CORE",
+      ":SNAP": "Snapshot de estado"
+    },
+    "pipeline_rules": {
+      "execution": "strict_sequential",
+      "interrupt_on": [">>DEL requires password", ">>PUSH to main requires confirmation", "unrecoverable_error"],
+      "on_error_es": "Detener pipeline, reportar en qué token falló, no continuar",
+      "on_error_en": "Stop pipeline, report which token failed, do not continue"
+    },
+    "natural_to_lm_translation": {
+      "enabled": true,
+      "description_es": "La IA traduce internamente lenguaje natural a LM antes de ejecutar. El usuario nunca ve el LM.",
+      "description_en": "AI internally translates natural language to LM before executing. User never sees LM."
+    }
+  },
+  "rules": {
+    "R1_core_file_conflict": {
+      "name_es": "Conflicto entre archivos AI_CORE",
+      "name_en": "AI_CORE file conflict",
+      "trigger_es": "Dato en AI_CORE no coincide con el código real",
+      "trigger_en": "Data in AI_CORE does not match real code",
+      "action_es": "Verificar veracidad del dato contra el código. Si no coincide → preguntar al usuario cómo proseguir antes de continuar.",
+      "action_en": "Verify data accuracy against code. If mismatch → ask user how to proceed before continuing.",
+      "priority": "CRITICAL"
+    },
+    "R2_branch_control": {
+      "name_es": "Control de rama de trabajo",
+      "name_en": "Working branch control",
+      "trigger_es": "Trabajo detectado en rama incorrecta",
+      "trigger_en": "Work detected on wrong branch",
+      "action_es": "Avisar al usuario. Definir rama del proyecto una sola vez y guardar en este protocolo. Todo el trabajo va en esa rama. Pase a main solo cuando el usuario lo solicita explícitamente.",
+      "action_en": "Warn user. Define project branch once and save in this protocol. All work goes to that branch. Merge to main only when user explicitly requests.",
+      "project_branch": null,
+      "main_branch": "main",
+      "note_es": "project_branch se completa en el acuerdo inicial del proyecto y nunca se modifica sin confirmación del usuario.",
+      "note_en": "project_branch is set in the initial project agreement and never modified without user confirmation."
+    },
+    "R3_node_granularity": {
+      "name_es": "Granularidad de nodos y fases",
+      "name_en": "Node and phase granularity",
+      "trigger_es": "Inicio de proyecto o adición de feature",
+      "trigger_en": "Project start or feature addition",
+      "action_es": "Fases, nodos y pasos se definen en acuerdo previo al inicio del proyecto. Features se agregan según el sector al que pertenecen. No se crean nodos fuera del acuerdo sin confirmación.",
+      "action_en": "Phases, nodes and steps defined in agreement before project start. Features added according to their sector. No nodes created outside agreement without confirmation.",
+      "requires_initial_agreement": true
+    },
+    "R4_new_env_variable": {
+      "name_es": "Variable de entorno nueva",
+      "name_en": "New environment variable",
+      "trigger_es": "El código nuevo requiere una ENV no registrada",
+      "trigger_en": "New code requires an unregistered ENV variable",
+      "action_es": "1. Verificar si existe en el repositorio algo que ya cumpla la función → si existe, usarlo. 2. Si no existe → agregar al código, registrar en config.json.files_map.env_vars y services.json, y avisar al usuario.",
+      "action_en": "1. Check if repository already has something fulfilling the function → if yes, use it. 2. If not → add to code, register in config.json.files_map.env_vars and services.json, notify user.",
+      "priority": "HIGH"
+    },
+    "R5_breaking_change": {
+      "name_es": "Breaking change — estándar industria",
+      "name_en": "Breaking change — industry standard",
+      "trigger_es": "Modificación que rompe la firma de función consumida por otros módulos",
+      "trigger_en": "Modification that breaks function signature consumed by other modules",
+      "steps_es": ["1. Identificar todos los consumidores de la función antes de tocarla", "2. Deprecar la versión vieja, crear la nueva en paralelo", "3. Migrar consumidores uno a uno", "4. Eliminar la versión deprecada solo cuando todos migraron"],
+      "steps_en": ["1. Identify all consumers of the function before touching it", "2. Deprecate old version, create new one in parallel", "3. Migrate consumers one by one", "4. Remove deprecated version only when all consumers are migrated"]
+    },
+    "R6_bilingual_documentation": {
+      "name_es": "Documentación bilingüe obligatoria",
+      "name_en": "Mandatory bilingual documentation",
+      "rules_es": ["Toda documentación → ES y EN", "Código → EN siempre", "Comentarios en código → ES y EN", "Commits → EN", "README → ES y EN", "Archivos AI_CORE → ES y EN en todos los campos descriptivos"],
+      "rules_en": ["All documentation → ES and EN", "Code → EN always", "Code comments → ES and EN", "Commits → EN", "README → ES and EN", "AI_CORE files → ES and EN in all descriptive fields"]
+    },
+    "R7_outdated_module": {
+      "name_es": "Módulo desactualizado en library",
+      "name_en": "Outdated module in library",
+      "trigger_es": "Función en proyecto diverge de su versión en modules.json",
+      "trigger_en": "Project function diverges from its version in modules.json",
+      "action_es": "Actualizar el módulo en el library inmediatamente al detectar la divergencia. Luego continuar con la tarea.",
+      "action_en": "Update the module in the library immediately upon detecting divergence. Then continue with the task."
+    },
+    "R8_minimum_tests": {
+      "name_es": "Test mínimo obligatorio — pirámide alineada",
+      "name_en": "Mandatory minimum test — aligned pyramid",
+      "coverage_critical_functions": "80%",
+      "levels": {
+        "L1": { "trigger_es": "Función cumple su propósito de forma aislada", "trigger_en": "Function fulfills its purpose in isolation", "required_es": "1 test unitario", "required_en": "1 unit test", "tools": ["Jest", "Vitest", "PyTest"] },
+        "L2": { "trigger_es": "Función se integra con otras partes del sistema", "trigger_en": "Function integrates with other system parts", "required_es": "1 test unitario + 1 test de integración", "required_en": "1 unit test + 1 integration test", "tools": ["Jest", "Supertest", "Testing Library"] },
+        "L3": { "trigger_es": "Cambio puede afectar sectores ya funcionando en producción", "trigger_en": "Change may affect sectors already running in production", "required_es": "1 test unitario + 1 test de integración + 1 E2E del flujo afectado", "required_en": "1 unit test + 1 integration test + 1 E2E of affected flow", "tools": ["Jest", "Supertest", "Playwright", "Cypress"], "note_es": "El E2E debe cubrir específicamente los flujos críticos del sector en riesgo", "note_en": "E2E must specifically cover critical flows of the at-risk sector" }
+      },
+      "node_complete_condition_es": "Un nodo se marca COMPLETE solo cuando sus tests mínimos pasan",
+      "node_complete_condition_en": "A node is marked COMPLETE only when its minimum tests pass"
+    },
+    "R9_service_down": {
+      "name_es": "Servicio externo caído",
+      "name_en": "External service down",
+      "trigger_es": "Falla de conexión a servicio externo durante operación",
+      "trigger_en": "Connection failure to external service during operation",
+      "action_es": "Frenar la operación completa con aviso claro. Registrar en services.json el estado como DOWN con timestamp. Esperar hasta que el servicio vuelva o el usuario solicite reintentar manualmente.",
+      "action_en": "Stop the complete operation with clear warning. Register in services.json the status as DOWN with timestamp. Wait until service recovers or user manually requests retry.",
+      "user_commands": ["REINTENTAR", "RETRY"]
+    },
+    "R10_semantic_versioning": {
+      "name_es": "Versionado semántico",
+      "name_en": "Semantic versioning",
+      "format": "MAJOR.MINOR.PATCH",
+      "rules": {
+        "PATCH_es": "Corrección de bug o ajuste menor sin cambio funcional → sube automáticamente",
+        "PATCH_en": "Bug fix or minor adjustment without functional change → auto-increment",
+        "MINOR_es": "Feature nueva que no rompe nada existente → sube automáticamente",
+        "MINOR_en": "New feature that breaks nothing existing → auto-increment",
+        "MAJOR_es": "Breaking change → PREGUNTAR al usuario → hacer pruebas de lo que rompe y lo que agrega → subir SOLO si todo funciona",
+        "MAJOR_en": "Breaking change → ASK user → test what breaks and what is added → increment ONLY if everything works"
+      },
+      "auto_increment": ["PATCH", "MINOR"],
+      "requires_confirmation": ["MAJOR"]
+    },
+    "R5_node_time_tracking": {
+      "name_es": "Rastreo de tiempo por nodo",
+      "name_en": "Node time tracking",
+      "fields_added_to_nodes": ["started_at", "completed_at", "estimated_hours", "actual_hours"],
+      "action_es": "Al iniciar nodo → registrar started_at. Al completar → registrar completed_at y calcular actual_hours.",
+      "action_en": "On node start → record started_at. On complete → record completed_at and calculate actual_hours.",
+      "feeds_es": "meta.json nivel 2 con datos reales de estimacion vs tiempo real.",
+      "feeds_en": "meta.json level 2 with real data on estimate vs actual time."
+    },
+    "R16_architectural_coherence": {
+      "name_es": "Coherencia arquitectural",
+      "name_en": "Architectural coherence",
+      "trigger_es": "Al agregar feature o modificar arquitectura",
+      "trigger_en": "When adding feature or modifying architecture",
+      "action_es": "Cargar decisions.json y verificar que la propuesta no contradiga ninguna decision ACTIVE o SETTLED.",
+      "action_en": "Load decisions.json and verify proposal does not contradict any ACTIVE or SETTLED decision.",
+      "on_conflict_es": "Alertar con la decision que se contradice y proponer alternativa coherente.",
+      "on_conflict_en": "Alert with the contradicted decision and propose coherent alternative."
+    }
+  },
+  "auto_save": {
+    "orchestrator": "claude-code",
+    "description_es": "Auto-guardado nativo con Claude Code. Sin copy-paste manual. Escritura directa a disco y commit automático.",
+    "description_en": "Native auto-save with Claude Code. No manual copy-paste. Direct disk write and automatic commit.",
+    "layer_1_milestone": {
+      "name_es": "Guardado por hito — escritura directa",
+      "name_en": "Milestone save — direct write",
+      "triggers_es": ["Nodo completado", "Feature COMPLETE", "Deuda nueva", "PUSH exitoso", "Módulo publicado"],
+      "triggers_en": ["Node completed", "Feature COMPLETE", "New debt", "Successful PUSH", "Module published"],
+      "action_es": "Claude Code escribe delta directamente en archivo __AI_CORE__ correspondiente. Sin intervención del usuario.",
+      "action_en": "Claude Code writes delta directly to corresponding __AI_CORE__ file. No user intervention.",
+      "method": "fs.writeFile → git add → git commit",
+      "commit_message_format": "chore(snap): milestone — {trigger} [{YYYY-MM-DDTHHMMSS}]"
+    },
+    "layer_2_predictive": {
+      "name_es": "Guardado predictivo — commit silencioso",
+      "name_en": "Predictive save — silent commit",
+      "trigger_es": "Tokens restantes < 20% del contexto",
+      "trigger_en": "Remaining tokens < 20% of context",
+      "action_es": "Claude Code escribe todos los archivos AI_CORE modificados en la sesión y hace commit.",
+      "action_en": "Claude Code writes all AI_CORE files modified in session and commits.",
+      "method": "fs.writeFile (all modified) → git add __AI_CORE__/ → git commit",
+      "alert_es": "⚠️ CONTEXTO AL 80% — Estado guardado en repo. Continuidad garantizada.",
+      "alert_en": "⚠️ CONTEXT AT 80% — State saved to repo. Continuity guaranteed.",
+      "commit_message_format": "chore(snap): predictive save [{YYYY-MM-DDTHHMMSS}]"
+    },
+    "layer_3_session_end": {
+      "name_es": "SNAP FINAL — commit completo automático",
+      "name_en": "FINAL SNAP — automatic full commit",
+      "triggers_natural_es": ["gracias", "hasta manana", "listo por hoy", "cerramos", "hasta luego"],
+      "triggers_natural_en": ["thanks", "see you tomorrow", "done for today", "closing", "bye"],
+      "trigger_command": "CERRAR SESION",
+      "action_es": "Claude Code escribe todos los archivos AI_CORE, hace commit al branch del proyecto y push. Muestra resumen de sesion.",
+      "action_en": "Claude Code writes all AI_CORE files, commits to project branch and pushes. Shows session summary.",
+      "method": "fs.writeFile (all) → git add __AI_CORE__/ → git commit → git push origin [project_branch]",
+      "commit_message_format": "chore(snap): session end [{YYYY-MM-DDTHHMMSS}]",
+      "snap_includes": ["config.json", "features.json", "tech_debt.json", "decisions.json", "patterns.json", "health.json"],
+      "session_summary_es": "Resumen: completado hoy, pendiente manana, deudas nuevas, proximo nodo.",
+      "session_summary_en": "Summary: completed today, pending tomorrow, new debts, next node."
+    }
+  },
+  "meta_learning": {
+    "description_es": "Sistema de aprendizaje del framework en dos niveles.",
+    "description_en": "Two-level framework learning system.",
+    "level_1_project": {
+      "name_es": "Meta-aprendizaje de proyecto",
+      "name_en": "Project meta-learning",
+      "file": "patterns.json",
+      "tracks_es": ["Bugs que se repiten por zona", "Módulos modificados frecuentemente (volátiles)", "Decisiones que se revierten", "Estimaciones vs tiempo real por tipo de nodo"],
+      "tracks_en": ["Recurring bugs by zone", "Frequently modified modules (volatile)", "Reverted decisions", "Estimates vs real time by node type"],
+      "action_es": "Al detectar patrón → reforzar verificaciones en esa zona automáticamente en siguientes sesiones.",
+      "action_en": "On pattern detection → automatically reinforce checks in that zone in following sessions."
+    },
+    "level_2_cross_project": {
+      "name_es": "Meta-aprendizaje entre proyectos",
+      "name_en": "Cross-project meta-learning",
+      "file": "__MODULE_LIBRARY__/meta.json",
+      "activation_condition_es": "Activar cuando el segundo proyecto inicia en el mismo framework.",
+      "activation_condition_en": "Activate when the second project starts on the same framework.",
+      "tracks_es": ["Módulos más reutilizados entre proyectos", "Deudas técnicas universales (preventivas)", "Fases históricamente subestimadas en tiempo"],
+      "tracks_en": ["Most reused modules across projects", "Universal tech debts (preventive)", "Historically underestimated phases in time"],
+      "action_es": "Deudas universales → verificaciones preventivas automáticas en proyectos nuevos. Fases subestimadas → ajuste de estimación en acuerdo inicial.",
+      "action_en": "Universal debts → automatic preventive checks in new projects. Underestimated phases → estimation adjustment in initial agreement."
+    }
+  },
+  "technical_health": {
+    "description_es": "Índice de salud técnica calculado al arrancar cada sesión.",
+    "description_en": "Technical health index calculated at each session start.",
+    "file": "health.json",
+    "thresholds": {
+      "critical_debt_count": 3,
+      "action_es": "Si deudas CRITICAL o HIGH superan umbral → proponer sesión de deuda antes de continuar features.",
+      "action_en": "If CRITICAL or HIGH debts exceed threshold → propose debt session before continuing features."
+    }
+  },
+  "module_library": {
+    "description_es": "Repositorio de funciones modulares reutilizables entre proyectos.",
+    "description_en": "Repository of reusable modular functions across projects.",
+    "registry_file": "__AI_CORE__/modules.json",
+    "library_path": "__MODULE_LIBRARY__/",
+    "detection_es": "Cuando una función es suficientemente genérica → la IA propone publicarla al library.",
+    "detection_en": "When a function is generic enough → AI proposes publishing it to the library.",
+    "publish_protocol": ["Extraer función a /module_library/[categoría]/[nombre].js", "Generar README.md bilingüe del módulo", "Crear entrada en modules.json", "Commit: chore(modules): publish MOD-[id] [nombre]"],
+    "install_command": "INSTALAR MÓDULO [MOD-id o nombre]",
+    "update_rule_es": "Si función en proyecto diverge de su versión en library → actualizar library inmediatamente.",
+    "update_rule_en": "If project function diverges from library version → update library immediately."
+  },
+  "anti_patterns": {
+    "forbidden_es": ["Saludar al usuario (Hola, Claro, Por supuesto)", "Pedir disculpas (Lo siento, Perdón)", "Repetir archivos completos sin solicitud explícita", "Actuar sobre archivo sin verificar su estado primero", "Superar 1000 tokens sin fragmentar", "Ejecutar acciones destructivas sin contraseña catastrófica", "Proponer más de 3 opciones de diseño simultáneas", "Sugerir commit por cada archivo individual", "Exponer el Lenguaje Máquina interno al usuario", "Marcar nodo COMPLETE sin tests mínimos pasando", "Continuar con features si deuda crítica supera umbral"],
+    "forbidden_en": ["Greet user (Hello, Sure, Of course)", "Apologize (Sorry, My bad)", "Repeat full files without explicit request", "Act on file without verifying its state first", "Exceed 1000 tokens without fragmenting", "Execute destructive actions without catastrophic password", "Propose more than 3 design options simultaneously", "Suggest commit for each individual file", "Expose internal Machine Language to user", "Mark node COMPLETE without minimum tests passing", "Continue with features if critical debt exceeds threshold"]
+  },
+  "session_commands": {
+    "ARRANCAR": { "action_es": "Cargar contexto e iniciar sesión", "action_en": "Load context and start session" },
+    "ESTADO": { "action_es": "Dashboard compacto del proyecto", "action_en": "Compact project dashboard" },
+    "INICIAR PROYECTO": { "action_es": "Crear estructura __AI_CORE__ desde cero con acuerdo inicial", "action_en": "Create __AI_CORE__ structure from scratch with initial agreement" },
+    "AUDITAR PROYECTO": { "action_es": "Mapear proyecto heredado y generar __AI_CORE__", "action_en": "Map inherited project and generate __AI_CORE__" },
+    "SIGUIENTE": { "action_es": "Continuar fragmento pendiente", "action_en": "Continue pending fragment" },
+    "CERRAR SESIÓN": { "action_es": "Protocolo de cierre, SNAP FINAL y guardado", "action_en": "Closing protocol, FINAL SNAP and save" },
+    "INSTALAR MÓDULO": { "action_es": "Descargar módulo del library al proyecto", "action_en": "Download module from library to project" },
+    "PUBLICAR MÓDULO": { "action_es": "Subir función al module library", "action_en": "Upload function to module library" },
+    "DEUDA [TD-id]": { "action_es": "Detalle de deuda técnica específica", "action_en": "Specific tech debt detail" },
+    "FEATURE [F-id]": { "action_es": "Detalle de feature específica", "action_en": "Specific feature detail" },
+    "REINTENTAR": { "action_es": "Reintentar operación tras servicio caído", "action_en": "Retry operation after service recovery" },
+    "SALUD": { "action_es": "Índice de salud técnica del proyecto", "action_en": "Project technical health index" }
+  },
+  "startup_protocol": {
+    "steps_es": ["0. Claude Code lee todos los archivos __AI_CORE__/ directamente del disco.", "1. Leer config.json → extraer project, current_node, progress_pct", "2. Leer workflow.json → restaurar reglas activas", "3. Calcular health.json → alertar si deuda supera umbral", "4. Verificar BUGS_CONOCIDOS y PENDIENTE_MANANA", "5. Emitir una sola línea de confirmación", "6. Si patterns.json tiene patrones activos → aplicar verificaciones reforzadas"],
+    "steps_en": ["0. Claude Code reads all __AI_CORE__/ files directly from disk.", "1. Read config.json → extract project, current_node, progress_pct", "2. Read workflow.json → restore active rules", "3. Calculate health.json → alert if debt exceeds threshold", "4. Check KNOWN_BUGS and PENDING_TOMORROW", "5. Emit single confirmation line", "6. If patterns.json has active patterns → apply reinforced checks"],
+    "confirmation_format": "[project] listo al [progress_pct]%. Nodo: [current_node]. [health_alert_if_any]"
+  },
+  "response_format": {
+    "blocks": ["1. ACCIONES", "2. CONTROL DE INTEGRACIÓN", "3. GIT", "4. TEST"],
+    "git_states": ["📦 ACUMULAR", "🚀 COMMIT+DEPLOY", "⚠️ DEPLOY CRÍTICO"],
+    "fragment_footer": "━━━\n[FRAGMENTO X/N] — Fase: [nombre] — Paso: [nombre]\nCompletado: [...]\nPendiente: [...]\n→ Continuar: SIGUIENTE\n━━━"
+  },
+  "saas_context": {
+    "description_es": "Este framework opera en una SaaS de soluciones y desarrollo de software. Cada proyecto es un producto o cliente independiente con su propio __AI_CORE__. El __MODULE_LIBRARY__ es compartido entre todos los proyectos.",
+    "description_en": "This framework operates in a software solutions and development SaaS. Each project is an independent product or client with its own __AI_CORE__. The __MODULE_LIBRARY__ is shared across all projects.",
+    "project_isolation": true,
+    "shared_resources": ["__MODULE_LIBRARY__", "meta.json"]
+  },
+  "claude_code_context": {
+    "description_es": "Capacidades exclusivas disponibles con Claude Code como orquestador.",
+    "description_en": "Exclusive capabilities available with Claude Code as orchestrator.",
+    "filesystem": {
+      "can_read_write_es": "Lectura y escritura directa de todos los archivos __AI_CORE__. Sin copy-paste.",
+      "can_read_write_en": "Direct read/write of all __AI_CORE__ files. No copy-paste.",
+      "watch_es": "Puede detectar cambios en archivos del proyecto en tiempo real.",
+      "watch_en": "Can detect project file changes in real time."
+    },
+    "git": {
+      "full_access": true,
+      "operations_es": ["git status", "git add", "git commit", "git push", "git pull", "git branch", "git checkout", "git merge", "git log"],
+      "operations_en": ["All standard git operations available natively"],
+      "auto_commit_snap": true,
+      "auto_push_on_snap": true
+    },
+    "netlify": {
+      "deploy_command_es": "netlify deploy --prod ejecutado directamente desde Claude Code.",
+      "deploy_command_en": "netlify deploy --prod executed directly from Claude Code.",
+      "preview_deploy_es": "netlify deploy (sin --prod) para preview antes de produccion.",
+      "preview_deploy_en": "netlify deploy (without --prod) for preview before production."
+    },
+    "terminal": {
+      "can_run_tests": true,
+      "can_install_deps": true,
+      "can_run_scripts": true,
+      "note_es": "Todos los comandos de test, install y scripts se ejecutan directamente.",
+      "note_en": "All test, install and script commands execute directly."
+    },
+    "module_library": {
+      "install_method_es": "Copia directa de archivos del __MODULE_LIBRARY__ al proyecto. Sin descarga manual.",
+      "install_method_en": "Direct file copy from __MODULE_LIBRARY__ to project. No manual download.",
+      "publish_method_es": "Copia directa del archivo al __MODULE_LIBRARY__ + commit automático.",
+      "publish_method_en": "Direct file copy to __MODULE_LIBRARY__ + automatic commit."
+    },
+    "vs_claude_ai": {
+      "snap_manual_copy": false,
+      "snap_auto_commit": true,
+      "deploy_manual": false,
+      "deploy_auto": true,
+      "module_install_manual": false,
+      "module_install_auto": true,
+      "note_es": "Todas las operaciones que en claude.ai requerían acción manual son automáticas en Claude Code.",
+      "note_en": "All operations that required manual action in claude.ai are automatic in Claude Code."
+    }
+  },
+  "selective_context_loading": {
+    "description_es": "Carga selectiva de contexto para minimizar tokens en arranque.",
+    "description_en": "Selective context loading to minimize tokens on startup.",
+    "on_startup_always": {
+      "config.json": ["meta.project", "meta.version", "roadmap.current_node", "roadmap.progress_pct", "session_state"],
+      "workflow.json": "full",
+      "health.json": ["status", "dimensions.debt", "alerts"],
+      "session_digest.json": ["last_3_sessions"],
+      "patterns.json": ["reinforced_checks — active only"]
+    },
+    "on_demand": {
+      "tech_debt.json": "DEUDA command or touching affected file",
+      "features.json": "working on feature or FEATURE command",
+      "decisions.json": "architecture proposal or R16 coherence check",
+      "modules.json": "install or publish module",
+      "services.json": "connect or check external service",
+      "services.private.json": "env vars or credentials needed",
+      "schema.sql": "touching database"
+    },
+    "estimated_token_savings_es": "40-60% en tokens de arranque vs carga completa.",
+    "estimated_token_savings_en": "40-60% in startup tokens vs full load."
+  },
+  "turbo_mode": {
+    "description_es": "Modo de ejecución para tareas atómicas < 15 minutos.",
+    "description_en": "Execution mode for atomic tasks < 15 minutes.",
+    "trigger": "TURBO [task description]",
+    "skips": ["health check", "patterns analysis", "meta-learning", "session digest"],
+    "loads": ["config.json — current_node only", "workflow.json — rules only"],
+    "snap_on_complete": true,
+    "note_es": "No usar para tareas que afecten arquitectura, DB o servicios externos.",
+    "note_en": "Do not use for tasks affecting architecture, DB or external services."
+  },
+  "session_digest_rules": {
+    "file": "__AI_CORE__/session_digest.json",
+    "max_sessions": 5,
+    "archive_to": "__AI_CORE__/changelog.md",
+    "update_on": "CERRAR SESION snap",
+    "settled_decision_cache_es": "Decisiones evaluadas 3+ veces con mismo resultado → SETTLED → no re-evaluar.",
+    "settled_decision_cache_en": "Decisions evaluated 3+ times with same result → SETTLED → do not re-evaluate.",
+    "description_es": "El arranque lee session_digest.json, no changelog.md completo. Ahorra tokens.",
+    "description_en": "Startup reads session_digest.json, not full changelog.md. Saves tokens."
+  },
+  "decision_cache": {
+    "description_es": "Decisiones recurrentes precacheadas. Se aplican directamente sin re-evaluar.",
+    "description_en": "Recurring decisions precached. Applied directly without re-evaluation.",
+    "settle_threshold": 3,
+    "settle_threshold_note_es": "Una decision evaluada 3+ veces con mismo resultado se marca SETTLED en decisions.json.",
+    "settle_threshold_note_en": "A decision evaluated 3+ times with same result is marked SETTLED in decisions.json.",
+    "on_settled_es": "Agregar a session_digest.json.settled_decisions_cache para acceso rapido.",
+    "on_settled_en": "Add to session_digest.json.settled_decisions_cache for fast access."
+  },
+  "client_context_protocol": {
+    "description_es": "Contexto de cliente. Se pregunta al inicio de cada proyecto.",
+    "description_en": "Client context. Asked at the start of each project.",
+    "project_types": {
+      "client_external": {
+        "fields_es": ["nombre_cliente", "nda_activo", "stack_aprobado", "restricciones_contractuales", "contacto_tecnico", "fecha_entrega"],
+        "fields_en": ["client_name", "active_nda", "approved_stack", "contractual_restrictions", "technical_contact", "delivery_date"]
+      },
+      "internal_product": {
+        "fields_es": ["nombre_producto", "responsable_interno", "objetivo_negocio", "fecha_lanzamiento"],
+        "fields_en": ["product_name", "internal_owner", "business_goal", "launch_date"]
+      },
+      "both": "Combina campos de ambos tipos segun el proyecto."
+    },
+    "stored_in": "__AI_CORE__/config.json.client_context",
+    "asked_on": "INICIAR PROYECTO"
+  },
+  "module_contracts": {
+    "description_es": "Contratos de interfaz entre modulos. Mas preciso que R5 para breaking changes.",
+    "description_en": "Module interface contracts. More precise than R5 for breaking changes.",
+    "stored_in": "__AI_CORE__/modules.json — campo contracts por modulo",
+    "contract_fields": ["inputs", "outputs", "types", "throws", "version_contract"],
+    "check_on_modify_es": "Antes de modificar modulo → verificar contratos activos → evaluar breaking changes segun R5.",
+    "check_on_modify_en": "Before modifying module → check active contracts → evaluate breaking changes per R5."
+  },
+  "pre_mortem_protocol": {
+    "description_es": "Analisis de riesgos antes de iniciar cada fase. Tecnica Google pre-mortem.",
+    "description_en": "Risk analysis before starting each phase. Google pre-mortem technique.",
+    "trigger_es": "Al iniciar nueva fase del roadmap",
+    "trigger_en": "When starting new roadmap phase",
+    "inputs": ["patterns.json — recurring bugs in similar zones", "meta.json — universal debts", "tech_debt.json — open debts"],
+    "output_es": "Lista de riesgos especificos convertidos en checkpoints preventivos dentro del roadmap.",
+    "output_en": "List of specific risks converted into preventive checkpoints within the roadmap.",
+    "format_es": "Maximo 5 riesgos priorizados. No bloquea el inicio de fase.",
+    "format_en": "Maximum 5 prioritized risks. Does not block phase start."
+  },
+  "multi_agent_protocol": {
+    "description_es": "Modo orquestador multi-agente. Se activa automaticamente si se trabaja con mas de un agente.",
+    "description_en": "Multi-agent orchestrator mode. Activates automatically when working with more than one agent.",
+    "activation_es": "Automatico al detectar subagentes. Un agente solo = modo single (default).",
+    "activation_en": "Automatic on subagent detection. Single agent = single mode (default).",
+    "roles": {
+      "architect": "Decisiones de arquitectura, manejo de __AI_CORE__, coordinacion de agentes",
+      "frontend": "UI, componentes, estilos, interacciones",
+      "backend": "APIs, funciones, logica de negocio",
+      "database": "Schema, migraciones, queries, RLS",
+      "devops": "Deploy, CI/CD, infraestructura"
+    },
+    "rules_es": ["Solo el Arquitecto modifica __AI_CORE__", "Agentes especialistas reportan al Arquitecto", "Conflictos entre agentes los resuelve el Arquitecto", "Un agente no puede hacer push a main sin aprobacion del Arquitecto"],
+    "rules_en": ["Only the Architect modifies __AI_CORE__", "Specialist agents report to the Architect", "Conflicts between agents resolved by the Architect", "An agent cannot push to main without Architect approval"]
+  },
+  "dashboard_ansi": {
+    "description_es": "Dashboard visual en terminal con caracteres ANSI. Sin dependencias externas.",
+    "description_en": "Visual terminal dashboard with ANSI characters. No external dependencies.",
+    "trigger": "ESTADO command",
+    "sections": ["project header", "progress bar", "current node", "health score", "active debts", "active features", "services status", "next actions"],
+    "colors": { "HEALTHY": "green", "WARNING": "yellow", "CRITICAL": "red" },
+    "note_es": "Generado por Claude Code con python3 -c o node -e. Sin npm install.",
+    "note_en": "Generated by Claude Code with python3 -c or node -e. No npm install."
+  },
+  "offline_mode": {
+    "description_es": "Modo degradado cuando servicios externos estan caidos. No bloquea el desarrollo.",
+    "description_en": "Degraded mode when external services are down. Does not block development.",
+    "queue_file": "__AI_CORE__/pending_sync.json",
+    "on_service_down_es": "Registrar operacion en pending_sync.json. Continuar desarrollo local. Avisar al usuario.",
+    "on_service_down_en": "Register operation in pending_sync.json. Continue local development. Notify user.",
+    "on_reintentar_es": "Procesar cola pending_sync.json en orden. Reportar resultado de cada operacion.",
+    "on_reintentar_en": "Process pending_sync.json queue in order. Report result of each operation.",
+    "queueable_operations": ["git_push", "netlify_deploy", "supabase_migration", "module_publish"]
+  },
+  "automated_changelog": {
+    "description_es": "Changelog generado automaticamente desde mensajes de commit.",
+    "description_en": "Changelog automatically generated from commit messages.",
+    "updated_on": "CERRAR SESION snap",
+    "source": "git log desde last_snap hasta HEAD",
+    "mapping": {
+      "feat": "Añadido / Added",
+      "fix": "Corregido / Fixed",
+      "chore": "Mantenimiento / Maintenance",
+      "refactor": "Refactorizado / Refactored",
+      "docs": "Documentacion / Documentation",
+      "test": "Tests",
+      "perf": "Rendimiento / Performance"
+    },
+    "format_es": "Bilingue ES/EN por convencion de commit.",
+    "format_en": "Bilingual ES/EN by commit convention."
+  },
+  "framework_versioning": {
+    "description_es": "Versionado del framework independiente del proyecto.",
+    "description_en": "Framework versioning independent of the project.",
+    "current_framework_version": "2.2.0",
+    "field_in_files": "_meta.framework_version",
+    "migration_script": "scripts/migrate-framework.sh",
+    "migration_rule_es": "Al actualizar framework → ejecutar script de migracion → verificar que __AI_CORE__ sigue valido.",
+    "migration_rule_en": "On framework update → run migration script → verify __AI_CORE__ is still valid.",
+    "backward_compatible_until": "2.0.0"
+  },
+  "enhanced_audit": {
+    "description_es": "AUDITAR PROYECTO mejorado. Genera __AI_CORE__ pre-poblado desde codigo existente.",
+    "description_en": "Enhanced AUDITAR PROYECTO. Generates pre-populated __AI_CORE__ from existing code.",
+    "steps_es": ["1. Leer package.json / requirements.txt → detectar stack automaticamente", "2. Analizar estructura de carpetas → inferir arquitectura", "3. Buscar comentarios TODO/FIXME → convertir en tech_debt.json", "4. Leer commits recientes → inferir decisions.json", "5. Detectar variables de entorno usadas → poblar config.json.files_map.env_vars", "6. Generar __AI_CORE__ completo pre-poblado con hallazgos"],
+    "steps_en": ["1. Read package.json / requirements.txt → auto-detect stack", "2. Analyze folder structure → infer architecture", "3. Search TODO/FIXME comments → convert to tech_debt.json", "4. Read recent commits → infer decisions.json", "5. Detect used env variables → populate config.json.files_map.env_vars", "6. Generate complete pre-populated __AI_CORE__ with findings"]
+  },
+  "iniciar_proyecto_protocol": {
+    "description_es": "Protocolo completo de inicio de proyecto. Guia conversacional paso a paso.",
+    "description_en": "Complete project start protocol. Step by step conversational guide.",
+    "trigger": "INICIAR PROYECTO [nombre]",
+    "steps": [
+      { "step": 1, "name": "Identificacion", "questions_es": ["Nombre del proyecto: [ya dado en el comando]", "Tipo: saas-web | api-rest | mobile-app | desktop-windows | fullstack-nextjs | library-npm | custom", "Es para cliente externo, producto interno, o ambos?"], "action_es": "Cargar template de project-templates.json segun tipo elegido. Precargar stack sugerido." },
+      { "step": 2, "name": "Cliente y contexto", "condition": "Si client_external o both", "questions_es": ["Nombre del cliente", "Hay NDA activo?", "Fecha de entrega estimada", "Restricciones de stack o tecnologia", "Contacto tecnico del cliente"], "condition_internal": "Si internal_product", "questions_internal_es": ["Objetivo de negocio del producto", "Responsable interno", "Fecha de lanzamiento estimada"] },
+      { "step": 3, "name": "Stack", "action_es": "Mostrar stack sugerido por template. Preguntar si confirma o ajusta cada item.", "format_es": "Frontend: [sugerido] — confirmar o cambiar?", "note_es": "Solo preguntar los que tienen valor. Nulos se saltan." },
+      { "step": 4, "name": "Repositorio y ramas", "questions_es": ["URL del repositorio GitHub para este proyecto", "Nombre de la rama de desarrollo (default: develop)"], "action_es": "Guardar en R2 como rama definida del proyecto. Nunca volver a preguntar." },
+      { "step": 5, "name": "Fases y nodos — acuerdo inicial", "action_es": "Mostrar fases tipicas del template como propuesta. Usuario confirma, ajusta o agrega.", "format_es": ["Fase 1 — [nombre] (~X dias) — confirmar?", "  Nodo 1.1 — [nombre] (~X hs) — confirmar?", "  Nodo 1.2 — [nombre] (~X hs) — confirmar?"], "note_es": "Cada nodo necesita: nombre, estimacion en horas, nivel de test (L1/L2/L3).", "pre_mortem_es": "Al confirmar cada fase → ejecutar pre-mortem automatico con patterns.json y meta.json." },
+      { "step": 6, "name": "Servicios externos", "action_es": "Preguntar cuales servicios estan ya configurados y cuales faltan.", "format_es": "GitHub: configurado? Supabase: configurado? Netlify: configurado?", "note_es": "Actualizar services.json con estados reales." },
+      { "step": 7, "name": "Confirmacion final y escritura", "action_es": "Mostrar resumen completo del acuerdo. Usuario confirma.", "on_confirm_es": ["Escribir config.json completo poblado", "Escribir services.json con estados reales", "Crear rama develop en el repo", "Hacer primer commit: feat(init): project agreement — [nombre]", "Emitir confirmacion de inicio"], "confirmation_format": "[proyecto] listo al 0%. Nodo: 1.1 — [nombre]. Arrancamos." }
+    ],
+    "total_estimated_time_es": "5-10 minutos con template. 15-20 minutos custom.",
+    "total_estimated_time_en": "5-10 minutes with template. 15-20 minutes custom."
+  }
+}
