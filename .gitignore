@@ -1,0 +1,16 @@
+.env
+.env.local
+.env.*.local
+__AI_CORE__/services.private.json
+__AI_CORE__/*.private.json
+__AI_CORE__/*.secret.json
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+node_modules/
+dist/
+.next/
+__pycache__/
+*.pyc

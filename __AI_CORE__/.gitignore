@@ -1,0 +1,5 @@
+# ES: Archivos privados — NUNCA al repositorio
+# EN: Private files — NEVER to repository
+services.private.json
+*.private.json
+*.secret.json
