@@ -1,0 +1,61 @@
+{
+  "_meta": {
+    "file": "platform.json",
+    "description_es": "Registro de la plataforma centralizada. Una DB Supabase, un schema por proyecto.",
+    "description_en": "Centralized platform registry. One Supabase DB, one schema per project."
+  },
+  "platform": {
+    "name": "mh-systems-platform",
+    "provider": "Supabase",
+    "project_id": "nehfrtedwcmdlmbulhef",
+    "url": "https://nehfrtedwcmdlmbulhef.supabase.co",
+    "db_host": "db.nehfrtedwcmdlmbulhef.supabase.co",
+    "region": "sa-east-1",
+    "organization": "M H Systems",
+    "plan": "Pro",
+    "created_at": "2026-06-09T01:00:00Z"
+  },
+  "schema_protocol": {
+    "rule_es": "Cada proyecto ocupa un schema de PostgreSQL. Nunca usar el schema public para tablas de aplicacion.",
+    "rule_en": "Each project occupies one PostgreSQL schema. Never use public schema for app tables.",
+    "shared_schema": "shared",
+    "shared_schema_purpose": "Cross-project resources: platform admin users, billing, global audit",
+    "naming_convention": "snake_case del nombre del proyecto (ej: asistente_real_state)"
+  },
+  "projects": [
+    {
+      "id": "asistente-real-state",
+      "schema": "asistente_real_state",
+      "repo": "heraldoianode-ops/asistente-real-state",
+      "status": "active",
+      "migrations_applied": [
+        "01_extensions",
+        "02_schemas",
+        "03_core_tables",
+        "04_multitenant_tables",
+        "05_rls_policies"
+      ],
+      "created_at": "2026-06-09T01:00:00Z"
+    }
+  ],
+  "new_project_protocol": {
+    "steps_es": [
+      "1. Crear repo en heraldoianode-ops/[nombre-proyecto]",
+      "2. Clonar architect-ai-framework como base",
+      "3. Ejecutar INICIAR PROYECTO [nombre]",
+      "4. Aplicar migracion: CREATE SCHEMA IF NOT EXISTS [nombre_schema]",
+      "5. Aplicar migraciones del proyecto en el nuevo schema",
+      "6. Registrar en platform.json bajo projects[]",
+      "7. SUPABASE_URL y DB_SCHEMA ya estan en .env.example"
+    ],
+    "steps_en": [
+      "1. Create repo at heraldoianode-ops/[project-name]",
+      "2. Clone architect-ai-framework as base",
+      "3. Run INICIAR PROYECTO [name]",
+      "4. Apply migration: CREATE SCHEMA IF NOT EXISTS [schema_name]",
+      "5. Apply project migrations inside the new schema",
+      "6. Register in platform.json under projects[]",
+      "7. SUPABASE_URL and DB_SCHEMA are already in .env.example"
+    ]
+  }
+}

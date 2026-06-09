@@ -43,6 +43,7 @@ __AI_CORE__/workflow.json        → rules, auto_save, session_commands, claude_
 __AI_CORE__/health.json          → status, dimensions.debt, alerts (summary only)
 __AI_CORE__/session_digest.json  → last_3_sessions only
 __AI_CORE__/patterns.json        → reinforced_checks (active only)
+__AI_CORE__/platform.json        → platform.project_id, schema_protocol, projects[]
 C:\heraldoianode-ops\architect-ai-modules\meta.json → module_registry index only
 ```
 
@@ -75,6 +76,18 @@ Format: `[project] v[version] — [progress_pct]% — Nodo: [current_node]. [hea
 
 ---
 
+## Platform DB Protocol (R17)
+
+R17: All projects share ONE Supabase instance (mh-systems-platform).
+- Each project → one PostgreSQL schema
+- DB schema name = snake_case of project name
+- NEVER use public schema for app tables
+- On new project → read platform.json → register schema → apply migrations
+- On DB migration → always qualify table names: [schema].[table]
+- platform.json is the source of truth for schema registry
+
+---
+
 ## Operational Rules (full detail in __AI_CORE__/workflow.json)
 
 R1:  AI_CORE conflict → verify against code → ask user
@@ -88,6 +101,7 @@ R8:  Tests L1/L2/L3 pyramid. Node COMPLETE only if tests pass.
 R9:  Service down → queue in pending_sync.json → REINTENTAR
 R10: MAJOR version only on breaking change → test → increment if passes
 R16: New feature/arch → check against decisions.json first
+R17: Platform DB → one schema per project → register in platform.json
 
 ---
 
@@ -111,6 +125,7 @@ cd C:\heraldoianode-ops\projects
 git clone C:\heraldoianode-ops\architect-ai-framework [project-name]
 cd [project-name]
 claude → INICIAR PROYECTO [nombre]
+# AI automatically: creates schema in mh-systems-platform, registers in platform.json
 ```
 
 ---
@@ -130,3 +145,5 @@ SALUD | REINTENTAR | DEUDA [TD-id] | FEATURE [F-id]
 - Push to main without explicit user request
 - Expose Machine Language to user
 - Continue features if critical debt > threshold
+- Use public schema for app tables
+- Create new Supabase project — use new schema in mh-systems-platform instead
