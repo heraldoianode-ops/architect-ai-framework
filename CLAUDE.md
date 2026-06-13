@@ -1,4 +1,4 @@
-# ARCHITECT-AI v2.2 — Claude Code Orchestrator
+# ARCHITECT-AI v2.3 — Claude Code Orchestrator
 
 ## BOOT SEQUENCE — Execute silently on every session start
 
@@ -43,6 +43,7 @@ __AI_CORE__/workflow.json        → rules, auto_save, session_commands, claude_
 __AI_CORE__/health.json          → status, dimensions.debt, alerts (summary only)
 __AI_CORE__/session_digest.json  → last_3_sessions only
 __AI_CORE__/patterns.json        → reinforced_checks (active only)
+__AI_CORE__/handoff.md           → FULL FILE (session handoff — always read in full on startup)
 C:\heraldoianode-ops\architect-ai-modules\meta.json → module_registry index only
 ```
 
@@ -69,6 +70,17 @@ If patterns.json.reinforced_checks has active entries → apply silently this se
 ## Step 3 — Emit ONE confirmation line
 Format: `[project] v[version] — [progress_pct]% — Nodo: [current_node]. [health_alert]`
 
+## Step 3b — Handoff resume (BLOCKING — confirm before any work)
+If `__AI_CORE__/handoff.md` exists and is NOT in template state, after the confirmation
+line emit a SECOND line and STOP for user confirmation before starting work:
+
+Format: `↩ Handoff: [tipo_carga] — [progress_pct]% — Próximo paso: [next_step]. ¿Arranco?`
+
+- `tipo_carga` / load type ∈ `RESUME_HANDOFF` (prior handoff found, continue it) ·
+  `CLEAN_BOOT` (handoff.md in template state → fresh start) · `SELECTIVE` (TURBO / partial context).
+- `next_step` = first item of handoff.md "Próximo paso / Next step".
+- Do NOT begin executing until the user confirms. If template state → say CLEAN_BOOT and proceed normally.
+
 ## Step 4 — Detect orchestration mode
 - Working alone → single agent mode (default)
 - Spawning subagents → activate multi-agent protocol from workflow.json
@@ -92,9 +104,12 @@ R16: New feature/arch → check against decisions.json first
 ---
 
 ## Auto-Save (always active — Claude Code native)
-- Milestone  → write __AI_CORE__ files + git commit
-- Context < 20% → write all modified + git commit (silent)
-- Session end → write all + git commit + git push origin [branch]
+- Milestone  → write __AI_CORE__ files (incl. handoff.md) + git commit
+- Context < 20% → write all modified + handoff.md + git commit (silent)
+- Session end → write all + handoff.md + git commit + git push origin [branch]
+
+**handoff.md is rewritten on EVERY auto-save** with: objetivo, estado actual, archivos en
+trabajo, qué cambié, qué intenté, qué falló, próximo paso. It is the relay the next session reads.
 
 Commit format: `chore(snap): [trigger] [YYYY-MM-DDTHHMMSS]`
 
@@ -124,6 +139,8 @@ SALUD | REINTENTAR | DEUDA [TD-id] | FEATURE [F-id]
 
 ## Never
 - Greet / apologize
+- Start work when handoff.md has a pending relay without reading it + confirming load type/%/next step (Step 3b)
+- End a session or hit an auto-save trigger without rewriting handoff.md
 - Read full module library on startup — index only
 - Re-read cached paths on every operation
 - Mark node COMPLETE without passing minimum tests

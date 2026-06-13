@@ -1,7 +1,7 @@
 {
   "_meta": {
     "file": "workflow.json",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "framework": "ARCHITECT-AI",
     "orchestrator": "claude-code",
     "description_es": "Reglas operativas completas del sistema. Uso exclusivo de la IA. Orquestador: Claude Code.",
@@ -52,9 +52,10 @@
   },
   "auto_save": {
     "orchestrator": "claude-code",
-    "layer_1_milestone": { "triggers_es": ["Nodo completado","Feature COMPLETE","Deuda nueva","PUSH exitoso","Módulo publicado"], "method": "fs.writeFile → git add → git commit", "commit_message_format": "chore(snap): milestone — {trigger} [{YYYY-MM-DDTHHMMSS}]" },
-    "layer_2_predictive": { "trigger_es": "Tokens restantes < 20% del contexto", "alert_es": "⚠️ CONTEXTO AL 80% — Estado guardado en repo. Continuidad garantizada.", "commit_message_format": "chore(snap): predictive save [{YYYY-MM-DDTHHMMSS}]" },
-    "layer_3_session_end": { "trigger_command": "CERRAR SESION", "method": "fs.writeFile all → git add __AI_CORE__/ → git commit → git push origin [project_branch]", "commit_message_format": "chore(snap): session end [{YYYY-MM-DDTHHMMSS}]" }
+    "always_rewrite": "__AI_CORE__/handoff.md — reescrito en TODA capa de auto-save con el estado vigente",
+    "layer_1_milestone": { "triggers_es": ["Nodo completado","Feature COMPLETE","Deuda nueva","PUSH exitoso","Módulo publicado"], "method": "fs.writeFile (incl. handoff.md) → git add → git commit", "commit_message_format": "chore(snap): milestone — {trigger} [{YYYY-MM-DDTHHMMSS}]" },
+    "layer_2_predictive": { "trigger_es": "Tokens restantes < 20% del contexto", "alert_es": "⚠️ CONTEXTO AL 80% — Estado guardado en repo (incl. handoff.md). Continuidad garantizada.", "commit_message_format": "chore(snap): predictive save [{YYYY-MM-DDTHHMMSS}]" },
+    "layer_3_session_end": { "trigger_command": "CERRAR SESION", "method": "fs.writeFile all (incl. handoff.md) → git add __AI_CORE__/ → git commit → git push origin [project_branch]", "commit_message_format": "chore(snap): session end [{YYYY-MM-DDTHHMMSS}]" }
   },
   "session_commands": {
     "ARRANCAR": { "action_es": "Cargar contexto e iniciar sesión" },
@@ -78,9 +79,27 @@
       "3. Calcular health.json → alertar si deuda supera umbral",
       "4. Verificar BUGS_CONOCIDOS y PENDIENTE_MANANA",
       "5. Emitir una sola línea de confirmación",
-      "6. Si patterns.json tiene patrones activos → aplicar verificaciones reforzadas"
+      "6. Si patterns.json tiene patrones activos → aplicar verificaciones reforzadas",
+      "7. Leer handoff.md COMPLETO. Si no está en estado plantilla → emitir línea de relevo (tipo_carga + progress_pct + próximo paso) y ESPERAR confirmación del usuario antes de arrancar (handoff_protocol)."
     ],
     "confirmation_format": "[project] listo al [progress_pct]%. Nodo: [current_node]. [health_alert_if_any]"
+  },
+  "handoff_protocol": {
+    "file": "__AI_CORE__/handoff.md",
+    "priority": "HIGH",
+    "purpose_es": "Relevo entre sesiones. Fuente de verdad de dónde quedó el trabajo.",
+    "purpose_en": "Cross-session relay. Source of truth for where work was left off.",
+    "read_on_startup": true,
+    "read_mode": "FULL_FILE",
+    "sections": ["objetivo","estado_actual","archivos_en_trabajo","que_cambie","que_intente","que_fallo","proximo_paso"],
+    "load_types": {
+      "RESUME_HANDOFF": "handoff.md con relevo válido → continuar ese trabajo",
+      "CLEAN_BOOT": "handoff.md en estado plantilla (valores entre [corchetes]) → arranque limpio",
+      "SELECTIVE": "Contexto parcial (TURBO o carga mínima)"
+    },
+    "startup_confirmation_es": "Antes de ejecutar trabajo: emitir 'tipo_carga + progress_pct + próximo paso' y esperar confirmación del usuario.",
+    "rewrite_on_es": ["Cada auto-save (milestone)","Contexto < 20%","CERRAR SESIÓN"],
+    "rewrite_rule_es": "Reescribir handoff.md completo en cada auto-save con el estado vigente. Nunca cerrar sesión sin actualizarlo."
   },
   "anti_patterns": {
     "forbidden_es": [
@@ -100,7 +119,7 @@
     "rules_es": ["Solo el Arquitecto modifica __AI_CORE__","Agentes especialistas reportan al Arquitecto","Un agente no puede hacer push a main sin aprobación del Arquitecto"]
   },
   "framework_versioning": {
-    "current_framework_version": "2.2.0",
+    "current_framework_version": "2.3.0",
     "backward_compatible_until": "2.0.0"
   }
 }
