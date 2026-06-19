@@ -5,13 +5,16 @@
     "description_en": "Map of external services connected to the project."
   },
   "services": {
-    "github": { "status": "PENDING", "repo": null, "branch_strategy": "gitflow", "project_branch": null, "auto_deploy_on": ["main"], "last_checked": null },
-    "database": { "provider": null, "status": "PENDING", "project_id": null, "region": null, "rls_enabled": null, "backups": null, "last_checked": null },
-    "hosting": { "provider": null, "status": "PENDING", "site_id": null, "deploy_url": null, "functions_dir": null, "env_vars_set": false, "last_checked": null },
-    "email": { "provider": null, "status": "PENDING", "from_domain": null, "templates": [], "last_checked": null },
+    "github": { "provider": "GitHub", "status": "CONNECTED", "repo": null, "branch_strategy": "gitflow", "project_branch": null, "auto_deploy_on": ["main"], "note": "Repositorio estándar del usuario.", "last_checked": "2026-06-19" },
+    "database": { "provider": "Supabase", "status": "CONNECTED", "project_id": null, "region": null, "rls_enabled": true, "pgvector": true, "backups": null, "alternatives": ["Neon"], "note": "Supabase (pago) es la base por defecto. Neon como Postgres serverless alternativo.", "last_checked": "2026-06-19" },
+    "hosting": { "provider": "Netlify", "status": "CONNECTED", "site_id": null, "deploy_url": null, "functions_dir": null, "env_vars_set": false, "scope": "frontend / dashboard (Next.js)", "backend_host": { "provider": "Railway", "status": "CONNECTED", "scope": "backend Python always-on (FastAPI + Celery + gateway Node)", "services": ["backend-web", "celery-worker", "celery-beat", "gateway"], "redis_addon": true, "note": "Netlify no corre procesos prendidos ni tareas programadas; el backend va a Railway." }, "last_checked": "2026-06-19" },
+    "email": { "provider": "Resend", "status": "CONNECTED", "from_domain": null, "templates": [], "last_checked": "2026-06-19" },
     "payments": { "provider": null, "status": "PENDING", "mode": "[test / live]", "webhooks_configured": false, "last_checked": null },
-    "monitoring": { "provider": null, "status": "PENDING", "dsn": null, "last_checked": null },
-    "auth": { "provider": null, "status": "PENDING", "mfa_enabled": false, "last_checked": null }
+    "monitoring": { "provider": "Sentry", "status": "PENDING", "dsn": null, "last_checked": null },
+    "auth": { "provider": "Supabase", "status": "PENDING", "mfa_enabled": false, "last_checked": null }
+  },
+  "dev_tools": {
+    "ide_agent": { "provider": "Claude Code", "status": "CONNECTED", "note": "Asistente de desarrollo (pago)." }
   },
   "status_legend": {
     "CONNECTED": { "es": "Conectado y operativo", "en": "Connected and operational" },
