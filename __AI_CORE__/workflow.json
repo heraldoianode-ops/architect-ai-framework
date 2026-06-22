@@ -1,7 +1,7 @@
 {
   "_meta": {
     "file": "workflow.json",
-    "version": "2.2.0",
+    "version": "2.3.0",
     "framework": "ARCHITECT-AI",
     "orchestrator": "claude-code",
     "description_es": "Reglas operativas completas del sistema. Uso exclusivo de la IA. Orquestador: Claude Code.",
@@ -48,7 +48,11 @@
     "R8_minimum_tests": { "coverage_critical_functions": "80%", "node_complete_condition_es": "Un nodo se marca COMPLETE solo cuando sus tests mínimos pasan" },
     "R9_service_down": { "action_es": "Frenar la operación completa. Registrar DOWN con timestamp. Encolar en pending_sync.json. Esperar REINTENTAR." },
     "R10_semantic_versioning": { "format": "MAJOR.MINOR.PATCH", "auto_increment": ["PATCH","MINOR"], "requires_confirmation": ["MAJOR"] },
-    "R16_architectural_coherence": { "action_es": "Al agregar feature o modificar arquitectura → cargar decisions.json → verificar que la propuesta no contradiga ninguna decisión ACTIVE o SETTLED." }
+    "R16_architectural_coherence": { "action_es": "Al agregar feature o modificar arquitectura → cargar decisions.json → verificar que la propuesta no contradiga ninguna decisión ACTIVE o SETTLED." },
+    "R17_ddd_domain_isolation": { "name_es": "Aislamiento estricto de dominios DDD", "priority": "CRITICAL", "spec": "ddd.json", "action_es": "Toda regla de negocio reside en un directorio de dominio único. Comunicación entre dominios solo asíncrona (event-driven o conector abstracto). Ningún dominio accede a la BD o memoria de otro dominio directamente.", "action_en": "Every business rule lives in a unique domain directory. Inter-domain communication is async only (event-driven or abstract connector). No domain accesses another domain's DB or memory directly." },
+    "R18_agent_loop_safety": { "name_es": "Seguridad de loops de agentes", "priority": "HIGH", "spec": "agent_loops.json", "action_es": "Todo loop iterativo declara un contador max_iterations explícito y enrutamiento de escape estructurado. Loops recursivos de generación/testing corren en git worktree o sandbox aislado.", "action_en": "Every iterative loop declares an explicit max_iterations counter and structured escape routing. Recursive generation/testing loops run in an isolated git worktree or sandbox." },
+    "R19_zero_direct_env": { "name_es": "Cero acceso directo a entorno — Secure Key Broker", "priority": "CRITICAL", "spec": "ddd.json", "action_es": "Ningún sub-agente ni skill invoca process.env ni lee config cruda. Los secretos se inyectan en runtime vía el Secure Key Broker, solo en la capa de infraestructura/conectores.", "action_en": "No sub-agent or skill invokes process.env or reads raw config. Secrets are injected at runtime via the Secure Key Broker, only in the infrastructure/connector layer." },
+    "R20_core_file_protection": { "name_es": "Protección de archivos núcleo — prevención de conflictos", "priority": "CRITICAL", "action_es": "Si una petición exige MODIFICAR un archivo núcleo del framework → no romper la abstracción existente. Extender vía inyección de dependencias o composición. Al CREAR módulo nuevo → inspeccionar architect-ai-modules/templates y replicar el esqueleto y tipos exactamente.", "action_en": "If a request requires MODIFYING a core framework file → do not break the existing abstraction. Extend via dependency injection or composition. When CREATING a new module → inspect architect-ai-modules/templates and replicate the skeleton and types exactly." }
   },
   "auto_save": {
     "orchestrator": "claude-code",
@@ -97,10 +101,29 @@
   "multi_agent_protocol": {
     "activation_es": "Automático al detectar subagentes. Un agente solo = modo single (default).",
     "roles": { "architect": "Decisiones de arquitectura, manejo de __AI_CORE__, coordinación", "frontend": "UI, componentes", "backend": "APIs, lógica de negocio", "database": "Schema, migraciones", "devops": "Deploy, CI/CD" },
-    "rules_es": ["Solo el Arquitecto modifica __AI_CORE__","Agentes especialistas reportan al Arquitecto","Un agente no puede hacer push a main sin aprobación del Arquitecto"]
+    "rules_es": ["Solo el Arquitecto modifica __AI_CORE__","Agentes especialistas reportan al Arquitecto","Un agente no puede hacer push a main sin aprobación del Arquitecto"],
+    "bounded_context_subagents": {
+      "spec": "ddd.json",
+      "principle_es": "Dentro de cada dominio se asignan sub-agentes de rol atómico e hiper-específico. Un sub-agente no puede escapar de su bounded context.",
+      "principle_en": "Within each domain, atomic hyper-specific role sub-agents are assigned. A sub-agent cannot escape its bounded context.",
+      "atomic_roles": { "domain_validator": "Valida reglas de negocio e invariantes del dominio", "domain_executor": "Ejecuta casos de uso (skills) del dominio", "connector_adapter": "Media con infraestructura solo vía conectores + Secure Key Broker" },
+      "constraints_es": ["Un sub-agente solo opera dentro de su dominio","No accede a memoria ni BD de otro dominio","No invoca process.env — usa el Secure Key Broker"]
+    }
+  },
+  "ddd_architecture": {
+    "spec": "ddd.json",
+    "pattern": "Domain-Driven-Design (DDD)",
+    "isolation_level": "Strict_Zero_Cross_Domain_Contamination",
+    "enforced_by_rules": ["R17_ddd_domain_isolation", "R19_zero_direct_env"]
+  },
+  "agent_loop_engineering": {
+    "spec": "agent_loops.json",
+    "model": "State_Machine + Graph_Based_Execution",
+    "enforced_by_rules": ["R18_agent_loop_safety"]
   },
   "framework_versioning": {
-    "current_framework_version": "2.2.0",
-    "backward_compatible_until": "2.0.0"
+    "current_framework_version": "2.3.0",
+    "backward_compatible_until": "2.0.0",
+    "changelog_2_3_0_es": "Aditivo: DDD (ddd.json), loops de agentes (agent_loops.json), reglas R17–R20, sub-agentes por bounded context. Sin breaking changes."
   }
 }

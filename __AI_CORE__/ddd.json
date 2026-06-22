@@ -1,0 +1,124 @@
+{
+  "_meta": {
+    "file": "ddd.json",
+    "version": "1.0.0",
+    "framework": "ARCHITECT-AI",
+    "added_in_framework_version": "2.3.0",
+    "description_es": "Matriz de arquitectura Domain-Driven Design (DDD). Aislamiento estricto de dominios, conectores abstractos y Secure Key Broker. Uso exclusivo de la IA. Aditivo y retrocompatible — no reemplaza ninguna regla previa.",
+    "description_en": "Domain-Driven Design (DDD) architecture matrix. Strict domain isolation, abstract connectors and Secure Key Broker. AI use only. Additive and backward-compatible — does not replace any prior rule.",
+    "load_on_demand": true,
+    "load_when_es": "Al crear/modificar un dominio, conector o feature de negocio, o en chequeo de coherencia R16/R17.",
+    "load_when_en": "When creating/modifying a domain, connector or business feature, or on R16/R17 coherence check."
+  },
+
+  "isolation_level": "Strict_Zero_Cross_Domain_Contamination",
+
+  "domain_definition": {
+    "formula": "DOMAIN := { Bounded_Context + Ubiquitous_Language + Isolated_Business_Rules }",
+    "note_es": "Cada dominio es una unidad de negocio autónoma con su propio lenguaje ubicuo y reglas aisladas.",
+    "note_en": "Each domain is an autonomous business unit with its own ubiquitous language and isolated rules."
+  },
+
+  "isolation_rules": {
+    "rule_1_modular_residence": {
+      "statement_es": "Toda regla de negocio debe residir en un directorio de dominio único y modular.",
+      "statement_en": "Every business rule must reside within a unique, modular domain directory.",
+      "enforced_by": "R17_ddd_domain_isolation"
+    },
+    "rule_2_async_inter_domain": {
+      "statement_es": "La comunicación entre dominios es estrictamente asíncrona vía Event-Driven o Conectores Abstractos.",
+      "statement_en": "Inter-domain communication is strictly asynchronous via Event-Driven or Abstract Connectors.",
+      "allowed_mechanisms": ["domain_event", "abstract_connector", "message_bus"],
+      "forbidden_mechanisms": ["direct_function_import_across_domains", "shared_mutable_singleton"]
+    },
+    "rule_3_no_foreign_state": {
+      "statement_es": "Ningún dominio accede directamente a la base de datos o memoria de otro dominio.",
+      "statement_en": "Never allow a domain to access the database or memory of another domain directly.",
+      "enforced_by": "R17_ddd_domain_isolation"
+    }
+  },
+
+  "bounded_contexts": [],
+
+  "bounded_context_template": {
+    "id": "DOM-000",
+    "name_es": "",
+    "name_en": "",
+    "ubiquitous_language": [
+      { "term": "", "definition_es": "", "definition_en": "" }
+    ],
+    "directory": "src/domains/[domain-name]",
+    "layers": {
+      "domain": "entities, value-objects, domain-events, business-rules (pure, no infra)",
+      "application": "use-cases, skills (1:1 with use cases)",
+      "infrastructure": "connectors only (DB, API, env access lives here)",
+      "interface": "controllers, event-handlers"
+    },
+    "exposes": {
+      "skills": [],
+      "domain_events_published": [],
+      "domain_events_consumed": []
+    },
+    "connectors": [],
+    "owns_storage": "[schema / table prefix owned exclusively by this domain]",
+    "status": "[ACTIVE / DEPRECATED]"
+  },
+
+  "connectors": {
+    "principle_es": "Toda infraestructura, API y base de datos se abstrae detrás de un Conector. El dominio depende de la interfaz del conector, nunca de la implementación concreta.",
+    "principle_en": "All infrastructure, APIs and databases are abstracted behind a Connector. The domain depends on the connector interface, never the concrete implementation.",
+    "pattern": "Dependency Injection / Ports & Adapters (Hexagonal)",
+    "connector_template": {
+      "id": "CON-000",
+      "name_es": "",
+      "name_en": "",
+      "kind": "[database / api / queue / cache / email / payment / storage]",
+      "interface": "[port name — typed contract consumed by the domain]",
+      "adapter": "[concrete implementation — lives in infrastructure layer]",
+      "injected_into": [],
+      "secrets_via": "secure_key_broker"
+    }
+  },
+
+  "secure_key_broker": {
+    "principle_es": "Cero acceso directo a entorno. Ningún sub-agente o skill invoca process.env ni lee archivos de configuración crudos. Los secretos se inyectan en runtime a través de un Broker de Claves unificado.",
+    "principle_en": "Zero direct env access. No sub-agent or skill may invoke process.env or read raw configuration files. Secrets are injected at runtime via a unified Secure Key Broker.",
+    "pattern": "Secure Key Broker (single injection point)",
+    "rules_es": [
+      "Prohibido process.env fuera de la capa infrastructure/broker",
+      "Prohibido leer archivos *.env o *.private.json desde dominio o aplicación",
+      "El broker resuelve y entrega secretos tipados a los conectores en runtime",
+      "Los secretos nunca se loguean, serializan ni se incrustan en commits"
+    ],
+    "rules_en": [
+      "process.env forbidden outside the infrastructure/broker layer",
+      "Reading *.env or *.private.json from domain or application layers forbidden",
+      "The broker resolves and delivers typed secrets to connectors at runtime",
+      "Secrets are never logged, serialized or embedded in commits"
+    ],
+    "source_of_truth": "__AI_CORE__/services.private.json (gitignored)",
+    "broker_template": {
+      "key_id": "",
+      "consumed_by_connectors": [],
+      "scope": "[domain id that may request this key]"
+    }
+  },
+
+  "skills": {
+    "principle_es": "Las capacidades del dominio se exponen como Skills: funciones atómicas, tipadas y reutilizables. Mapeo 1:1 con los Casos de Uso del dominio.",
+    "principle_en": "Domain capabilities are exposed as Skills: atomic, typed and reusable functions. 1:1 mapping with domain Use Cases.",
+    "skill_template": {
+      "id": "SKILL-000",
+      "name_es": "",
+      "name_en": "",
+      "domain": "[DOM-id]",
+      "use_case": "[1:1 use case it implements]",
+      "input_type": "",
+      "output_type": "",
+      "side_effects_via_connectors": []
+    }
+  },
+
+  "compatibility_contract_es": "Mantener compatibilidad total con abstracciones, clases y tipos ya presentes en architect-ai-framework y architect-ai-modules. Crear dominios nuevos replicando el esqueleto de architect-ai-modules/templates.",
+  "compatibility_contract_en": "Maintain full compatibility with existing abstractions, classes and types in architect-ai-framework and architect-ai-modules. Create new domains by replicating the architect-ai-modules/templates skeleton."
+}
