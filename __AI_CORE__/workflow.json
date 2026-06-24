@@ -1,113 +1,75 @@
 {
-  "_meta": {
-    "file": "workflow.json",
-    "version": "2.3.0",
-    "framework": "ARCHITECT-AI",
-    "orchestrator": "claude-code",
-    "description_es": "Reglas operativas completas del sistema. Uso exclusivo de la IA. Orquestador: Claude Code.",
-    "description_en": "Complete operational rules for the system. AI use only. Orchestrator: Claude Code.",
-    "last_updated": "YYYY-MM-DD"
-  },
   "communication": {
     "user_language": "natural",
     "internal_language": "machine",
-    "note_es": "El usuario siempre recibe lenguaje natural. El LM es exclusivamente interno.",
-    "note_en": "User always receives natural language. LM is exclusively internal.",
     "documentation_language": "bilingual_ES_EN",
     "code_language": "EN",
-    "comments_language": "bilingual_ES_EN",
     "commits_language": "EN"
   },
   "color_protocol": {
-    "green": {
-      "tags": ["[CREAR]","[MODIFICAR]","[INCRUSTAR]","[REEMPLAZAR]","[PEGAR]"],
-      "meaning_es": "Crear o modificar",
-      "meaning_en": "Create or modify"
-    },
-    "red": {
-      "tags": ["[BORRAR]","[ELIMINAR]"],
-      "meaning_es": "Destruir o remover",
-      "meaning_en": "Destroy or remove"
-    },
-    "blue": {
-      "tags": ["[BUSCAR]","[VERIFICAR]"],
-      "meaning_es": "Leer o confirmar antes de actuar",
-      "meaning_en": "Read or confirm before acting"
-    },
-    "rule_es": "Siempre AZUL antes de VERDE o ROJO. Nunca actuar a ciegas.",
-    "rule_en": "Always BLUE before GREEN or RED. Never act blindly."
+    "green": { "tags": ["[CREAR]","[MODIFICAR]","[INCRUSTAR]","[REEMPLAZAR]","[PEGAR]"], "meaning": "Create or modify" },
+    "red": { "tags": ["[BORRAR]","[ELIMINAR]"], "meaning": "Destroy or remove" },
+    "blue": { "tags": ["[BUSCAR]","[VERIFICAR]"], "meaning": "Read or confirm before acting" },
+    "rule": "Always BLUE before GREEN or RED. Never act blindly."
   },
   "rules": {
-    "R1_core_file_conflict": { "name_es": "Conflicto entre archivos AI_CORE", "priority": "CRITICAL", "action_es": "Verificar veracidad del dato contra el código. Si no coincide → preguntar al usuario cómo proseguir antes de continuar." },
-    "R2_branch_control": { "name_es": "Control de rama de trabajo", "action_es": "Avisar al usuario. Definir rama del proyecto una sola vez. Todo el trabajo va en esa rama. Pase a main solo cuando el usuario lo solicita explícitamente.", "project_branch": null, "main_branch": "main" },
-    "R3_node_granularity": { "name_es": "Granularidad de nodos y fases", "requires_initial_agreement": true },
-    "R4_new_env_variable": { "name_es": "Variable de entorno nueva", "priority": "HIGH", "action_es": "Verificar si existe. Si no → agregar al código, registrar en config.json y avisar al usuario." },
-    "R5_breaking_change": { "steps_es": ["1. Identificar todos los consumidores","2. Deprecar viejo + crear nuevo en paralelo","3. Migrar consumidores uno a uno","4. Eliminar deprecado cuando todos migraron"] },
-    "R6_bilingual_documentation": { "rules_es": ["Toda documentación ES y EN","Código EN","Comentarios ES y EN","Commits EN"] },
-    "R7_outdated_module": { "action_es": "Actualizar el módulo en el library inmediatamente al detectar la divergencia." },
-    "R8_minimum_tests": { "coverage_critical_functions": "80%", "node_complete_condition_es": "Un nodo se marca COMPLETE solo cuando sus tests mínimos pasan" },
-    "R9_service_down": { "action_es": "Frenar la operación completa. Registrar DOWN con timestamp. Encolar en pending_sync.json. Esperar REINTENTAR." },
+    "R1_core_file_conflict": { "priority": "CRITICAL", "action": "Verify data against code. If mismatch → ask user before continuing." },
+    "R2_branch_control": { "action": "Warn user. Define project branch once. All work on that branch. Push to main only on explicit request.", "project_branch": null, "main_branch": "main" },
+    "R3_node_granularity": { "requires_initial_agreement": true },
+    "R4_new_env_variable": { "priority": "HIGH", "action": "Check if exists. If not → add to code, register in config.json, notify user." },
+    "R5_breaking_change": { "steps": ["1. Identify all consumers","2. Deprecate old + create new in parallel","3. Migrate consumers one by one","4. Delete deprecated when all migrated"] },
+    "R6_bilingual_documentation": { "rules": ["All documentation ES and EN","Code EN","Commits EN"] },
+    "R7_outdated_module": { "action": "Update module in library immediately upon detecting divergence." },
+    "R8_minimum_tests": { "coverage_critical_functions": "80%", "node_complete_condition": "Node marked COMPLETE only when minimum tests pass." },
+    "R9_service_down": { "action": "Stop full operation. Register DOWN with timestamp. Queue in pending_sync.json. Await REINTENTAR." },
     "R10_semantic_versioning": { "format": "MAJOR.MINOR.PATCH", "auto_increment": ["PATCH","MINOR"], "requires_confirmation": ["MAJOR"] },
-    "R16_architectural_coherence": { "action_es": "Al agregar feature o modificar arquitectura → cargar decisions.json → verificar que la propuesta no contradiga ninguna decisión ACTIVE o SETTLED." },
-    "R17_ddd_domain_isolation": { "name_es": "Aislamiento estricto de dominios DDD", "priority": "CRITICAL", "spec": "ddd.json", "action_es": "Toda regla de negocio reside en un directorio de dominio único. Comunicación entre dominios solo asíncrona (event-driven o conector abstracto). Ningún dominio accede a la BD o memoria de otro dominio directamente.", "action_en": "Every business rule lives in a unique domain directory. Inter-domain communication is async only (event-driven or abstract connector). No domain accesses another domain's DB or memory directly." },
-    "R18_agent_loop_safety": { "name_es": "Seguridad de loops de agentes", "priority": "HIGH", "spec": "agent_loops.json", "action_es": "Todo loop iterativo declara un contador max_iterations explícito y enrutamiento de escape estructurado. Loops recursivos de generación/testing corren en git worktree o sandbox aislado.", "action_en": "Every iterative loop declares an explicit max_iterations counter and structured escape routing. Recursive generation/testing loops run in an isolated git worktree or sandbox." },
-    "R19_zero_direct_env": { "name_es": "Cero acceso directo a entorno — Secure Key Broker", "priority": "CRITICAL", "spec": "ddd.json", "action_es": "Ningún sub-agente ni skill invoca process.env ni lee config cruda. Los secretos se inyectan en runtime vía el Secure Key Broker, solo en la capa de infraestructura/conectores.", "action_en": "No sub-agent or skill invokes process.env or reads raw config. Secrets are injected at runtime via the Secure Key Broker, only in the infrastructure/connector layer." },
-    "R20_core_file_protection": { "name_es": "Protección de archivos núcleo — prevención de conflictos", "priority": "CRITICAL", "action_es": "Si una petición exige MODIFICAR un archivo núcleo del framework → no romper la abstracción existente. Extender vía inyección de dependencias o composición. Al CREAR módulo nuevo → inspeccionar architect-ai-modules/templates y replicar el esqueleto y tipos exactamente.", "action_en": "If a request requires MODIFYING a core framework file → do not break the existing abstraction. Extend via dependency injection or composition. When CREATING a new module → inspect architect-ai-modules/templates and replicate the skeleton and types exactly." }
+    "R16_architectural_coherence": { "action": "When adding feature or modifying architecture → load decisions.json → verify proposal doesn't contradict any ACTIVE or SETTLED decision." },
+    "R17_ddd_domain_isolation": { "priority": "CRITICAL", "spec": "ddd.json", "action": "Every business rule lives in a unique domain directory. Inter-domain communication async only (event-driven or abstract connector). No cross-domain DB/memory access." },
+    "R18_agent_loop_safety": { "priority": "HIGH", "spec": "agent_loops.json", "action": "Every iterative loop declares explicit max_iterations counter and structured escape routing. Recursive generation/testing loops run in isolated git worktree or sandbox." },
+    "R19_zero_direct_env": { "priority": "CRITICAL", "spec": "ddd.json", "action": "No sub-agent or skill invokes process.env or reads raw config. Secrets injected at runtime via Secure Key Broker, only in infrastructure/connector layer." },
+    "R20_core_file_protection": { "priority": "CRITICAL", "action": "If modifying core framework file → do not break existing abstraction. Extend via DI or composition. When creating new module → inspect architect-ai-modules/templates and replicate skeleton and types exactly." }
   },
   "auto_save": {
     "orchestrator": "claude-code",
-    "layer_1_milestone": { "triggers_es": ["Nodo completado","Feature COMPLETE","Deuda nueva","PUSH exitoso","Módulo publicado"], "method": "fs.writeFile → git add → git commit", "commit_message_format": "chore(snap): milestone — {trigger} [{YYYY-MM-DDTHHMMSS}]" },
-    "layer_2_predictive": { "trigger_es": "Tokens restantes < 20% del contexto", "alert_es": "⚠️ CONTEXTO AL 80% — Estado guardado en repo. Continuidad garantizada.", "commit_message_format": "chore(snap): predictive save [{YYYY-MM-DDTHHMMSS}]" },
-    "layer_3_session_end": { "trigger_command": "CERRAR SESION", "method": "fs.writeFile all → git add __AI_CORE__/ → git commit → git push origin [project_branch]", "commit_message_format": "chore(snap): session end [{YYYY-MM-DDTHHMMSS}]" }
+    "layer_1_milestone": { "triggers": ["Node completed","Feature COMPLETE","New debt","Successful PUSH","Module published"], "method": "fs.writeFile → git add → git commit", "commit_format": "chore(snap): milestone — {trigger} [{ISO}]" },
+    "layer_2_predictive": { "trigger": "Remaining tokens < 20% of context", "commit_format": "chore(snap): predictive save [{ISO}]" },
+    "layer_3_session_end": { "trigger_command": "CERRAR SESION", "method": "fs.writeFile all → git add __AI_CORE__/ → git commit → git push origin [project_branch]", "commit_format": "chore(snap): session end [{ISO}]" }
   },
   "session_commands": {
-    "ARRANCAR": { "action_es": "Cargar contexto e iniciar sesión" },
-    "ESTADO": { "action_es": "Dashboard compacto del proyecto" },
-    "INICIAR PROYECTO": { "action_es": "Crear estructura __AI_CORE__ desde cero con acuerdo inicial" },
-    "AUDITAR PROYECTO": { "action_es": "Mapear proyecto heredado y generar __AI_CORE__" },
-    "SIGUIENTE": { "action_es": "Continuar fragmento pendiente" },
-    "CERRAR SESIÓN": { "action_es": "Protocolo de cierre, SNAP FINAL y guardado" },
-    "INSTALAR MÓDULO": { "action_es": "Descargar módulo del library al proyecto" },
-    "PUBLICAR MÓDULO": { "action_es": "Subir función al module library" },
-    "DEUDA [TD-id]": { "action_es": "Detalle de deuda técnica específica" },
-    "FEATURE [F-id]": { "action_es": "Detalle de feature específica" },
-    "REINTENTAR": { "action_es": "Reintentar operación tras servicio caído" },
-    "SALUD": { "action_es": "Índice de salud técnica del proyecto" }
+    "ARRANCAR": "Load context and start session",
+    "ESTADO": "Compact project dashboard",
+    "INICIAR PROYECTO": "Create __AI_CORE__ structure from scratch with initial agreement",
+    "AUDITAR PROYECTO": "Map inherited project and generate __AI_CORE__",
+    "SIGUIENTE": "Continue pending fragment",
+    "CERRAR SESIÓN": "Close protocol, SNAP FINAL and save",
+    "INSTALAR MÓDULO": "Download module from library to project",
+    "PUBLICAR MÓDULO": "Upload function to module library",
+    "DEUDA [TD-id]": "Detail of specific technical debt",
+    "FEATURE [F-id]": "Detail of specific feature",
+    "REINTENTAR": "Retry operation after service down",
+    "SALUD": "Project technical health index"
   },
   "startup_protocol": {
-    "steps_es": [
-      "0. Claude Code lee todos los archivos __AI_CORE__/ directamente del disco.",
-      "1. Leer config.json → extraer project, current_node, progress_pct",
-      "2. Leer workflow.json → restaurar reglas activas",
-      "3. Calcular health.json → alertar si deuda supera umbral",
-      "4. Verificar BUGS_CONOCIDOS y PENDIENTE_MANANA",
-      "5. Emitir una sola línea de confirmación",
-      "6. Si patterns.json tiene patrones activos → aplicar verificaciones reforzadas"
+    "steps": [
+      "0. Read selective fields from __AI_CORE__/ per CLAUDE.md Step 0",
+      "1. Read config.json → extract project, current_node, progress_pct",
+      "2. Read workflow.json → restore active rules",
+      "3. Calculate health.json → alert if debt exceeds threshold",
+      "4. Check bugs_known and pending_tomorrow",
+      "5. Emit single confirmation line",
+      "6. If patterns.json has active patterns → apply reinforced checks"
     ],
-    "confirmation_format": "[project] listo al [progress_pct]%. Nodo: [current_node]. [health_alert_if_any]"
-  },
-  "anti_patterns": {
-    "forbidden_es": [
-      "Saludar al usuario (Hola, Claro, Por supuesto)",
-      "Pedir disculpas (Lo siento, Perdón)",
-      "Repetir archivos completos sin solicitud explícita",
-      "Actuar sobre archivo sin verificar su estado primero",
-      "Ejecutar acciones destructivas sin contraseña catastrófica",
-      "Exponer el Lenguaje Máquina interno al usuario",
-      "Marcar nodo COMPLETE sin tests mínimos pasando",
-      "Continuar con features si deuda crítica supera umbral"
-    ]
+    "confirmation_format": "[project] v[version] — [progress_pct]% — Nodo: [current_node]. [health_alert]"
   },
   "multi_agent_protocol": {
-    "activation_es": "Automático al detectar subagentes. Un agente solo = modo single (default).",
-    "roles": { "architect": "Decisiones de arquitectura, manejo de __AI_CORE__, coordinación", "frontend": "UI, componentes", "backend": "APIs, lógica de negocio", "database": "Schema, migraciones", "devops": "Deploy, CI/CD" },
-    "rules_es": ["Solo el Arquitecto modifica __AI_CORE__","Agentes especialistas reportan al Arquitecto","Un agente no puede hacer push a main sin aprobación del Arquitecto"],
+    "activation": "Automatic on subagent detection. Single agent = default mode.",
+    "roles": { "architect": "Architecture decisions, __AI_CORE__ management, coordination", "frontend": "UI, components", "backend": "APIs, business logic", "database": "Schema, migrations", "devops": "Deploy, CI/CD" },
+    "rules": ["Only Architect modifies __AI_CORE__","Specialist agents report to Architect","No agent pushes to main without Architect approval"],
     "bounded_context_subagents": {
       "spec": "ddd.json",
-      "principle_es": "Dentro de cada dominio se asignan sub-agentes de rol atómico e hiper-específico. Un sub-agente no puede escapar de su bounded context.",
-      "principle_en": "Within each domain, atomic hyper-specific role sub-agents are assigned. A sub-agent cannot escape its bounded context.",
-      "atomic_roles": { "domain_validator": "Valida reglas de negocio e invariantes del dominio", "domain_executor": "Ejecuta casos de uso (skills) del dominio", "connector_adapter": "Media con infraestructura solo vía conectores + Secure Key Broker" },
-      "constraints_es": ["Un sub-agente solo opera dentro de su dominio","No accede a memoria ni BD de otro dominio","No invoca process.env — usa el Secure Key Broker"]
+      "principle": "Within each domain, atomic hyper-specific role sub-agents are assigned. A sub-agent cannot escape its bounded context.",
+      "atomic_roles": { "domain_validator": "Validates business rules and domain invariants", "domain_executor": "Executes domain use cases (skills)", "connector_adapter": "Mediates with infrastructure only via connectors + Secure Key Broker" },
+      "constraints": ["Sub-agent operates only within its domain","No access to another domain's memory or DB","No process.env — uses Secure Key Broker"]
     }
   },
   "ddd_architecture": {
@@ -122,8 +84,8 @@
     "enforced_by_rules": ["R18_agent_loop_safety"]
   },
   "framework_versioning": {
-    "current_framework_version": "2.3.0",
-    "backward_compatible_until": "2.0.0",
-    "changelog_2_3_0_es": "Aditivo: DDD (ddd.json), loops de agentes (agent_loops.json), reglas R17–R20, sub-agentes por bounded context. Sin breaking changes."
+    "current_framework_version": "2.4.0",
+    "backward_compatible_until": "2.2.0",
+    "changelog_2_4_0": "XML machine language for CLAUDE.md, token optimization (~40% reduction), bilingual dedup across all JSON, relative paths, Obsidian integration support, contradiction fixes."
   }
 }

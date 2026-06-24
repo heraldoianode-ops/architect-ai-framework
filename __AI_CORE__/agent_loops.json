@@ -1,57 +1,37 @@
 {
-  "_meta": {
-    "file": "agent_loops.json",
-    "version": "1.0.0",
-    "framework": "ARCHITECT-AI",
-    "added_in_framework_version": "2.3.0",
-    "description_es": "Ingeniería de loops de agentes: máquina de estados + ejecución basada en grafo, con cortes deterministas. Uso exclusivo de la IA. Aditivo y retrocompatible.",
-    "description_en": "Agent loop engineering: state machine + graph-based execution with deterministic cutoffs. AI use only. Additive and backward-compatible.",
-    "load_on_demand": true,
-    "load_when_es": "Al ejecutar loops recursivos de generación/testing o al orquestar sub-agentes.",
-    "load_when_en": "When running recursive generation/testing loops or orchestrating sub-agents."
-  },
+  "added_in_framework_version": "2.3.0",
+  "load_on_demand": true,
+  "load_when": "When running recursive generation/testing loops or orchestrating sub-agents.",
 
   "loop_model": {
     "formula": "LOOP_ENGINEERING := { State_Machine + Graph_Based_Execution }",
-    "evaluation_cycle": "(State) -> [Evaluate] -> [Next_Action / Sub_Agent]",
-    "note_es": "Cada iteración evalúa el estado de forma determinista y enruta a la siguiente acción o sub-agente.",
-    "note_en": "Each iteration deterministically evaluates state and routes to the next action or sub-agent."
+    "evaluation_cycle": "(State) -> [Evaluate] -> [Next_Action / Sub_Agent]"
   },
 
   "safety": {
     "max_iterations_default": 8,
     "require_explicit_counter": true,
     "structured_escape_routing": {
-      "on_max_iterations_es": "Detener el loop, registrar estado en pending_sync.json y reportar al Arquitecto.",
-      "on_max_iterations_en": "Stop the loop, record state in pending_sync.json and report to the Architect.",
-      "on_no_progress_es": "Si dos iteraciones consecutivas no cambian el estado → escape inmediato.",
-      "on_no_progress_en": "If two consecutive iterations do not change state → immediate escape.",
+      "on_max_iterations": "Stop loop, record state in pending_sync.json and report to Architect.",
+      "on_no_progress": "If two consecutive iterations do not change state → immediate escape.",
       "escape_states": ["DONE", "BLOCKED", "MAX_ITERATIONS_REACHED", "NO_PROGRESS"]
     },
-    "forbidden_es": [
-      "Loops sin contador max_iterations explícito",
-      "Loops sin condición de escape estructurada",
-      "Recursión de generación de código sobre el árbol de trabajo principal sin aislamiento"
-    ],
-    "forbidden_en": [
-      "Loops without an explicit max_iterations counter",
+    "forbidden": [
+      "Loops without explicit max_iterations counter",
       "Loops without structured escape conditions",
-      "Recursive code generation over the main working tree without isolation"
+      "Recursive code generation over main working tree without isolation"
     ]
   },
 
   "isolation": {
-    "principle_es": "Los loops recursivos de generación o testing corren en git worktrees aislados o sandboxes virtuales para evitar contaminar el árbol de trabajo.",
-    "principle_en": "Recursive generation or testing loops run in isolated git worktrees or virtual sandboxes to avoid polluting the working tree.",
+    "principle": "Recursive generation or testing loops run in isolated git worktrees or virtual sandboxes to avoid polluting the working tree.",
     "mechanisms": ["git_worktree", "virtual_code_sandbox"],
-    "cleanup_es": "Eliminar el worktree/sandbox al finalizar si no produjo cambios aceptados.",
-    "cleanup_en": "Remove the worktree/sandbox on completion if it produced no accepted changes."
+    "cleanup": "Remove worktree/sandbox on completion if no accepted changes produced."
   },
 
   "state_machine_template": {
     "id": "LOOP-000",
-    "goal_es": "",
-    "goal_en": "",
+    "goal": "",
     "max_iterations": 8,
     "isolation": "[git_worktree / virtual_code_sandbox / none]",
     "states": [

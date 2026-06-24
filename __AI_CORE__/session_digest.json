@@ -1,11 +1,6 @@
 {
-  "_meta": {
-    "file": "session_digest.json",
-    "description_es": "Resumen comprimido de las últimas 5 sesiones. El arranque lee esto, no el changelog completo.",
-    "description_en": "Compressed summary of last 5 sessions. Startup reads this, not the full changelog.",
-    "max_sessions": 5,
-    "auto_updated_by": "CERRAR SESIÓN / session end SNAP"
-  },
+  "max_sessions": 5,
+  "auto_updated_by": "CERRAR SESIÓN / session end SNAP",
   "last_sessions": [],
   "settled_decisions_cache": [],
   "session_template": {
