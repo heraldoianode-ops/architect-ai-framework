@@ -4,18 +4,18 @@
     "description_es": "Índice de salud técnica. Calculado automáticamente al arrancar cada sesión.",
     "description_en": "Technical health index. Automatically calculated at each session start."
   },
-  "last_calculated": null,
-  "overall_score": null,
-  "status": "[HEALTHY / WARNING / CRITICAL]",
+  "last_calculated": "2026-06-28",
+  "overall_score": 18,
+  "status": "HEALTHY",
   "dimensions": {
     "debt": {
       "critical_count": 0,
-      "high_count": 0,
+      "high_count": 1,
       "medium_count": 0,
-      "low_count": 0,
+      "low_count": 2,
       "score_es": "0 = saludable, 100 = en crisis",
       "score_en": "0 = healthy, 100 = in crisis",
-      "value": 0
+      "value": 12
     },
     "test_coverage": {
       "estimated_pct": 0,
@@ -23,9 +23,9 @@
       "value": 0
     },
     "progress": {
-      "phases_complete": 0,
-      "phases_total": 0,
-      "pct": 0
+      "phases_complete": 3,
+      "phases_total": 4,
+      "pct": 85
     },
     "pending_decisions": {
       "count": 0,
@@ -34,5 +34,9 @@
     }
   },
   "alerts": [],
-  "recommendations": []
+  "recommendations": [
+    "HIGH: Configurar dominio propio para emails (FROM_EMAIL hardcoded como onboarding@resend.dev)",
+    "LOW: Eliminar ~22 console.log en producción",
+    "LOW: Unificar FONT_STACKS duplicado entre catalog.js y mis-pedidos.html"
+  ]
 }

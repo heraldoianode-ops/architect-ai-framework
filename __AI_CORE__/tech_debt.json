@@ -15,5 +15,63 @@
     "MEDIUM":   { "es": "Código frágil / Puede fallar bajo carga", "en": "Fragile code / May fail under load" },
     "LOW":      { "es": "Mejora de mantenibilidad / Sin riesgo inmediato", "en": "Maintainability improvement / No immediate risk" }
   },
-  "debts": []
+  "debts": [
+    {
+      "id": "TD-001",
+      "severity": "HIGH",
+      "title_es": "Email FROM hardcoded",
+      "title_en": "Hardcoded FROM email",
+      "description_es": "FROM_EMAIL = 'onboarding@resend.dev' en todas las funciones de email. Requiere dominio propio.",
+      "description_en": "FROM_EMAIL = 'onboarding@resend.dev' in all email functions. Needs custom domain.",
+      "files": ["netlify/functions/order-receipt-email.js", "netlify/functions/send-order-email.js", "netlify/functions/send-booking-email.js", "netlify/functions/send-appointment-reminders.js", "netlify/functions/email-campaign-send.js"],
+      "created": "2026-03-01",
+      "status": "OPEN"
+    },
+    {
+      "id": "TD-002",
+      "severity": "LOW",
+      "title_es": "console.log en producción",
+      "title_en": "console.log in production",
+      "description_es": "~22 ocurrencias en admin.js y catalog.js.",
+      "description_en": "~22 occurrences in admin.js and catalog.js.",
+      "files": ["public/assets/js/admin.js", "public/assets/js/catalog.js"],
+      "created": "2026-06-28",
+      "status": "OPEN"
+    },
+    {
+      "id": "TD-003",
+      "severity": "LOW",
+      "title_es": "FONT_STACKS duplicado",
+      "title_en": "Duplicated FONT_STACKS",
+      "description_es": "Definido igual en catalog.js y mis-pedidos.html.",
+      "description_en": "Defined identically in catalog.js and mis-pedidos.html.",
+      "files": ["public/assets/js/catalog.js", "public/mis-pedidos.html"],
+      "created": "2026-06-28",
+      "status": "OPEN"
+    },
+    {
+      "id": "TD-004",
+      "severity": "LOW",
+      "title_es": "alert() reemplazado por showToast()",
+      "title_en": "alert() replaced with showToast()",
+      "description_es": "53 alert() reemplazados por sistema toast inline.",
+      "description_en": "53 alert() calls replaced with inline toast system.",
+      "files": ["public/assets/js/admin.js", "public/assets/js/catalog.js"],
+      "created": "2026-06-28",
+      "resolved": "2026-06-28",
+      "status": "RESOLVED"
+    },
+    {
+      "id": "TD-005",
+      "severity": "LOW",
+      "title_es": "Métodos HTTP estandarizados",
+      "title_en": "HTTP methods standardized",
+      "description_es": "4 endpoints DELETE migrados de POST+body a DELETE+query.",
+      "description_en": "4 DELETE endpoints migrated from POST+body to DELETE+query.",
+      "files": ["netlify/functions/categories-delete.js", "netlify/functions/reviews-delete.js", "netlify/functions/email-subscriber-delete.js", "netlify/functions/email-campaign-delete.js"],
+      "created": "2026-06-28",
+      "resolved": "2026-06-28",
+      "status": "RESOLVED"
+    }
+  ]
 }

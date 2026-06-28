@@ -10,78 +10,104 @@
   },
 
   "meta": {
-    "project": "[NOMBRE_PROYECTO]",
-    "project_slug": "[nombre-proyecto]",
-    "version": "0.1.0",
-    "type": "[SaaS / API / WebApp / MobileApp / Library]",
-    "client": "[nombre-cliente-o-interno]",
-    "created": "[YYYY-MM-DD]",
-    "last_updated": "[YYYY-MM-DD]",
-    "owner": "[nombre-equipo-o-dev]",
+    "project": "Multyprof CRM",
+    "project_slug": "multyprof-crm",
+    "version": "4.0.0",
+    "type": "SaaS",
+    "client": "interno",
+    "created": "2026-01-01",
+    "last_updated": "2026-06-28",
+    "owner": "heraldoianode-ops",
     "language_primary": "es",
     "language_secondary": "en"
   },
 
   "stack": {
-    "frontend": "[React 18 + Vite / Next.js / Vue / null]",
-    "backend": "[Netlify Functions / Express / FastAPI / null]",
-    "database": "[Supabase / PlanetScale / MongoDB / null]",
-    "auth": "[Supabase Auth / Auth0 / NextAuth / null]",
-    "hosting": "[Netlify / Vercel / Railway / null]",
-    "email": "[Resend / SendGrid / Postmark / null]",
-    "payments": "[Stripe / Lemonsqueezy / null]",
-    "monitoring": "[Sentry / Datadog / null]",
-    "repo": "[github.com/org/repo]",
+    "frontend": "HTML / CSS / JavaScript vanilla",
+    "backend": "Netlify Functions (Node.js CommonJS)",
+    "database": "Supabase PostgreSQL (wgdobtlmeugxzqyxrsee, sa-east-1)",
+    "auth": "Supabase Auth (JWT)",
+    "hosting": "Netlify (multyprof-crm.netlify.app)",
+    "email": "Resend",
+    "payments": "MercadoPago Checkout Pro",
+    "monitoring": null,
+    "repo": "github.com/heraldoianode-ops/multyprof-crm",
     "branch_main": "main",
-    "branch_dev": "[develop]",
-    "package_manager": "[npm / yarn / pnpm]"
+    "branch_dev": null,
+    "package_manager": "npm"
   },
 
   "initial_agreement": {
-    "agreed_on": "[YYYY-MM-DD]",
-    "description_es": "Acuerdo previo al inicio del proyecto. Define fases, nodos y criterios.",
-    "description_en": "Agreement prior to project start. Defines phases, nodes and criteria.",
+    "agreed_on": "2026-01-01",
+    "description_es": "SaaS CRM multi-rubro para pequeños negocios de Argentina.",
+    "description_en": "Multi-industry SaaS CRM for small businesses in Argentina.",
     "phases": [
       {
         "id": 1,
-        "name_es": "[Nombre Fase 1]",
-        "name_en": "[Phase 1 Name]",
-        "estimated_days": 0,
+        "name_es": "Core — Auth, catálogo, reservas, caja",
+        "name_en": "Core — Auth, catalog, bookings, cash register",
+        "estimated_days": 30,
         "nodes": [
-          {
-            "id": "1.1",
-            "name_es": "[Nombre nodo]",
-            "name_en": "[Node name]",
-            "steps_es": ["[paso 1]", "[paso 2]"],
-            "steps_en": ["[step 1]", "[step 2]"],
-            "estimated_hours": 0,
-            "test_level": 1
-          }
+          { "id": "1.1", "name_es": "E1–E11 Core features", "name_en": "E1–E11 Core features", "steps_es": ["Auth", "Catálogo", "Reservas", "Caja", "Staff", "Recordatorios"], "steps_en": ["Auth", "Catalog", "Bookings", "Cash register", "Staff", "Reminders"], "estimated_hours": 80, "test_level": 1 }
+        ]
+      },
+      {
+        "id": 2,
+        "name_es": "Growth — Pagos, marketing, fidelización",
+        "name_en": "Growth — Payments, marketing, loyalty",
+        "estimated_days": 30,
+        "nodes": [
+          { "id": "2.1", "name_es": "E12–E21 Features avanzadas", "name_en": "E12–E21 Advanced features", "steps_es": ["Reseñas", "Categorías", "MercadoPago", "Email marketing", "Fidelización", "Reportes", "URLs limpias", "Música", "Chatbot", "Share card", "Portal pedidos", "PDF", "Stock alerts"], "steps_en": ["Reviews", "Categories", "MercadoPago", "Email marketing", "Loyalty", "Reports", "Clean URLs", "Music", "Chatbot", "Share card", "Orders portal", "PDF", "Stock alerts"], "estimated_hours": 120, "test_level": 1 }
+        ]
+      },
+      {
+        "id": 3,
+        "name_es": "Extras — Variantes, zonas, suscripciones",
+        "name_en": "Extras — Variants, zones, subscriptions",
+        "estimated_days": 15,
+        "nodes": [
+          { "id": "3.1", "name_es": "E25, E27, Suscripciones, Notices, Chatbot avanzado", "name_en": "E25, E27, Subscriptions, Notices, Advanced chatbot", "steps_es": ["Variantes producto", "Zonas envío", "Planes membresía", "Avisos", "Typewriter"], "steps_en": ["Product variants", "Delivery zones", "Membership plans", "Notices", "Typewriter"], "estimated_hours": 40, "test_level": 1 }
+        ]
+      },
+      {
+        "id": 4,
+        "name_es": "Próximas — WhatsApp, galería, multi-sucursal",
+        "name_en": "Next — WhatsApp, gallery, multi-branch",
+        "estimated_days": 30,
+        "nodes": [
+          { "id": "4.1", "name_es": "E22 Remito WhatsApp", "name_en": "E22 WhatsApp receipt", "steps_es": ["Generar imagen comprobante", "Compartir por WA"], "steps_en": ["Generate receipt image", "Share via WA"], "estimated_hours": 8, "test_level": 1 },
+          { "id": "4.2", "name_es": "E28 Galería multi-imagen", "name_en": "E28 Multi-image gallery", "steps_es": ["Múltiples imágenes por producto", "Carrusel en catálogo"], "steps_en": ["Multiple images per product", "Carousel in catalog"], "estimated_hours": 12, "test_level": 1 },
+          { "id": "4.3", "name_es": "E23 Multi-sucursal", "name_en": "E23 Multi-branch", "steps_es": ["branch_id en tablas", "Selector de sucursal"], "steps_en": ["branch_id in tables", "Branch selector"], "estimated_hours": 40, "test_level": 2 }
         ]
       }
     ]
   },
 
   "roadmap": {
-    "current_phase": "[Fase 1 — Nombre]",
-    "current_node": "[1.1 — Nombre nodo]",
-    "progress_pct": 0,
-    "phases": []
+    "current_phase": "Fase 4 — Próximas features",
+    "current_node": "4.1 — E22 Remito WhatsApp",
+    "progress_pct": 85,
+    "phases": [
+      { "id": 1, "status": "COMPLETE", "pct": 100 },
+      { "id": 2, "status": "COMPLETE", "pct": 100 },
+      { "id": 3, "status": "COMPLETE", "pct": 100 },
+      { "id": 4, "status": "IN_PROGRESS", "pct": 0 }
+    ]
   },
 
   "files_map": {
-    "critical": [],
-    "env_vars": [],
-    "entry_points": [],
-    "config_files": []
+    "critical": ["netlify/functions/_lib/auth.js", "public/assets/js/admin.js", "public/assets/js/catalog.js", "netlify/functions/orders-create.js"],
+    "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_KEY", "RESEND_API_KEY", "SITE_URL"],
+    "entry_points": ["public/admin.html", "public/catalog.html", "public/mis-pedidos.html", "public/login.html"],
+    "config_files": ["netlify.toml", "package.json"]
   },
 
   "session_state": {
-    "completed_today": [],
-    "pending_tomorrow": [],
+    "completed_today": ["refactor: toast notifications replacing alert()", "refactor: standardize DELETE methods", "cleanup: remove hello.js", "docs: update CLAUDE.md features list"],
+    "pending_tomorrow": ["E22 — Remito WhatsApp imagen"],
     "bugs_known": [],
-    "last_commit": null,
-    "last_snap": null,
-    "active_since": "[YYYY-MM-DD]"
+    "last_commit": "ec7e14d",
+    "last_snap": "2026-06-28T000000",
+    "active_since": "2026-06-28"
   }
 }

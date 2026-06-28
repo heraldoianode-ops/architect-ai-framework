@@ -6,7 +6,23 @@
     "max_sessions": 5,
     "auto_updated_by": "CERRAR SESIÓN / session end SNAP"
   },
-  "last_sessions": [],
+  "last_sessions": [
+    {
+      "session_id": "2026-06-28T000000",
+      "date": "2026-06-28",
+      "duration_min": 30,
+      "node_start": "3.1",
+      "node_end": "4.1",
+      "progress_delta": 5,
+      "completed": ["Toast notification system", "DELETE method standardization", "hello.js cleanup", "CLAUDE.md + framework state update"],
+      "new_debts": [],
+      "resolved_debts": ["TD-004 alert()", "TD-005 HTTP methods"],
+      "features_completed": [],
+      "modules_published": [],
+      "key_decisions": ["Proceed with E22 WhatsApp receipt next"],
+      "commit": "ec7e14d"
+    }
+  ],
   "settled_decisions_cache": [],
   "session_template": {
     "session_id": "YYYY-MM-DDTHHMMSS",
