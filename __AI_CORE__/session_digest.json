@@ -8,6 +8,21 @@
   },
   "last_sessions": [
     {
+      "session_id": "2026-06-29T020000",
+      "date": "2026-06-29",
+      "duration_min": 45,
+      "node_start": "4.3",
+      "node_end": "4.3",
+      "progress_delta": 1,
+      "completed": ["E40 bulk discount server-side validation", "E41 price history tracking", "fix: outdated Phase 3 references in frontend", "E40 bulk fields in products-create"],
+      "new_debts": [],
+      "resolved_debts": [],
+      "features_completed": ["E40", "E41"],
+      "modules_published": [],
+      "key_decisions": ["User bought domain — FROM_EMAIL debt can be resolved next session"],
+      "commit": "2833d91"
+    },
+    {
       "session_id": "2026-06-29T000000",
       "date": "2026-06-29",
       "duration_min": 90,

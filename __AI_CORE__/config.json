@@ -103,8 +103,8 @@
   },
 
   "session_state": {
-    "completed_today": ["E38 — CSV export productos/servicios", "E39 — Sección Sobre Nosotros", "E40 — Descuento por cantidad (bulk discount)", "E41 — Historial de precios"],
-    "pending_tomorrow": [],
+    "completed_today": ["E38 — CSV export productos/servicios", "E39 — Sección Sobre Nosotros", "E40 — Descuento por cantidad (bulk discount)", "E41 — Historial de precios", "fix: referencias Fase 3 desactualizadas en frontend"],
+    "pending_tomorrow": ["Resolver deuda FROM_EMAIL — usuario compró dominio, falta: saber dominio, email FROM, verificar DNS en Resend"],
     "bugs_known": [],
     "last_commit": "1143b40",
     "last_snap": "2026-06-29T000000",
