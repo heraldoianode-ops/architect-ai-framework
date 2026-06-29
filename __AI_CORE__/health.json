@@ -12,7 +12,7 @@
       "critical_count": 0,
       "high_count": 1,
       "medium_count": 0,
-      "low_count": 2,
+      "low_count": 0,
       "score_es": "0 = saludable, 100 = en crisis",
       "score_en": "0 = healthy, 100 = in crisis",
       "value": 12
@@ -25,7 +25,7 @@
     "progress": {
       "phases_complete": 3,
       "phases_total": 4,
-      "pct": 92
+      "pct": 97
     },
     "pending_decisions": {
       "count": 0,
@@ -35,8 +35,6 @@
   },
   "alerts": [],
   "recommendations": [
-    "HIGH: Configurar dominio propio para emails (FROM_EMAIL hardcoded como onboarding@resend.dev)",
-    "LOW: Eliminar ~22 console.log en producción",
-    "LOW: Unificar FONT_STACKS duplicado entre catalog.js y mis-pedidos.html"
+    "HIGH: Configurar dominio propio para emails (FROM_EMAIL hardcoded como onboarding@resend.dev)"
   ]
 }

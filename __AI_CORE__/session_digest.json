@@ -10,17 +10,17 @@
     {
       "session_id": "2026-06-29T000000",
       "date": "2026-06-29",
-      "duration_min": 45,
+      "duration_min": 90,
       "node_start": "4.1",
       "node_end": "4.3",
-      "progress_delta": 7,
-      "completed": ["E32 PDF report export (backend + frontend)", "E33 Push notifications (SW + Web Push + VAPID + admin UI)", "VAPID keys generated"],
+      "progress_delta": 12,
+      "completed": ["E32 PDF report export", "E33 Push notifications", "E34 already done", "Tech debt: console.log + FONT_STACKS", "E35 WhatsApp FAB", "E36 Employee stats", "E37 CSV import"],
       "new_debts": [],
-      "resolved_debts": [],
-      "features_completed": ["E32", "E33"],
+      "resolved_debts": ["TD-002 console.log", "TD-003 FONT_STACKS"],
+      "features_completed": ["E32", "E33", "E34", "E35", "E36", "E37"],
       "modules_published": [],
-      "key_decisions": ["E34 Agenda visual next, E23 Multi-sucursal deferred"],
-      "commit": "42a4563"
+      "key_decisions": ["E23 Multi-sucursal deferred until demand", "New features E35-E37 prioritized over structural changes"],
+      "commit": "ab1aa28"
     },
     {
       "session_id": "2026-06-28T000000",

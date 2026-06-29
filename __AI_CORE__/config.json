@@ -86,7 +86,7 @@
   "roadmap": {
     "current_phase": "Fase 4 — Próximas features",
     "current_node": "4.3 — E23 Multi-sucursal (pendiente)",
-    "progress_pct": 92,
+    "progress_pct": 97,
     "phases": [
       { "id": 1, "status": "COMPLETE", "pct": 100 },
       { "id": 2, "status": "COMPLETE", "pct": 100 },
