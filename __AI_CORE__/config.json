@@ -97,7 +97,7 @@
 
   "files_map": {
     "critical": ["netlify/functions/_lib/auth.js", "public/assets/js/admin.js", "public/assets/js/catalog.js", "netlify/functions/orders-create.js"],
-    "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_KEY", "RESEND_API_KEY", "SITE_URL"],
+    "env_vars": ["SUPABASE_URL", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_KEY", "RESEND_API_KEY", "SITE_URL", "VAPID_PUBLIC_KEY", "VAPID_PRIVATE_KEY", "VAPID_EMAIL"],
     "entry_points": ["public/admin.html", "public/catalog.html", "public/mis-pedidos.html", "public/login.html"],
     "config_files": ["netlify.toml", "package.json"]
   },

@@ -8,18 +8,33 @@
   },
   "last_sessions": [
     {
+      "session_id": "2026-06-29T000000",
+      "date": "2026-06-29",
+      "duration_min": 45,
+      "node_start": "4.1",
+      "node_end": "4.3",
+      "progress_delta": 7,
+      "completed": ["E32 PDF report export (backend + frontend)", "E33 Push notifications (SW + Web Push + VAPID + admin UI)", "VAPID keys generated"],
+      "new_debts": [],
+      "resolved_debts": [],
+      "features_completed": ["E32", "E33"],
+      "modules_published": [],
+      "key_decisions": ["E34 Agenda visual next, E23 Multi-sucursal deferred"],
+      "commit": "42a4563"
+    },
+    {
       "session_id": "2026-06-28T000000",
       "date": "2026-06-28",
       "duration_min": 30,
       "node_start": "3.1",
       "node_end": "4.1",
       "progress_delta": 5,
-      "completed": ["Toast notification system", "DELETE method standardization", "hello.js cleanup", "CLAUDE.md + framework state update"],
+      "completed": ["Toast notification system", "DELETE method standardization", "hello.js cleanup", "E22 WhatsApp receipt", "E31 Dark mode", "CLAUDE.md + framework state update"],
       "new_debts": [],
       "resolved_debts": ["TD-004 alert()", "TD-005 HTTP methods"],
-      "features_completed": [],
+      "features_completed": ["E22", "E31"],
       "modules_published": [],
-      "key_decisions": ["Proceed with E22 WhatsApp receipt next"],
+      "key_decisions": ["Proceed with E32 PDF export next"],
       "commit": "ec7e14d"
     }
   ],
