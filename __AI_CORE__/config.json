@@ -86,7 +86,7 @@
   "roadmap": {
     "current_phase": "Fase 4 — Próximas features",
     "current_node": "4.3 — E23 Multi-sucursal (pendiente)",
-    "progress_pct": 97,
+    "progress_pct": 98,
     "phases": [
       { "id": 1, "status": "COMPLETE", "pct": 100 },
       { "id": 2, "status": "COMPLETE", "pct": 100 },
@@ -103,11 +103,11 @@
   },
 
   "session_state": {
-    "completed_today": ["refactor: toast notifications replacing alert()", "refactor: standardize DELETE methods", "cleanup: remove hello.js", "docs: update CLAUDE.md features list"],
-    "pending_tomorrow": ["E22 — Remito WhatsApp imagen"],
+    "completed_today": ["E38 — CSV export productos/servicios", "E39 — Sección Sobre Nosotros", "E40 — Descuento por cantidad (bulk discount)", "E41 — Historial de precios"],
+    "pending_tomorrow": [],
     "bugs_known": [],
-    "last_commit": "ec7e14d",
-    "last_snap": "2026-06-28T000000",
-    "active_since": "2026-06-28"
+    "last_commit": "1143b40",
+    "last_snap": "2026-06-29T000000",
+    "active_since": "2026-06-29"
   }
 }
