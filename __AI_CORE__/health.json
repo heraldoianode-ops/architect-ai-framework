@@ -4,7 +4,7 @@
     "description_es": "Índice de salud técnica. Calculado automáticamente al arrancar cada sesión.",
     "description_en": "Technical health index. Automatically calculated at each session start."
   },
-  "last_calculated": "2026-06-28",
+  "last_calculated": "2026-06-29",
   "overall_score": 18,
   "status": "HEALTHY",
   "dimensions": {
@@ -25,7 +25,7 @@
     "progress": {
       "phases_complete": 3,
       "phases_total": 4,
-      "pct": 85
+      "pct": 92
     },
     "pending_decisions": {
       "count": 0,

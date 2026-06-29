@@ -85,8 +85,8 @@
 
   "roadmap": {
     "current_phase": "Fase 4 — Próximas features",
-    "current_node": "4.1 — E22 Remito WhatsApp",
-    "progress_pct": 85,
+    "current_node": "4.3 — E23 Multi-sucursal (pendiente)",
+    "progress_pct": 92,
     "phases": [
       { "id": 1, "status": "COMPLETE", "pct": 100 },
       { "id": 2, "status": "COMPLETE", "pct": 100 },
