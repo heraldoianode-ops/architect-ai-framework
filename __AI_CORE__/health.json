@@ -5,12 +5,12 @@
     "description_en": "Technical health index. Automatically calculated at each session start."
   },
   "last_calculated": "2026-06-29",
-  "overall_score": 18,
+  "overall_score": 5,
   "status": "HEALTHY",
   "dimensions": {
     "debt": {
       "critical_count": 0,
-      "high_count": 1,
+      "high_count": 0,
       "medium_count": 0,
       "low_count": 0,
       "score_es": "0 = saludable, 100 = en crisis",
@@ -34,7 +34,5 @@
     }
   },
   "alerts": [],
-  "recommendations": [
-    "HIGH: Configurar dominio propio para emails (FROM_EMAIL hardcoded como onboarding@resend.dev)"
-  ]
+  "recommendations": []
 }
