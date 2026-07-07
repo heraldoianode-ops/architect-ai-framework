@@ -29,6 +29,7 @@ ARCHITECT-AI-v2/
 │   ├── patterns.json         ← ES: Meta-aprendizaje nivel 1 / EN: Level 1 meta-learning
 │   ├── health.json           ← ES: Índice de salud técnica / EN: Technical health index
 │   ├── schema.sql            ← ES: Estructura de BD (si aplica) / EN: DB structure (if applicable)
+│   ├── rca_protocol.json     ← ES: Protocolo de Auditoría y RCA (HITL) / EN: Audit and RCA protocol (HITL)
 │   └── changelog.md          ← ES: Historial bilingüe / EN: Bilingual history
 │
 └── __MODULE_LIBRARY__/       ← ES: Compartido entre proyectos / EN: Shared across projects
@@ -53,6 +54,8 @@ ARCHITECT-AI-v2/
 | `PUBLICAR MÓDULO [fn]` | Subir función al library | Upload function to library |
 | `SALUD` | Índice de salud técnica | Technical health index |
 | `REINTENTAR` | Reintentar tras servicio caído | Retry after service recovery |
+| `RCA [descripción]` | Auditoría y Análisis de Causa Raíz de un error/bug (HITL) | Human-in-the-Loop Root Cause Analysis audit of an error/bug |
+| `AUTORIZO [A|B]` | Autorizar la opción elegida del Reporte RCA pendiente | Authorize the chosen option of the pending RCA report |
 
 ---
 
@@ -88,6 +91,9 @@ ARCHITECT-AI-v2/
 
 **R10** ES: MAJOR solo si breaking change → probar → subir si todo funciona.
 **R10** EN: MAJOR only on breaking change → test → increment if everything works.
+
+**R21** ES: Ante error/bug/caída → diagnosticar y emitir Reporte RCA (Síntoma, Causa Raíz, Opción A/B) → DETENERSE hasta autorización humana explícita → reparar en rama fix/bugfix aislada → esperar confirmación visual de diff + tests → commit/PR con formato Síntoma/Causa Raíz/Solución.
+**R21** EN: On error/bug/crash → diagnose and emit an RCA Report (Symptom, Root Cause, Option A/B) → STOP until explicit human authorization → repair on an isolated fix/bugfix branch → wait for visual confirmation of diff + tests → commit/PR using Symptom/Root Cause/Solution format.
 
 ---
 
