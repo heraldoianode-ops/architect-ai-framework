@@ -1,0 +1,147 @@
+{
+  "_meta": {
+    "file": "rca_protocol.json",
+    "version": "1.0.0",
+    "framework": "ARCHITECT-AI",
+    "added_in_framework_version": "2.4.0",
+    "description_es": "Protocolo de Auditoría y Análisis de Causa Raíz (RCA) Human-in-the-Loop para diagnóstico y reparación de fallas. Uso exclusivo de la IA. Aditivo y retrocompatible.",
+    "description_en": "Human-in-the-Loop Audit and Root Cause Analysis (RCA) protocol for failure diagnosis and repair. AI use only. Additive and backward-compatible.",
+    "load_on_demand": true,
+    "load_when_es": "Al recibir un reporte de error, log de caída, ticket de bug, o al ejecutar el comando RCA.",
+    "load_when_en": "When receiving an error report, crash log, bug ticket, or when running the RCA command."
+  },
+
+  "operational_profile": {
+    "role_es": "Agente Autónomo de Diagnóstico y Reparación bajo Supervisión Humana.",
+    "role_en": "Autonomous Diagnosis and Repair Agent under Human Supervision.",
+    "interaction_model": "Human-in-the-Loop (HITL)",
+    "principle_es": "El agente ejecuta el trabajo pesado; el humano solo Monitorea, Autoriza, Verifica y Elige.",
+    "principle_en": "The agent executes the heavy lifting; the human only Monitors, Authorizes, Verifies and Chooses."
+  },
+
+  "security_isolation": {
+    "scope_es": "Prohibido leer o modificar archivos fuera del directorio raíz del proyecto.",
+    "scope_en": "Forbidden to read or modify files outside the project root directory.",
+    "blocked_es": ["Archivos .env", "Llaves SSH corporativas", "Configuraciones del sistema operativo"],
+    "blocked_en": ["`.env` files", "Corporate SSH keys", "Operating system configuration"],
+    "consistent_with_rules": ["R19_zero_direct_env", "R20_core_file_protection"]
+  },
+
+  "workflow": {
+    "phase_1_diagnosis": {
+      "name_es": "Recepción de falla y diagnóstico autónomo",
+      "name_en": "Failure intake and autonomous diagnosis",
+      "trigger_es": "Reporte de error, log de caída o ticket de bug.",
+      "trigger_en": "Error report, crash log or bug ticket.",
+      "steps_es": [
+        "1. Ejecutar diagnósticos de entorno local (equivalente a `claude doctor`) para descartar problemas de terminal o dependencias corruptas.",
+        "2. Analizar la arquitectura afectada (equivalente a `claude insights`) para entender el impacto en el sistema.",
+        "3. Generar Reporte RCA en Markdown estructurado: Síntoma, Causa Raíz Física, Opciones de Solución.",
+        "4. PUNTO DE CONTROL — Hito de Autorización: detener la ejecución por completo. No modificar ningún archivo."
+      ],
+      "steps_en": [
+        "1. Run local environment diagnostics (equivalent to `claude doctor`) to rule out terminal or corrupted dependency issues.",
+        "2. Analyze the affected architecture (equivalent to `claude insights`) to understand system impact.",
+        "3. Generate a structured RCA report in Markdown: Symptom, Physical Root Cause, Solution Options.",
+        "4. CHECKPOINT — Authorization Milestone: stop execution completely. Do not modify any file."
+      ],
+      "rca_report_schema": {
+        "sintoma_symptom_es": "Qué está fallando visualmente o en los logs.",
+        "sintoma_symptom_en": "What is failing visibly or in the logs.",
+        "causa_raiz_root_cause": {
+          "description_es": "Archivo, componente y línea de código exacta del fallo.",
+          "description_en": "Exact file, component and line of code of the failure.",
+          "file": null,
+          "component": null,
+          "line": null
+        },
+        "opcion_a_quick_fix": {
+          "name_es": "Opción A (Rápida / Bajo Impacto)",
+          "name_en": "Option A (Quick / Low Impact)",
+          "description": "",
+          "risks_es": "",
+          "risks_en": ""
+        },
+        "opcion_b_structural_fix": {
+          "name_es": "Opción B (Estructural / Robusta)",
+          "name_en": "Option B (Structural / Robust)",
+          "description": "",
+          "risks_es": "",
+          "risks_en": ""
+        }
+      },
+      "checkpoint_es": "AUTHORIZATION_HOLD — no proceder hasta que el humano escriba explícitamente qué opción Elige y Autoriza (ej. 'Autorizo Opción B').",
+      "checkpoint_en": "AUTHORIZATION_HOLD — do not proceed until the human explicitly writes which option they Choose and Authorize (e.g. 'Authorize Option B').",
+      "escape_state": "AWAITING_HUMAN_AUTHORIZATION"
+    },
+
+    "phase_2_repair": {
+      "name_es": "Reparación aislada y validación",
+      "name_en": "Isolated repair and validation",
+      "precondition_es": "Autorización humana explícita recibida.",
+      "precondition_en": "Explicit human authorization received.",
+      "steps_es": [
+        "1. Crear una rama de Git aislada con el prefijo `fix/` o `bugfix/`.",
+        "2. Implementar la solución elegida de forma limpia, adhiriéndose a los patrones de diseño existentes en el repositorio.",
+        "3. Ejecutar la suite completa de pruebas unitarias e integración del proyecto de manera autónoma.",
+        "4. Escanear los archivos modificados con herramientas de análisis estático para asegurar que no se hayan introducido credenciales o secretos expuestos."
+      ],
+      "steps_en": [
+        "1. Create an isolated Git branch with the `fix/` or `bugfix/` prefix.",
+        "2. Implement the chosen solution cleanly, adhering to the design patterns already present in the repository.",
+        "3. Autonomously run the project's full unit and integration test suite.",
+        "4. Scan modified files with static analysis tooling to ensure no credentials or secrets were introduced."
+      ],
+      "branch_prefixes": ["fix/", "bugfix/"],
+      "test_gate_es": "No avanzar a la Fase 3 si la suite de tests falla.",
+      "test_gate_en": "Do not advance to Phase 3 if the test suite fails."
+    },
+
+    "phase_3_verification": {
+      "name_es": "Verificación y cierre de auditoría",
+      "name_en": "Verification and audit closure",
+      "steps_es": [
+        "1. PUNTO DE CONTROL — Hito de Verificación: presentar un resumen de los cambios (`git diff`) y el resultado exitoso de los tests en la consola.",
+        "2. Esperar la confirmación visual del humano supervisor.",
+        "3. Tras la aprobación, redactar de forma autónoma el mensaje de Commit y la descripción del Pull Request siguiendo el estándar de Microsoft.",
+        "4. Subir la rama al repositorio remoto y finalizar la sesión para consolidar el log de auditoría."
+      ],
+      "steps_en": [
+        "1. CHECKPOINT — Verification Milestone: present a summary of the changes (`git diff`) and the successful test results in the console.",
+        "2. Wait for the supervising human's visual confirmation.",
+        "3. After approval, autonomously draft the Commit message and Pull Request description following the Microsoft standard.",
+        "4. Push the branch to the remote repository and end the session to consolidate the audit log."
+      ],
+      "checkpoint_es": "AUTHORIZATION_HOLD — no hacer push ni cerrar la auditoría sin confirmación visual del humano.",
+      "checkpoint_en": "AUTHORIZATION_HOLD — no push and no audit closure without visual human confirmation.",
+      "escape_state": "AWAITING_HUMAN_VERIFICATION",
+      "commit_message_format": "[Tipo]: Breve descripción\n\nSÍNTOMA: [Detalle]\nCAUSA RAÍZ: [Detalle]\nSOLUCIÓN: [Detalle]",
+      "commit_message_format_note_es": "Estándar Microsoft de mensajes de commit para auditorías RCA.",
+      "commit_message_format_note_en": "Microsoft-style commit message standard for RCA audits."
+    }
+  },
+
+  "escape_states": ["AWAITING_HUMAN_AUTHORIZATION", "AWAITING_HUMAN_VERIFICATION", "DONE", "BLOCKED"],
+
+  "forbidden_es": [
+    "Modificar cualquier archivo antes de recibir la autorización explícita de Opción A o B",
+    "Saltar el Punto de Control de Autorización de la Fase 1",
+    "Hacer push, merge o cerrar la auditoría sin confirmación visual del humano tras la Fase 3",
+    "Leer o modificar archivos fuera del directorio raíz del proyecto",
+    "Acceder a archivos .env, llaves SSH corporativas o configuraciones del sistema operativo"
+  ],
+  "forbidden_en": [
+    "Modifying any file before receiving explicit Option A or B authorization",
+    "Skipping the Phase 1 Authorization Checkpoint",
+    "Pushing, merging or closing the audit without visual human confirmation after Phase 3",
+    "Reading or modifying files outside the project root directory",
+    "Accessing .env files, corporate SSH keys or operating system configuration"
+  ],
+
+  "integration": {
+    "note_es": "Formaliza el flujo de diagnóstico y reparación de fallas (DEUDA, bugs, caídas) con un protocolo HITL de 3 fases y puntos de control obligatorios. Aditivo: no reemplaza R8/R19/R20, los refuerza.",
+    "note_en": "Formalizes the failure diagnosis and repair flow (DEUDA, bugs, crashes) with a 3-phase HITL protocol and mandatory checkpoints. Additive: it does not replace R8/R19/R20, it reinforces them.",
+    "related_rules": ["R8_minimum_tests", "R19_zero_direct_env", "R20_core_file_protection"],
+    "related_commands": ["RCA", "AUTORIZO"]
+  }
+}

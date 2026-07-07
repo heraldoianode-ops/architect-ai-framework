@@ -1,7 +1,7 @@
 {
   "_meta": {
     "file": "workflow.json",
-    "version": "2.3.0",
+    "version": "2.4.0",
     "framework": "ARCHITECT-AI",
     "orchestrator": "claude-code",
     "description_es": "Reglas operativas completas del sistema. Uso exclusivo de la IA. Orquestador: Claude Code.",
@@ -52,7 +52,8 @@
     "R17_ddd_domain_isolation": { "name_es": "Aislamiento estricto de dominios DDD", "priority": "CRITICAL", "spec": "ddd.json", "action_es": "Toda regla de negocio reside en un directorio de dominio único. Comunicación entre dominios solo asíncrona (event-driven o conector abstracto). Ningún dominio accede a la BD o memoria de otro dominio directamente.", "action_en": "Every business rule lives in a unique domain directory. Inter-domain communication is async only (event-driven or abstract connector). No domain accesses another domain's DB or memory directly." },
     "R18_agent_loop_safety": { "name_es": "Seguridad de loops de agentes", "priority": "HIGH", "spec": "agent_loops.json", "action_es": "Todo loop iterativo declara un contador max_iterations explícito y enrutamiento de escape estructurado. Loops recursivos de generación/testing corren en git worktree o sandbox aislado.", "action_en": "Every iterative loop declares an explicit max_iterations counter and structured escape routing. Recursive generation/testing loops run in an isolated git worktree or sandbox." },
     "R19_zero_direct_env": { "name_es": "Cero acceso directo a entorno — Secure Key Broker", "priority": "CRITICAL", "spec": "ddd.json", "action_es": "Ningún sub-agente ni skill invoca process.env ni lee config cruda. Los secretos se inyectan en runtime vía el Secure Key Broker, solo en la capa de infraestructura/conectores.", "action_en": "No sub-agent or skill invokes process.env or reads raw config. Secrets are injected at runtime via the Secure Key Broker, only in the infrastructure/connector layer." },
-    "R20_core_file_protection": { "name_es": "Protección de archivos núcleo — prevención de conflictos", "priority": "CRITICAL", "action_es": "Si una petición exige MODIFICAR un archivo núcleo del framework → no romper la abstracción existente. Extender vía inyección de dependencias o composición. Al CREAR módulo nuevo → inspeccionar architect-ai-modules/templates y replicar el esqueleto y tipos exactamente.", "action_en": "If a request requires MODIFYING a core framework file → do not break the existing abstraction. Extend via dependency injection or composition. When CREATING a new module → inspect architect-ai-modules/templates and replicate the skeleton and types exactly." }
+    "R20_core_file_protection": { "name_es": "Protección de archivos núcleo — prevención de conflictos", "priority": "CRITICAL", "action_es": "Si una petición exige MODIFICAR un archivo núcleo del framework → no romper la abstracción existente. Extender vía inyección de dependencias o composición. Al CREAR módulo nuevo → inspeccionar architect-ai-modules/templates y replicar el esqueleto y tipos exactamente.", "action_en": "If a request requires MODIFYING a core framework file → do not break the existing abstraction. Extend via dependency injection or composition. When CREATING a new module → inspect architect-ai-modules/templates and replicate the skeleton and types exactly." },
+    "R21_rca_hitl_protocol": { "name_es": "Protocolo de Auditoría y RCA Human-in-the-Loop", "priority": "CRITICAL", "spec": "rca_protocol.json", "action_es": "Ante reporte de error/log de caída/bug: diagnosticar, generar Reporte RCA (Síntoma, Causa Raíz Física, Opción A rápida / Opción B estructural) y DETENERSE. No modificar ningún archivo hasta que el humano escriba explícitamente qué opción Autoriza. Tras autorización → rama fix/ o bugfix/ → implementar → tests → escaneo de secretos → presentar git diff + tests en consola → esperar confirmación visual → commit formato [Tipo]/SÍNTOMA/CAUSA RAÍZ/SOLUCIÓN → push.", "action_en": "On error report/crash log/bug: diagnose, generate an RCA Report (Symptom, Physical Root Cause, Quick Option A / Structural Option B) and STOP. Do not modify any file until the human explicitly authorizes an option. After authorization → fix/ or bugfix/ branch → implement → tests → secret scan → present git diff + console test results → wait for visual confirmation → commit in [Type]/SYMPTOM/ROOT CAUSE/SOLUTION format → push." }
   },
   "auto_save": {
     "orchestrator": "claude-code",
@@ -72,7 +73,9 @@
     "DEUDA [TD-id]": { "action_es": "Detalle de deuda técnica específica" },
     "FEATURE [F-id]": { "action_es": "Detalle de feature específica" },
     "REINTENTAR": { "action_es": "Reintentar operación tras servicio caído" },
-    "SALUD": { "action_es": "Índice de salud técnica del proyecto" }
+    "SALUD": { "action_es": "Índice de salud técnica del proyecto" },
+    "RCA [descripción]": { "action_es": "Iniciar Protocolo de Auditoría y RCA (rca_protocol.json) sobre un error/log/bug reportado. Genera Reporte RCA (Síntoma, Causa Raíz, Opción A/B) y se detiene en el Punto de Control de Autorización." },
+    "AUTORIZO [A|B]": { "action_es": "Autorizar la Opción A o B del último Reporte RCA pendiente y habilitar la Fase 2 (reparación aislada en rama fix/bugfix)." }
   },
   "startup_protocol": {
     "steps_es": [
@@ -121,9 +124,16 @@
     "model": "State_Machine + Graph_Based_Execution",
     "enforced_by_rules": ["R18_agent_loop_safety"]
   },
+  "rca_hitl_protocol": {
+    "spec": "rca_protocol.json",
+    "model": "Human-in-the-Loop (HITL) — Diagnóstico → Autorización → Reparación aislada → Verificación",
+    "enforced_by_rules": ["R21_rca_hitl_protocol"],
+    "commands": ["RCA [descripción]", "AUTORIZO [A|B]"]
+  },
   "framework_versioning": {
-    "current_framework_version": "2.3.0",
+    "current_framework_version": "2.4.0",
     "backward_compatible_until": "2.0.0",
-    "changelog_2_3_0_es": "Aditivo: DDD (ddd.json), loops de agentes (agent_loops.json), reglas R17–R20, sub-agentes por bounded context. Sin breaking changes."
+    "changelog_2_3_0_es": "Aditivo: DDD (ddd.json), loops de agentes (agent_loops.json), reglas R17–R20, sub-agentes por bounded context. Sin breaking changes.",
+    "changelog_2_4_0_es": "Aditivo: Protocolo de Auditoría y RCA Human-in-the-Loop (rca_protocol.json), regla R21, comandos RCA/AUTORIZO. Sin breaking changes."
   }
 }

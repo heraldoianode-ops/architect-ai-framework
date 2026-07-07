@@ -1,4 +1,4 @@
-# ARCHITECT-AI v2.3 — Claude Code Orchestrator
+# ARCHITECT-AI v2.4 — Claude Code Orchestrator
 
 ## BOOT SEQUENCE — Execute silently on every session start
 
@@ -57,6 +57,7 @@ services.private.json → env vars or credentials (NEVER commit)
 schema.sql           → touching database
 ddd.json             → creating/modifying a domain, connector or business feature, or on R16/R17 check
 agent_loops.json     → running recursive generation/testing loops or orchestrating sub-agents
+rca_protocol.json    → receiving an error report/crash log/bug ticket, or on RCA/AUTORIZO command
 [specific module]    → only when INSTALAR MÓDULO [id] is called
 ```
 
@@ -94,6 +95,18 @@ R17: DDD domain isolation → business rule per domain dir; inter-domain async o
 R18: Agent loop safety → explicit max_iterations + structured escape routing; recursive loops in isolated git worktree/sandbox (spec: agent_loops.json)
 R19: Zero direct env → no process.env or raw config in domain/skill; secrets via Secure Key Broker in infra/connector layer only (spec: ddd.json)
 R20: Core file protection → never break core abstractions; extend via dependency injection/composition; new module → replicate architect-ai-modules/templates skeleton + types
+R21: RCA Human-in-the-Loop protocol → on error/crash/bug: diagnose, emit RCA report (Symptom, Root Cause, Option A quick / Option B structural), then STOP and wait for explicit human authorization before touching any file (spec: rca_protocol.json)
+
+---
+
+## RCA / Audit Protocol (v2.4 — additive, backward-compatible)
+- Full spec in `__AI_CORE__/rca_protocol.json`. Triggered by an error report, crash log, bug ticket, or the `RCA` command.
+- **Phase 1 — Diagnosis:** run local diagnostics + architecture impact analysis → emit a Markdown RCA report (Síntoma / Causa Raíz Física / Opción A rápida / Opción B estructural) → **STOP. Do not modify any file.**
+- **Checkpoint (authorization):** wait for the human to explicitly write which option they authorize (e.g. `AUTORIZO B`). Never assume or proceed without it.
+- **Phase 2 — Isolated repair:** create a `fix/` or `bugfix/` branch → implement the authorized option → run the full test suite → scan changed files for exposed secrets/credentials.
+- **Checkpoint (verification):** present the `git diff` and passing test results → wait for the human's visual confirmation before pushing.
+- **Phase 3 — Closure:** write the commit/PR using `[Type]: summary` + `SÍNTOMA:` / `CAUSA RAÍZ:` / `SOLUCIÓN:` sections → push the branch → close out the audit log.
+- Security isolation: never read or modify files outside the project root; `.env`, SSH keys and OS configuration are always out of bounds (consistent with R19/R20).
 
 ---
 
@@ -134,6 +147,7 @@ claude → INICIAR PROYECTO [nombre]
 ARRANCAR | ESTADO | TURBO [task] | INICIAR PROYECTO [name] | AUDITAR PROYECTO
 SIGUIENTE | CERRAR SESIÓN | INSTALAR MÓDULO [id] | PUBLICAR MÓDULO [fn]
 SALUD | REINTENTAR | DEUDA [TD-id] | FEATURE [F-id]
+RCA [descripción] | AUTORIZO [A|B]
 
 ---
 
@@ -149,3 +163,6 @@ SALUD | REINTENTAR | DEUDA [TD-id] | FEATURE [F-id]
 - Invoke process.env or read raw config from a domain/skill — use Secure Key Broker (R19)
 - Run an iterative loop without an explicit max_iterations + escape route (R18)
 - Break core framework abstractions — extend via DI/composition instead (R20)
+- Modify any file during an RCA audit before the human explicitly authorizes Option A or B (R21)
+- Push, merge or close an RCA audit without the human's visual confirmation of the diff + passing tests (R21)
+- Read or modify files outside the project root, or touch .env/SSH keys/OS config, during an audit (R21)
